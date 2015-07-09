@@ -46,9 +46,9 @@ class PurchaseTestCase(unittest.TestCase):
 
 
 class EventTestCase(unittest.TestCase):
-    def test_generates_an_uuid_upon_creation(self):
+    def test_generates_an_oid_upon_creation(self):
         event = events.Event('', [])
-        self.assertIsNotNone(event.uuid)
+        self.assertIsNotNone(event.oid)
 
     def test_has_name(self):
         name = 'Cool event'
@@ -75,7 +75,7 @@ class EventTestCase(unittest.TestCase):
         purchase = events.Purchase('Bob', 'Gas', 10)
         event.add_purchase(purchase)
         expected_event = {
-            'id': str(event.uuid),
+            '_id': event.oid,
             'name': 'Cool event',
             'participants': ['Bob', 'Kim'],
             'purchases': [{'purchaser': 'Bob', 'title': 'Gas', 'amount': 10, 'participants': [], 'description': None}]
