@@ -3,7 +3,7 @@ import abc
 import repository
 
 
-collection = None
+db = None
 
 
 class RepositoryLocator:
@@ -27,4 +27,4 @@ class RepositoryLocator:
 
 class MongoRepositoryLocator(RepositoryLocator):
     def _get_events(self):
-        return repository.EventRepository(collection)
+        return repository.EventRepository(db['event'])
