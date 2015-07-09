@@ -1,1 +1,2 @@
 smartconfigparser==0.1.1
+mongomock==2.1.0
