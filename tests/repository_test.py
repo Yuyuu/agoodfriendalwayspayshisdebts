@@ -2,6 +2,7 @@ import unittest
 import mongomock
 
 import repository
+import events
 
 
 class FakeEntity():
@@ -38,3 +39,34 @@ class MongoRepositoryTestCase(unittest.TestCase):
         found_entity = self.repository.get('1234')
 
         self.assertIsNotNone(found_entity)
+
+
+class EventRepositoryTestCase(unittest.TestCase):
+    def setUp(self):
+        self.collection = mongomock.Connection().db['agoodfriendalwayspayshisdebts']
+        self.repository = repository.EventRepository(self.collection)
+
+    def test_can_add_an_event(self):
+        event = events.Event('Cool event', ['Kim', 'Lea'])
+        self.repository.add(event)
+
+        found_event = self.collection.find_one()
+
+        self.assertIsNotNone(found_event['_id'])
+        self.assertEqual('Cool event', found_event['name'])
+        self.assertEqual(['Kim', 'Lea'], found_event['participants'])
+        self.assertEqual(0, len(found_event['purchases']))
+
+    def test_can_retrieve_an_event(self):
+        event = events.Event('Cool event', ['Kim', 'Lea'])
+        event.add_purchase(events.Purchase('Kim', 'Shopping', 5))
+        self.repository.add(event)
+
+        found_event = self.repository.get(event.oid)
+
+        self.assertEqual(event.oid, found_event.oid)
+        self.assertEqual('Cool event', found_event.name)
+        self.assertEqual(['Kim', 'Lea'], found_event.participants)
+        self.assertEqual('Kim', found_event.purchases[0].purchaser)
+        self.assertEqual('Shopping', found_event.purchases[0].title)
+        self.assertEqual(5, found_event.purchases[0].amount)

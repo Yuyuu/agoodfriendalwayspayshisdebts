@@ -1,5 +1,7 @@
 import abc
 
+import events
+
 
 class MongoRepository:
     __metaclass__ = abc.ABCMeta
@@ -13,3 +15,15 @@ class MongoRepository:
 
     def add(self, entity):
         self.collection.insert(entity.serialize())
+
+
+class EventRepository(MongoRepository):
+    def get(self, uuid):
+        element = self.collection.find_one({'_id': uuid})
+        event = events.Event(element['name'], element['participants'])
+        event.oid = uuid
+        purchases = []
+        for purchase in element['purchases']:
+            purchases.append(events.Purchase(purchase['purchaser'], purchase['title'], purchase['amount']))
+        event.purchases = purchases
+        return event
