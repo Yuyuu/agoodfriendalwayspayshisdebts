@@ -10,7 +10,7 @@ class ValidatorTestCase(unittest.TestCase):
             validator.validate()
 
         exception = cm.exception
-        self.assertEqual(exception.messages[0], 'An event requires a name')
+        self.assertEqual(exception.messages[0], 'EVENT_NAME_REQUIRED')
 
     def test_create_command_without_participants_is_invalid(self):
         validator = validators.CreateEventCommandValidator({'name': 'Cool event'})
@@ -18,7 +18,7 @@ class ValidatorTestCase(unittest.TestCase):
             validator.validate()
 
         exception = cm.exception
-        self.assertEqual(exception.messages[0], 'At least one participant is required for an event')
+        self.assertEqual(exception.messages[0], 'PARTICIPANTS_REQUIRED')
 
     def test_create_command_requires_at_least_one_participant(self):
         validator = validators.CreateEventCommandValidator({'name': 'Cool event', 'participants': []})

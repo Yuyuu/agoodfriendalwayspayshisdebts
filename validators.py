@@ -14,13 +14,15 @@ class CreateEventCommandValidator(Validator):
     def validate(self):
         errors = []
         if 'name' not in self.data:
-            errors.append('An event requires a name')
+            errors.append('EVENT_NAME_REQUIRED')
         if 'participants' not in self.data or len(self.data['participants']) < 1:
-            errors.append('At least one participant is required for an event')
+            errors.append('PARTICIPANTS_REQUIRED')
         if len(errors) > 0:
             raise ValidationException(errors)
 
 
 class ValidationException(Exception):
+    status_code = 400
+
     def __init__(self, messages):
         self.messages = messages
