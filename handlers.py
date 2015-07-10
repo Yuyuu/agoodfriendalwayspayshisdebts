@@ -5,8 +5,8 @@ import events
 
 
 class CommandHandler:
-    def __init__(self):
-        pass
+    def __init__(self, command_type):
+        self.command_type = command_type
 
     @abc.abstractmethod
     def execute(self, command):

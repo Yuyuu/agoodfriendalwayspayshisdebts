@@ -14,7 +14,7 @@ class CreateEventCommandHandlerTestCase(unittest.TestCase):
         RepositoryLocator.initialize(None)
 
     def test_the_event_is_added_to_the_repository(self):
-        handler = handlers.CreateEventCommandHandler()
+        handler = handlers.CreateEventCommandHandler(commands.CreateEventCommand)
 
         event_id = handler.execute(commands.CreateEventCommand('Cool event', ['Lea', 'Eva']))
 
