@@ -18,3 +18,18 @@ class CreateEventCommandHandler(CommandHandler):
         event = events.Event(command.name, command.participants)
         RepositoryLocator.events().add(event)
         return event.oid
+
+
+class SearchHandler:
+    def __init__(self, search_type):
+        self.search_type = search_type
+
+    @abc.abstractmethod
+    def execute(self, command):
+        return
+
+
+class SearchEventDetailsHandler(SearchHandler):
+    def execute(self, command):
+        event = RepositoryLocator.events().get(command.oid)
+        return event
