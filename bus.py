@@ -53,6 +53,11 @@ class Bus:
             return ExecutionResult.error(e)
 
 
+class CommandBus(Bus):
+    def __init__(self, handlers):
+        Bus.__init__(self, handlers)
+
+
 class BusError(RuntimeError):
     def __init__(self, message):
         self.message = message
