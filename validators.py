@@ -21,7 +21,7 @@ class CreateEventCommandValidator(Validator):
             raise ValidationException(errors)
 
 
-class ValidationException(Exception):
+class ValidationException(RuntimeError):
     status_code = 400
 
     def __init__(self, messages):
