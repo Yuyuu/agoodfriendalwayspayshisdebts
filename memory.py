@@ -1,7 +1,7 @@
 from locator import RepositoryLocator
 
 
-class MemoryRepository():
+class MemoryRepository:
     def __init__(self):
         self.entities = {}
 

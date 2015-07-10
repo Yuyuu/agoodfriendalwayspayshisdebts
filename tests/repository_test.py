@@ -5,7 +5,7 @@ import repository
 import events
 
 
-class FakeEntity():
+class FakeEntity:
     def __init__(self, uuid):
         self.uuid = uuid
 
@@ -21,7 +21,7 @@ class FakeEntityRepository(repository.MongoRepository):
 
 class MongoRepositoryTestCase(unittest.TestCase):
     def setUp(self):
-        self.collection = mongomock.Connection().db['agoodfriendalwayspayshisdebts']
+        self.collection = mongomock.Connection().db['collection']
         self.repository = FakeEntityRepository(self.collection)
 
     def test_can_add_an_entity(self):
@@ -43,7 +43,7 @@ class MongoRepositoryTestCase(unittest.TestCase):
 
 class EventRepositoryTestCase(unittest.TestCase):
     def setUp(self):
-        self.collection = mongomock.Connection().db['agoodfriendalwayspayshisdebts']
+        self.collection = mongomock.Connection().db['collection']
         self.repository = repository.EventRepository(self.collection)
 
     def test_can_add_an_event(self):
