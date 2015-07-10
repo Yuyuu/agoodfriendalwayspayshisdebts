@@ -1,6 +1,6 @@
 import abc
 
-import events
+import factories
 
 
 class MongoRepository:
@@ -10,7 +10,7 @@ class MongoRepository:
         self.collection = collection
 
     @abc.abstractmethod
-    def get(self, uuid):
+    def get(self, oid):
         return
 
     def add(self, entity):
@@ -18,12 +18,6 @@ class MongoRepository:
 
 
 class EventRepository(MongoRepository):
-    def get(self, uuid):
-        element = self.collection.find_one({'_id': uuid})
-        event = events.Event(element['name'], element['participants'])
-        event.oid = uuid
-        purchases = []
-        for purchase in element['purchases']:
-            purchases.append(events.Purchase(purchase['purchaser'], purchase['title'], purchase['amount']))
-        event.purchases = purchases
-        return event
+    def get(self, oid):
+        document = self.collection.find_one({'_id': oid})
+        return factories.EventFactory.create_event_from_document(document)
