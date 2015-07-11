@@ -8,6 +8,7 @@ import handlers
 def bus_with(handler):
     return bus.Bus([handler])
 
+
 def empty_bus():
     return bus.Bus([])
 
@@ -17,9 +18,9 @@ class FakeCommand:
         pass
 
 
-class FakeCommandHandler(handlers.CommandHandler):
+class FakeCommandHandler(handlers.Handler):
     def __init__(self):
-        handlers.CommandHandler.__init__(self, FakeCommand)
+        handlers.Handler.__init__(self, FakeCommand)
         self.raise_exception = False
         self.command_received = None
 

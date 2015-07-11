@@ -3,6 +3,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class ExecutionResult:
     def __init__(self, response=None, error=None, success=False):
         self.response = response
@@ -28,9 +29,9 @@ class Bus:
     def __init__(self, handlers):
         self.handlers = {}
         for handler in handlers:
-            if self.handlers.get(handler.command_type, None) is None:
-                self.handlers[handler.command_type] = []
-            self.handlers[handler.command_type].append(handler)
+            if self.handlers.get(handler.message_type, None) is None:
+                self.handlers[handler.message_type] = []
+            self.handlers[handler.message_type].append(handler)
 
     def send_and_wait_response(self, command):
         handlers = self.handlers.get(command.__class__, [])
