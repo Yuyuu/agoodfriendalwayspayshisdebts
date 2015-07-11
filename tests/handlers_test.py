@@ -1,5 +1,8 @@
 import unittest
 
+from bson.objectid import ObjectId
+from bson.errors import InvalidId
+
 from locator import RepositoryLocator
 from memory import MemoryRepositoryLocator
 import commands
@@ -32,11 +35,16 @@ class EventDetailsSearchHandlerTestCase(unittest.TestCase):
         RepositoryLocator.initialize(None)
 
     def test_can_return_an_event_and_its_properties(self):
-        event = {'_id': '1234', 'name': 'Cool event', 'participants': ['Kim'], 'purchases': []}
-        RepositoryLocator.events().entities['1234'] = event
+        oid = ObjectId()
+        event = {'_id': oid, 'name': 'Cool event', 'participants': ['Kim'], 'purchases': []}
+        RepositoryLocator.events().entities[oid] = event
 
         result = handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)\
-            .execute(searches.EventDetailsSearch('1234'))
+            .execute(searches.EventDetailsSearch(str(oid)))
 
         self.assertDictEqual(result, event)
 
+    def test_an_exception_is_thrown_if_the_given_id_is_not_a_valid_objectid(self):
+        handler = handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)
+
+        self.assertRaises(InvalidId, handler.execute, searches.EventDetailsSearch("hello"))
