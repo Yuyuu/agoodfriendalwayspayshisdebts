@@ -58,6 +58,11 @@ class CommandBus(Bus):
         Bus.__init__(self, handlers)
 
 
+class SearchBus(Bus):
+    def __init__(self, handlers):
+        Bus.__init__(self, handlers)
+
+
 class BusError(RuntimeError):
     def __init__(self, message):
         self.message = message
