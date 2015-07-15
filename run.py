@@ -6,6 +6,7 @@ config.configure_logging()
 config.initialize_repository()
 
 server.app.configure_commands()
+server.app.configure_searches()
 
 app = server.app
 
