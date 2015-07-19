@@ -3,6 +3,19 @@ import unittest
 import events
 
 
+class ParticipantTestCase(unittest.TestCase):
+    def test_serialization(self):
+        participant = events.Participant('Bob & Lea', 2)
+        participant.email = 'bob@email.com'
+        expected_participant = {
+            'name': 'Bob & Lea',
+            'email': 'bob@email.com',
+            'share': 2
+        }
+
+        self.assertDictEqual(participant.serialize(), expected_participant)
+
+
 class PurchaseTestCase(unittest.TestCase):
     def test_has_purchaser(self):
         purchaser = 'Kim'
@@ -71,13 +84,13 @@ class EventTestCase(unittest.TestCase):
         self.assertListEqual(event.purchases, [purchase])
 
     def test_serialization(self):
-        event = events.Event('Cool event', ['Bob', 'Kim'])
+        event = events.Event('Cool event', [events.Participant('Bob', 1), events.Participant('Kim', 1)])
         purchase = events.Purchase('Bob', 'Gas', 10)
         event.add_purchase(purchase)
         expected_event = {
             '_id': event.oid,
             'name': 'Cool event',
-            'participants': ['Bob', 'Kim'],
+            'participants': [{'name': 'Bob', 'email': '', 'share': 1}, {'name': 'Kim', 'email': '', 'share': 1}],
             'purchases': [{'purchaser': 'Bob', 'title': 'Gas', 'amount': 10, 'participants': [], 'description': None}]
         }
         self.assertDictEqual(expected_event, event.serialize())

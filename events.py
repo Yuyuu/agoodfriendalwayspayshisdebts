@@ -11,19 +11,29 @@ class Event:
     def add_purchase(self, purchase):
         self.purchases.append(purchase)
 
-    def _get_serialized_purchases(self):
-        serialized_purchases = []
-        for purchase in self.purchases:
-            serialized_purchases.append(purchase.serialize())
-        return serialized_purchases
+    def __get_serialized_participants(self):
+        return map((lambda participant: participant.serialize()), self.participants)
+
+    def __get_serialized_purchases(self):
+        return map((lambda purchase: purchase.serialize()), self.purchases)
 
     def serialize(self):
         return {
             '_id': self.oid,
             'name': self.name,
-            'participants': self.participants,
-            'purchases': self._get_serialized_purchases()
+            'participants': self.__get_serialized_participants(),
+            'purchases': self.__get_serialized_purchases()
         }
+
+
+class Participant:
+    def __init__(self, name, share):
+        self.name = name
+        self.email = ''
+        self.share = share
+
+    def serialize(self):
+        return {'name': self.name, 'email': self.email, 'share': self.share}
 
 
 class Purchase:

@@ -20,11 +20,19 @@ class CreateEventCommandHandlerTestCase(unittest.TestCase):
     def test_the_event_is_added_to_the_repository(self):
         handler = handlers.CreateEventCommandHandler(commands.CreateEventCommand)
 
-        event_id = handler.execute(commands.CreateEventCommand('Cool event', ['Lea', 'Eva']))
+        event_id = handler.execute(commands.CreateEventCommand('Cool event', [
+            {'name': 'Lea', 'email': 'lea@email.com', 'share': 1},
+            {'name': 'Eva', 'share': 1}
+        ]))
 
-        repository = RepositoryLocator.events()
-        self.assertEqual('Cool event', repository.entities[event_id].name)
-        self.assertEqual(['Lea', 'Eva'], repository.entities[event_id].participants)
+        entity = RepositoryLocator.events().entities[event_id]
+        self.assertEqual('Cool event', entity.name)
+        self.assertEqual('Lea', entity.participants[0].name)
+        self.assertEqual('lea@email.com', entity.participants[0].email)
+        self.assertEqual(1, entity.participants[0].share)
+        self.assertEqual('Eva', entity.participants[1].name)
+        self.assertEqual('', entity.participants[1].email)
+        self.assertEqual(1, entity.participants[1].share)
 
 
 class EventDetailsSearchHandlerTestCase(unittest.TestCase):

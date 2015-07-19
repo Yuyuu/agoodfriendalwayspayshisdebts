@@ -19,9 +19,17 @@ class Handler:
 
 class CreateEventCommandHandler(Handler):
     def execute(self, command):
-        event = events.Event(command.name, command.participants)
+        participants = map(self.__create_participant_from_json, command.participants)
+        event = events.Event(command.name, participants)
         RepositoryLocator.events().add(event)
         return event.oid
+
+    @staticmethod
+    def __create_participant_from_json(json_participant):
+        participant = events.Participant(json_participant['name'], json_participant['share'])
+        if 'email' in json_participant and json_participant['email']:
+            participant.email = json_participant['email']
+        return participant
 
 
 class SearchEventDetailsHandler(Handler):

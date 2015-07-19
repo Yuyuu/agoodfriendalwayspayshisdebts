@@ -47,18 +47,21 @@ class EventRepositoryTestCase(unittest.TestCase):
         self.repository = repository.EventRepository(self.collection)
 
     def test_can_add_an_event(self):
-        event = events.Event('Cool event', ['Kim', 'Lea'])
+        event = events.Event('Cool event', [events.Participant('Kim', 1), events.Participant('Lea', 1)])
         self.repository.add(event)
 
         found_event = self.collection.find_one()
 
         self.assertIsNotNone(found_event['_id'])
         self.assertEqual('Cool event', found_event['name'])
-        self.assertEqual(['Kim', 'Lea'], found_event['participants'])
+        self.assertListEqual([
+            {'name': 'Kim', 'email': '', 'share': 1},
+            {'name': 'Lea', 'email': '', 'share': 1}
+        ], found_event['participants'])
         self.assertEqual(0, len(found_event['purchases']))
 
     def test_can_retrieve_an_event(self):
-        event = events.Event('Cool event', ['Kim', 'Lea'])
+        event = events.Event('Cool event', [events.Participant('Kim', 1), events.Participant('Lea', 1)])
         event.add_purchase(events.Purchase('Kim', 'Shopping', 5))
         self.repository.add(event)
 
@@ -66,7 +69,10 @@ class EventRepositoryTestCase(unittest.TestCase):
 
         self.assertEqual(event.oid, found_event.oid)
         self.assertEqual('Cool event', found_event.name)
-        self.assertEqual(['Kim', 'Lea'], found_event.participants)
+        self.assertListEqual([
+            {'name': 'Kim', 'email': '', 'share': 1},
+            {'name': 'Lea', 'email': '', 'share': 1}
+        ], found_event.participants)
         self.assertEqual('Kim', found_event.purchases[0].purchaser)
         self.assertEqual('Shopping', found_event.purchases[0].title)
         self.assertEqual(5, found_event.purchases[0].amount)
