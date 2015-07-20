@@ -37,6 +37,21 @@ class CreateEventCommandValidator(Validator):
             raise ValidationException(self.errors)
 
 
+class AddPurchaseCommandValidator(Validator):
+    def validate(self):
+        if 'purchaser' not in self.data or not self.data['purchaser']:
+            self.errors.append('PURCHASE_PURCHASER_REQUIRED')
+        if 'title' not in self.data or not self.data['title']:
+            self.errors.append('PURCHASE_TITLE_REQUIRED')
+        if 'amount' not in self.data:
+            self.errors.append('PURCHASE_AMOUNT_REQUIRED')
+        else:
+            if self.data['amount'] <= 0:
+                self.errors.append('INVALID_AMOUNT')
+        if len(self.errors) > 0:
+            raise ValidationException(self.errors)
+
+
 class ValidationException(RuntimeError):
     status_code = 400
 

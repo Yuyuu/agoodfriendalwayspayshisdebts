@@ -41,6 +41,15 @@ class MongoRepositoryTestCase(unittest.TestCase):
 
         self.assertIsNotNone(found_entity)
 
+    def test_can_update_an_entity(self):
+        entity = FakeEntity('1234')
+        self.repository.add(entity)
+
+        entity.uuid = '5678'
+        self.repository.update(entity.oid, entity)
+
+        self.assertIsNotNone(self.repository.get('5678'))
+
 
 class EventRepositoryTestCase(unittest.TestCase):
     def setUp(self):
@@ -77,3 +86,14 @@ class EventRepositoryTestCase(unittest.TestCase):
         self.assertEqual('Kim', found_event.purchases[0].purchaser)
         self.assertEqual('Shopping', found_event.purchases[0].title)
         self.assertEqual(5, found_event.purchases[0].amount)
+
+    def test_can_update_an_event(self):
+        event = events.Event('Cool event', [events.Participant('Kim', 1), events.Participant('Lea', 1)])
+        event.add_purchase(events.Purchase('Kim', 'Shopping', 5))
+        self.repository.add(event)
+
+        event.name = 'Weekend at the beach'
+        self.repository.update(event.oid, event)
+
+        updated_event = self.repository.get(event.oid)
+        self.assertEqual('Weekend at the beach', updated_event.name)

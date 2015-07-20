@@ -16,7 +16,10 @@ class Server(flask.Flask):
         super(Server, self).__init__(import_name)
 
     def configure_commands(self):
-        command_handlers = [handlers.CreateEventCommandHandler(commands.CreateEventCommand)]
+        command_handlers = [
+            handlers.CreateEventCommandHandler(commands.CreateEventCommand),
+            handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
+        ]
         self.command_bus = bus.CommandBus(command_handlers)
 
     def configure_searches(self):
@@ -53,6 +56,19 @@ def get_event(event_id):
         raise result.error
     event = result.response
     http_response = flask.jsonify({'id': str(event.oid), 'name': event.name, 'participants': event.participants})
+    return http_response
+
+@app.route('/events/<event_id>/purchases', methods=['POST'])
+def add_purchase(event_id):
+    data = flask.request.json
+    validators.AddPurchaseCommandValidator(data).validate()
+    command = commands.AddPurchaseCommand(event_id, data['purchaser'], data['title'], data['amount'])
+    result = app.command_bus.send_and_wait_response(command)
+    if not result.is_success():
+        raise result.error
+    purchase = result.response
+    http_response = flask.jsonify({'purchaser': purchase.purchaser, 'amount': purchase.amount})
+    http_response.status_code = 201
     return http_response
 
 

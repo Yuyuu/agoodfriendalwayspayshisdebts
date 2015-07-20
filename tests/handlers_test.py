@@ -42,6 +42,33 @@ class CreateEventCommandHandlerTestCase(unittest.TestCase):
         self.assertEqual(1, entity.participants[1].share)
 
 
+class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
+    event_id = ObjectId()
+
+    def setUp(self):
+        RepositoryLocator.initialize(MemoryRepositoryLocator())
+        RepositoryLocator.events().entities[self.event_id] = fake_event(self.event_id)
+
+    def tearDown(self):
+        RepositoryLocator.initialize(None)
+
+    def test_the_purchase_is_added_to_the_repository(self):
+        handler = handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
+        command = commands.AddPurchaseCommand(self.event_id, 'Kim', 'Gas', 10)
+        command.participants = ['Bob']
+        command.description = '10km at 1e/km'
+
+        handler.execute(command)
+
+        entity = RepositoryLocator.events().entities[self.event_id]
+
+        self.assertEqual('Kim', entity.purchases[0].purchaser)
+        self.assertEqual('Gas', entity.purchases[0].title)
+        self.assertEqual(10, entity.purchases[0].amount)
+        self.assertListEqual(['Bob'], entity.purchases[0].participants)
+        self.assertEqual('10km at 1e/km', entity.purchases[0].description)
+
+
 class EventDetailsSearchHandlerTestCase(unittest.TestCase):
     def setUp(self):
         RepositoryLocator.initialize(MemoryRepositoryLocator())

@@ -32,6 +32,17 @@ class CreateEventCommandHandler(Handler):
         return participant
 
 
+class AddPurchaseCommandHandler(Handler):
+    def execute(self, command):
+        purchase = events.Purchase(command.purchaser, command.title, command.amount)
+        purchase.participants = command.participants
+        purchase.description = command.description
+        event = RepositoryLocator.events().get(ObjectId(command.event_id))
+        event.add_purchase(purchase)
+        RepositoryLocator.events().update(event.oid, event)
+        return purchase
+
+
 class SearchEventDetailsHandler(Handler):
     def execute(self, search):
         oid = ObjectId(search.id_as_string)

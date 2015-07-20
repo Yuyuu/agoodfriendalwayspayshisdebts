@@ -16,6 +16,9 @@ class MongoRepository:
     def add(self, entity):
         self.collection.insert(entity.serialize())
 
+    def update(self, oid, entity):
+        self.collection.update({'_id': oid}, entity.serialize())
+
 
 class EventRepository(MongoRepository):
     def get(self, oid):

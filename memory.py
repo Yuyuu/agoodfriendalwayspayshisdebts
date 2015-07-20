@@ -11,6 +11,9 @@ class MemoryRepository:
     def get(self, oid):
         return self.entities[oid]
 
+    def update(self, oid, entity):
+        self.entities[oid] = entity
+
 
 class MemoryEventRepository(MemoryRepository):
     pass
