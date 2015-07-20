@@ -58,11 +58,14 @@ def get_event(event_id):
     http_response = flask.jsonify({'id': str(event.oid), 'name': event.name, 'participants': event.participants})
     return http_response
 
+
 @app.route('/events/<event_id>/purchases', methods=['POST'])
 def add_purchase(event_id):
     data = flask.request.json
     validators.AddPurchaseCommandValidator(data).validate()
     command = commands.AddPurchaseCommand(event_id, data['purchaser'], data['title'], data['amount'])
+    command.participants = data['participants'] if 'participants' in data else []
+    command.description = data['description'] if 'description' in data else ''
     result = app.command_bus.send_and_wait_response(command)
     if not result.is_success():
         raise result.error

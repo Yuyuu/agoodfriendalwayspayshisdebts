@@ -12,7 +12,7 @@ import handlers
 
 
 def fake_event(oid=ObjectId()):
-    event = events.Event('Cool event', [])
+    event = events.Event('Cool event', [events.Participant('Kim', 1)])
     event.oid = oid
     return event
 
@@ -67,6 +67,17 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
         self.assertEqual(10, entity.purchases[0].amount)
         self.assertListEqual(['Bob'], entity.purchases[0].participants)
         self.assertEqual('10km at 1e/km', entity.purchases[0].description)
+
+    def test_the_purchase_is_shared_between_all_participants_if_none_is_specified(self):
+        RepositoryLocator.events().entities[self.event_id].participants.append(events.Participant('Bob', 1))
+        handler = handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
+        command = commands.AddPurchaseCommand(self.event_id, 'Kim', 'Gas', 10)
+
+        handler.execute(command)
+
+        entity = RepositoryLocator.events().entities[self.event_id]
+
+        self.assertListEqual(['Kim', 'Bob'], entity.purchases[0].participants)
 
 
 class EventDetailsSearchHandlerTestCase(unittest.TestCase):
