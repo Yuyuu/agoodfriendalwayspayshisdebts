@@ -5,9 +5,16 @@ from bson.errors import InvalidId
 
 from locator import RepositoryLocator
 from memory import MemoryRepositoryLocator
+import events
 import commands
 import searches
 import handlers
+
+
+def fake_event(oid=ObjectId()):
+    event = events.Event('Cool event', [])
+    event.oid = oid
+    return event
 
 
 class CreateEventCommandHandlerTestCase(unittest.TestCase):
@@ -43,14 +50,17 @@ class EventDetailsSearchHandlerTestCase(unittest.TestCase):
         RepositoryLocator.initialize(None)
 
     def test_can_return_an_event_and_its_properties(self):
-        oid = ObjectId()
-        event = {'_id': oid, 'name': 'Cool event', 'participants': ['Kim'], 'purchases': []}
-        RepositoryLocator.events().entities[oid] = event
+        event = fake_event()
+        event.add_participant(events.Participant('Kim', '1'))
+        RepositoryLocator.events().entities[event.oid] = event
 
         result = handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)\
-            .execute(searches.EventDetailsSearch(str(oid)))
+            .execute(searches.EventDetailsSearch(str(event.oid)))
 
-        self.assertDictEqual(result, event)
+        self.assertEqual(result.oid, event.oid)
+        self.assertEqual(result.name, 'Cool event')
+        self.assertEqual(result.participants[0].name, 'Kim')
+        self.assertListEqual(result.purchases, [])
 
     def test_an_exception_is_thrown_if_the_given_id_is_not_a_valid_objectid(self):
         handler = handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)

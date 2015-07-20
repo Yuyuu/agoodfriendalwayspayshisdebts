@@ -11,7 +11,10 @@ class EventFactoryTestCase(unittest.TestCase):
         document = {
             '_id': object_id,
             'name': 'Cool event',
-            'participants': ['Lea', 'Kim'],
+            'participants': [
+                {'name': 'Lea', 'email': '', 'share': 1},
+                {'name': 'Kim', 'email': 'kim@email.com', 'share': 1},
+            ],
             'purchases': [
                 {
                     'purchaser': 'Lea',
@@ -34,7 +37,9 @@ class EventFactoryTestCase(unittest.TestCase):
 
         self.assertEqual(object_id, event.oid)
         self.assertEqual('Cool event', event.name)
-        self.assertListEqual(['Lea', 'Kim'], event.participants)
+        self.assertEqual('Lea', event.participants[0].name)
+        self.assertEqual('kim@email.com', event.participants[1].email)
+        self.assertEqual(1, event.participants[1].share)
         self.assertEqual('Lea', event.purchases[0].purchaser)
         self.assertEqual('Shopping', event.purchases[0].title)
         self.assertEqual(10, event.purchases[0].amount)

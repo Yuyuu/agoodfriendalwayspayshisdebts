@@ -8,6 +8,9 @@ class Event:
         self.participants = participants
         self.purchases = []
 
+    def add_participant(self, participant):
+        self.participants.append(participant)
+
     def add_purchase(self, purchase):
         self.purchases.append(purchase)
 
@@ -27,9 +30,9 @@ class Event:
 
 
 class Participant:
-    def __init__(self, name, share):
+    def __init__(self, name, share, email=''):
         self.name = name
-        self.email = ''
+        self.email = email
         self.share = share
 
     def serialize(self):

@@ -5,8 +5,7 @@ import events
 
 class ParticipantTestCase(unittest.TestCase):
     def test_serialization(self):
-        participant = events.Participant('Bob & Lea', 2)
-        participant.email = 'bob@email.com'
+        participant = events.Participant('Bob & Lea', 2, 'bob@email.com')
         expected_participant = {
             'name': 'Bob & Lea',
             'email': 'bob@email.com',
@@ -76,6 +75,12 @@ class EventTestCase(unittest.TestCase):
     def test_has_no_purchases_at_start(self):
         event = events.Event('', [])
         self.assertEqual(len(event.purchases), 0)
+
+    def test_can_add_a_participant(self):
+        participant = events.Participant('Kim', 1)
+        event = events.Event('', [])
+        event.add_participant(participant)
+        self.assertListEqual(event.participants, [participant])
 
     def test_can_add_a_purchase(self):
         purchase = events.Purchase('Kim', 'Shopping', 2)

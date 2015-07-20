@@ -6,17 +6,18 @@ import events
 
 
 class FakeEntity:
-    def __init__(self, uuid):
+    def __init__(self, uuid, oid=mongomock.ObjectId()):
+        self.oid = oid
         self.uuid = uuid
 
     def serialize(self):
-        return {'id': str(self.uuid)}
+        return {'_id': self.oid, 'id': self.uuid}
 
 
 class FakeEntityRepository(repository.MongoRepository):
     def get(self, uuid):
         element = self.collection.find_one({'id': str(uuid)})
-        return FakeEntity(element['id'])
+        return FakeEntity(element['id'], element['_id'])
 
 
 class MongoRepositoryTestCase(unittest.TestCase):
@@ -69,10 +70,10 @@ class EventRepositoryTestCase(unittest.TestCase):
 
         self.assertEqual(event.oid, found_event.oid)
         self.assertEqual('Cool event', found_event.name)
-        self.assertListEqual([
-            {'name': 'Kim', 'email': '', 'share': 1},
-            {'name': 'Lea', 'email': '', 'share': 1}
-        ], found_event.participants)
+        self.assertEqual('Kim', found_event.participants[0].name)
+        self.assertEqual(1, found_event.participants[0].share)
+        self.assertEqual('Lea', found_event.participants[1].name)
+        self.assertEqual(1, found_event.participants[1].share)
         self.assertEqual('Kim', found_event.purchases[0].purchaser)
         self.assertEqual('Shopping', found_event.purchases[0].title)
         self.assertEqual(5, found_event.purchases[0].amount)
