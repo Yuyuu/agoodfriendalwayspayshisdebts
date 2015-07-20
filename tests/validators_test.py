@@ -12,6 +12,14 @@ class CreateEventCommandValidatorTestCase(unittest.TestCase):
         exception = cm.exception
         self.assertEqual(exception.messages[0], 'EVENT_NAME_REQUIRED')
 
+    def test_create_event_command_with_an_empty_name_is_invalid(self):
+        validator = validators.CreateEventCommandValidator({'name: '', ''participants': [{'name': 'Bob', 'share': 1}]})
+        with self.assertRaises(validators.ValidationException) as cm:
+            validator.validate()
+
+        exception = cm.exception
+        self.assertEqual(exception.messages[0], 'EVENT_NAME_REQUIRED')
+
     def test_create_event_command_without_participants_is_invalid(self):
         validator = validators.CreateEventCommandValidator({'name': 'Cool event'})
         with self.assertRaises(validators.ValidationException) as cm:

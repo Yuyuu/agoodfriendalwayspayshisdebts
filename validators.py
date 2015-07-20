@@ -27,7 +27,7 @@ class CreateEventCommandValidator(Validator):
         self.errors.extend(errors)
 
     def validate(self):
-        if 'name' not in self.data:
+        if 'name' not in self.data or not self.data['name']:
             self.errors.append('EVENT_NAME_REQUIRED')
         if 'participants' not in self.data or len(self.data['participants']) < 1:
             self.errors.append('PARTICIPANTS_REQUIRED')
