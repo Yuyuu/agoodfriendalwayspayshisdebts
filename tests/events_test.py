@@ -21,10 +21,10 @@ class PurchaseTestCase(unittest.TestCase):
         purchase = events.Purchase(purchaser, '', 1)
         self.assertEqual(purchaser, purchase.purchaser)
         
-    def test_has_title(self):
-        title = 'Shopping'
+    def label(self):
+        label = 'Shopping'
         purchase = events.Purchase('', 'Shopping', 1)
-        self.assertEqual(title, purchase.title)
+        self.assertEqual(label, purchase.label)
         
     def test_has_amount(self):
         amount = 10.04
@@ -49,7 +49,7 @@ class PurchaseTestCase(unittest.TestCase):
         purchase.add_participant('Bob')
         expected_purchase = {
             'purchaser': 'Kim',
-            'title': 'Shopping',
+            'label': 'Shopping',
             'amount': 10.04,
             'participants': ['Bob'],
             'description': None
@@ -96,6 +96,6 @@ class EventTestCase(unittest.TestCase):
             '_id': event.oid,
             'name': 'Cool event',
             'participants': [{'name': 'Bob', 'email': '', 'share': 1}, {'name': 'Kim', 'email': '', 'share': 1}],
-            'purchases': [{'purchaser': 'Bob', 'title': 'Gas', 'amount': 10, 'participants': [], 'description': None}]
+            'purchases': [{'purchaser': 'Bob', 'label': 'Gas', 'amount': 10, 'participants': [], 'description': None}]
         }
         self.assertDictEqual(expected_event, event.serialize())

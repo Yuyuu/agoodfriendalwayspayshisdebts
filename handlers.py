@@ -35,7 +35,7 @@ class CreateEventCommandHandler(Handler):
 class AddPurchaseCommandHandler(Handler):
     def execute(self, command):
         event = RepositoryLocator.events().get(ObjectId(command.event_id))
-        purchase = events.Purchase(command.purchaser, command.title, command.amount)
+        purchase = events.Purchase(command.purchaser, command.label, command.amount)
         purchase.participants = command.participants or self.__get_all_event_participants_names(event)
         purchase.description = command.description
         event.add_purchase(purchase)

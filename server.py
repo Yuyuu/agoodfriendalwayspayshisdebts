@@ -63,7 +63,7 @@ def get_event(event_id):
 def add_purchase(event_id):
     data = flask.request.json
     validators.AddPurchaseCommandValidator(data).validate()
-    command = commands.AddPurchaseCommand(event_id, data['purchaser'], data['title'], data['amount'])
+    command = commands.AddPurchaseCommand(event_id, data['purchaser'], data['label'], data['amount'])
     command.participants = data['participants'] if 'participants' in data else []
     command.description = data['description'] if 'description' in data else ''
     result = app.command_bus.send_and_wait_response(command)

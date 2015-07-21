@@ -84,7 +84,7 @@ class EventRepositoryTestCase(unittest.TestCase):
         self.assertEqual('Lea', found_event.participants[1].name)
         self.assertEqual(1, found_event.participants[1].share)
         self.assertEqual('Kim', found_event.purchases[0].purchaser)
-        self.assertEqual('Shopping', found_event.purchases[0].title)
+        self.assertEqual('Shopping', found_event.purchases[0].label)
         self.assertEqual(5, found_event.purchases[0].amount)
 
     def test_can_update_an_event(self):

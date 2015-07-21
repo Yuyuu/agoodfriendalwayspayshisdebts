@@ -5,10 +5,10 @@ class CreateEventCommand:
 
 
 class AddPurchaseCommand:
-    def __init__(self, event_id, purchaser, title, amount):
+    def __init__(self, event_id, purchaser, label, amount):
         self.event_id = event_id
         self.purchaser = purchaser
-        self.title = title
+        self.label = label
         self.amount = amount
         self.participants = None
         self.description = ''

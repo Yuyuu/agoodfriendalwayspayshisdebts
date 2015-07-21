@@ -73,23 +73,23 @@ class CreateEventCommandValidatorTestCase(unittest.TestCase):
 
 class AddPurchaseCommandValidatorTestCase(unittest.TestCase):
     def test_the_command_requires_a_purchaser(self):
-        validator = validators.AddPurchaseCommandValidator({'title': 'Gas', 'amount': 10})
+        validator = validators.AddPurchaseCommandValidator({'label': 'Gas', 'amount': 10})
         with self.assertRaises(validators.ValidationException) as cm:
             validator.validate()
 
         exception = cm.exception
         self.assertEqual(exception.messages[0], 'PURCHASE_PURCHASER_REQUIRED')
 
-    def test_the_command_requires_a_title(self):
+    def test_the_command_requires_a_label(self):
         validator = validators.AddPurchaseCommandValidator({'purchaser': 'Kim', 'amount': 10})
         with self.assertRaises(validators.ValidationException) as cm:
             validator.validate()
 
         exception = cm.exception
-        self.assertEqual(exception.messages[0], 'PURCHASE_TITLE_REQUIRED')
+        self.assertEqual(exception.messages[0], 'PURCHASE_LABEL_REQUIRED')
 
     def test_the_command_requires_an_amount(self):
-        validator = validators.AddPurchaseCommandValidator({'title': 'Gas', 'purchaser': 'Kim'})
+        validator = validators.AddPurchaseCommandValidator({'label': 'Gas', 'purchaser': 'Kim'})
         with self.assertRaises(validators.ValidationException) as cm:
             validator.validate()
 
@@ -97,7 +97,7 @@ class AddPurchaseCommandValidatorTestCase(unittest.TestCase):
         self.assertEqual(exception.messages[0], 'PURCHASE_AMOUNT_REQUIRED')
 
     def test_the_amount_must_be_superior_to_0(self):
-        validator = validators.AddPurchaseCommandValidator({'title': 'Gas', 'purchaser': 'Kim', 'amount': 0})
+        validator = validators.AddPurchaseCommandValidator({'label': 'Gas', 'purchaser': 'Kim', 'amount': 0})
         with self.assertRaises(validators.ValidationException) as cm:
             validator.validate()
 

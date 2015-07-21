@@ -18,14 +18,14 @@ class EventFactoryTestCase(unittest.TestCase):
             'purchases': [
                 {
                     'purchaser': 'Lea',
-                    'title': 'Shopping',
+                    'label': 'Shopping',
                     'amount': 10,
                     'participants': [],
                     'description': ''
                 },
                 {
                     'purchaser': 'Kim',
-                    'title': 'Cards',
+                    'label': 'Cards',
                     'amount': 10,
                     'participants': ['Lea'],
                     'description': '10 cards at 1euro'
@@ -41,7 +41,7 @@ class EventFactoryTestCase(unittest.TestCase):
         self.assertEqual('kim@email.com', event.participants[1].email)
         self.assertEqual(1, event.participants[1].share)
         self.assertEqual('Lea', event.purchases[0].purchaser)
-        self.assertEqual('Shopping', event.purchases[0].title)
+        self.assertEqual('Shopping', event.purchases[0].label)
         self.assertEqual(10, event.purchases[0].amount)
         self.assertListEqual(['Lea'], event.purchases[1].participants)
         self.assertEqual('10 cards at 1euro', event.purchases[1].description)

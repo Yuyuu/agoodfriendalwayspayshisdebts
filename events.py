@@ -40,9 +40,9 @@ class Participant:
 
 
 class Purchase:
-    def __init__(self, purchaser, title, amount):
+    def __init__(self, purchaser, label, amount):
         self.purchaser = purchaser
-        self.title = title
+        self.label = label
         self.amount = amount
         self.participants = []
         self.description = None
@@ -53,7 +53,7 @@ class Purchase:
     def serialize(self):
         return {
             'purchaser': self.purchaser,
-            'title': self.title,
+            'label': self.label,
             'amount': self.amount,
             'participants': self.participants,
             'description': self.description

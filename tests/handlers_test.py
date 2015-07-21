@@ -63,7 +63,7 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
         entity = RepositoryLocator.events().entities[self.event_id]
 
         self.assertEqual('Kim', entity.purchases[0].purchaser)
-        self.assertEqual('Gas', entity.purchases[0].title)
+        self.assertEqual('Gas', entity.purchases[0].label)
         self.assertEqual(10, entity.purchases[0].amount)
         self.assertListEqual(['Bob'], entity.purchases[0].participants)
         self.assertEqual('10km at 1e/km', entity.purchases[0].description)
