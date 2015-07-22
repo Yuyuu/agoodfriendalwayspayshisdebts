@@ -5,8 +5,7 @@ class EventFactory:
     @staticmethod
     def create_event_from_document(document):
         participants = map(EventFactory.__create_participants, document['participants'])
-        event = events.Event(document['name'], participants)
-        event.oid = document['_id']
+        event = events.Event(document['name'], participants, document['uuid'])
         event.purchases = map(EventFactory.__create_purchases, document['purchases'])
         return event
 

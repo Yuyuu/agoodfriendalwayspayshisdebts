@@ -2,7 +2,9 @@ from uuid import uuid4
 
 
 class Event:
-    def __init__(self, name, participants, uuid=uuid4()):
+    def __init__(self, name, participants, uuid=None):
+        if uuid is None:
+            uuid = uuid4()
         self.uuid = uuid
         self.name = name
         self.participants = participants

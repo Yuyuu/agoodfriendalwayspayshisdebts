@@ -1,15 +1,14 @@
 import unittest
-
-from bson.objectid import ObjectId
+from uuid import uuid4
 
 import factories
 
 
 class EventFactoryTestCase(unittest.TestCase):
     def test_can_create_an_event_from_a_document(self):
-        object_id = ObjectId()
+        uuid = uuid4()
         document = {
-            '_id': object_id,
+            'uuid': uuid,
             'name': 'Cool event',
             'participants': [
                 {'name': 'Lea', 'email': '', 'share': 1},
@@ -35,7 +34,7 @@ class EventFactoryTestCase(unittest.TestCase):
 
         event = factories.EventFactory.create_event_from_document(document)
 
-        self.assertEqual(object_id, event.oid)
+        self.assertEqual(uuid, event.uuid)
         self.assertEqual('Cool event', event.name)
         self.assertEqual('Lea', event.participants[0].name)
         self.assertEqual('kim@email.com', event.participants[1].email)

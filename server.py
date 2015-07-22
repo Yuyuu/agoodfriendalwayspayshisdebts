@@ -1,7 +1,5 @@
 import flask
 
-from bson.errors import InvalidId
-
 import bus
 import validators
 import commands
@@ -83,8 +81,3 @@ def handle_validation_exception(exception):
     response = flask.jsonify({'errors': errors})
     response.status_code = exception.status_code
     return response
-
-
-@app.errorhandler(InvalidId)
-def handle_invalid_id(exception):
-    return flask.Response(status=404)
