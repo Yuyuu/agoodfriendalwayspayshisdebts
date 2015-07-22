@@ -1,3 +1,3 @@
 class EventDetailsSearch:
-    def __init__(self, id_as_string):
-        self.id_as_string = id_as_string
+    def __init__(self, event_id):
+        self.event_id = event_id

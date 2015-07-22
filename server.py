@@ -55,7 +55,7 @@ def get_event(event_id):
     if not result.is_success():
         raise result.error
     event = result.response
-    http_response = flask.jsonify({'id': str(event.oid), 'name': event.name, 'participants': event.participants})
+    http_response = flask.jsonify({'id': str(event.uuid), 'name': event.name, 'participants': event.participants})
     return http_response
 
 

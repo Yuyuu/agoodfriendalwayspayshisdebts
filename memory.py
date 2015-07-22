@@ -6,13 +6,13 @@ class MemoryRepository:
         self.entities = {}
 
     def add(self, entity):
-        self.entities[entity.oid] = entity
+        self.entities[entity.uuid] = entity
 
-    def get(self, oid):
-        return self.entities[oid]
+    def get(self, uuid):
+        return self.entities[uuid]
 
-    def update(self, oid, entity):
-        self.entities[oid] = entity
+    def update(self, uuid, entity):
+        self.entities[uuid] = entity
 
 
 class MemoryEventRepository(MemoryRepository):

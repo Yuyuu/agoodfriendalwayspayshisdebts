@@ -1,6 +1,5 @@
 import abc
-
-from bson.objectid import ObjectId
+from uuid import UUID
 
 from locator import RepositoryLocator
 import events
@@ -22,7 +21,7 @@ class CreateEventCommandHandler(Handler):
         participants = map(self.__create_participant_from_json, command.participants)
         event = events.Event(command.name, participants)
         RepositoryLocator.events().add(event)
-        return event.oid
+        return event.uuid
 
     @staticmethod
     def __create_participant_from_json(json_participant):
@@ -34,12 +33,12 @@ class CreateEventCommandHandler(Handler):
 
 class AddPurchaseCommandHandler(Handler):
     def execute(self, command):
-        event = RepositoryLocator.events().get(ObjectId(command.event_id))
+        event = RepositoryLocator.events().get(UUID(command.event_id))
         purchase = events.Purchase(command.purchaser, command.label, command.amount)
         purchase.participants = command.participants or self.__get_all_event_participants_names(event)
         purchase.description = command.description
         event.add_purchase(purchase)
-        RepositoryLocator.events().update(event.oid, event)
+        RepositoryLocator.events().update(event.uuid, event)
         return purchase
 
     @staticmethod
@@ -49,6 +48,6 @@ class AddPurchaseCommandHandler(Handler):
 
 class SearchEventDetailsHandler(Handler):
     def execute(self, search):
-        oid = ObjectId(search.id_as_string)
-        event = RepositoryLocator.events().get(oid)
+        event_uuid = UUID(hex=search.event_id)
+        event = RepositoryLocator.events().get(event_uuid)
         return event

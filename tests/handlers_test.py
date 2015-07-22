@@ -1,7 +1,5 @@
 import unittest
-
-from bson.objectid import ObjectId
-from bson.errors import InvalidId
+from uuid import uuid4
 
 from locator import RepositoryLocator
 from memory import MemoryRepositoryLocator
@@ -11,9 +9,8 @@ import searches
 import handlers
 
 
-def fake_event(oid=ObjectId()):
-    event = events.Event('Cool event', [events.Participant('Kim', 1)])
-    event.oid = oid
+def fake_event(uuid=uuid4()):
+    event = events.Event('Cool event', [events.Participant('Kim', 1)], uuid)
     return event
 
 
@@ -43,24 +40,24 @@ class CreateEventCommandHandlerTestCase(unittest.TestCase):
 
 
 class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
-    event_id = ObjectId()
+    event_uuid = uuid4()
 
     def setUp(self):
         RepositoryLocator.initialize(MemoryRepositoryLocator())
-        RepositoryLocator.events().entities[self.event_id] = fake_event(self.event_id)
+        RepositoryLocator.events().entities[self.event_uuid] = fake_event(self.event_uuid)
 
     def tearDown(self):
         RepositoryLocator.initialize(None)
 
     def test_the_purchase_is_added_to_the_repository(self):
         handler = handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
-        command = commands.AddPurchaseCommand(self.event_id, 'Kim', 'Gas', 10)
+        command = commands.AddPurchaseCommand(str(self.event_uuid), 'Kim', 'Gas', 10)
         command.participants = ['Bob']
         command.description = '10km at 1e/km'
 
         handler.execute(command)
 
-        entity = RepositoryLocator.events().entities[self.event_id]
+        entity = RepositoryLocator.events().entities[self.event_uuid]
 
         self.assertEqual('Kim', entity.purchases[0].purchaser)
         self.assertEqual('Gas', entity.purchases[0].label)
@@ -69,13 +66,13 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
         self.assertEqual('10km at 1e/km', entity.purchases[0].description)
 
     def test_the_purchase_is_shared_between_all_participants_if_none_is_specified(self):
-        RepositoryLocator.events().entities[self.event_id].participants.append(events.Participant('Bob', 1))
+        RepositoryLocator.events().entities[self.event_uuid].participants.append(events.Participant('Bob', 1))
         handler = handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
-        command = commands.AddPurchaseCommand(self.event_id, 'Kim', 'Gas', 10)
+        command = commands.AddPurchaseCommand(str(self.event_uuid), 'Kim', 'Gas', 10)
 
         handler.execute(command)
 
-        entity = RepositoryLocator.events().entities[self.event_id]
+        entity = RepositoryLocator.events().entities[self.event_uuid]
 
         self.assertListEqual(['Kim', 'Bob'], entity.purchases[0].participants)
 
@@ -90,17 +87,17 @@ class EventDetailsSearchHandlerTestCase(unittest.TestCase):
     def test_can_return_an_event_and_its_properties(self):
         event = fake_event()
         event.add_participant(events.Participant('Kim', '1'))
-        RepositoryLocator.events().entities[event.oid] = event
+        RepositoryLocator.events().entities[event.uuid] = event
 
         result = handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)\
-            .execute(searches.EventDetailsSearch(str(event.oid)))
+            .execute(searches.EventDetailsSearch(str(event.uuid)))
 
-        self.assertEqual(result.oid, event.oid)
+        self.assertEqual(result.uuid, event.uuid)
         self.assertEqual(result.name, 'Cool event')
         self.assertEqual(result.participants[0].name, 'Kim')
         self.assertListEqual(result.purchases, [])
 
-    def test_an_exception_is_thrown_if_the_given_id_is_not_a_valid_objectid(self):
+    def test_an_exception_is_thrown_if_the_given_uuid_is_not_valid(self):
         handler = handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)
 
-        self.assertRaises(InvalidId, handler.execute, searches.EventDetailsSearch("hello"))
+        self.assertRaises(ValueError, handler.execute, searches.EventDetailsSearch("hello"))

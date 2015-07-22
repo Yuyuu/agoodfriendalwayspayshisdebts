@@ -1,9 +1,9 @@
-from bson.objectid import ObjectId
+from uuid import uuid4
 
 
 class Event:
-    def __init__(self, name, participants):
-        self.oid = ObjectId()
+    def __init__(self, name, participants, uuid=uuid4()):
+        self.uuid = uuid
         self.name = name
         self.participants = participants
         self.purchases = []
@@ -22,7 +22,7 @@ class Event:
 
     def serialize(self):
         return {
-            '_id': self.oid,
+            'uuid': self.uuid,
             'name': self.name,
             'participants': self.__get_serialized_participants(),
             'purchases': self.__get_serialized_purchases()
