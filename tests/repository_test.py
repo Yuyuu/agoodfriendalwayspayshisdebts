@@ -10,7 +10,7 @@ class FakeEntity:
     def __init__(self, uuid=uuid4()):
         self.uuid = uuid
 
-    def serialize(self):
+    def to_bson(self):
         return {'uuid': self.uuid}
 
 

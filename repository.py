@@ -14,11 +14,11 @@ class MongoRepository:
         return
 
     def add(self, entity):
-        self.collection.insert(entity.serialize())
+        self.collection.insert(entity.to_bson())
 
     def update(self, uuid, entity):
-        e = self.collection.find_one({"uuid": uuid})
-        self.collection.update({'_id': e['_id']}, entity.serialize())
+        current_entity = self.collection.find_one({"uuid": uuid})
+        self.collection.update({'_id': current_entity['_id']}, entity.to_bson())
 
 
 class EventRepository(MongoRepository):

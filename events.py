@@ -17,12 +17,12 @@ class Event:
         self.purchases.append(purchase)
 
     def __get_serialized_participants(self):
-        return map((lambda participant: participant.serialize()), self.participants)
+        return map((lambda participant: participant.to_bson()), self.participants)
 
     def __get_serialized_purchases(self):
-        return map((lambda purchase: purchase.serialize()), self.purchases)
+        return map((lambda purchase: purchase.to_bson()), self.purchases)
 
-    def serialize(self):
+    def to_bson(self):
         return {
             'uuid': self.uuid,
             'name': self.name,
@@ -37,7 +37,7 @@ class Participant:
         self.email = email
         self.share = share
 
-    def serialize(self):
+    def to_bson(self):
         return {'name': self.name, 'email': self.email, 'share': self.share}
 
 
@@ -52,7 +52,7 @@ class Purchase:
     def add_participant(self, participant):
         self.participants.append(participant)
 
-    def serialize(self):
+    def to_bson(self):
         return {
             'purchaser': self.purchaser,
             'label': self.label,

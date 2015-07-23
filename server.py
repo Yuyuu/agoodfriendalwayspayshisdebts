@@ -5,6 +5,7 @@ import validators
 import commands
 import searches
 import handlers
+import serializers
 
 
 class Server(flask.Flask):
@@ -53,7 +54,7 @@ def get_event(event_id):
     if not result.is_success():
         raise result.error
     event = result.response
-    http_response = flask.jsonify({'id': str(event.uuid), 'name': event.name, 'participants': event.participants})
+    http_response = flask.jsonify(serializers.EventSerializer.serialize(event))
     return http_response
 
 
@@ -68,7 +69,7 @@ def add_purchase(event_id):
     if not result.is_success():
         raise result.error
     purchase = result.response
-    http_response = flask.jsonify({'purchaser': purchase.purchaser, 'amount': purchase.amount})
+    http_response = flask.jsonify(serializers.PurchaseSerializer.serialize(purchase))
     http_response.status_code = 201
     return http_response
 

@@ -12,7 +12,7 @@ class ParticipantTestCase(unittest.TestCase):
             'share': 2
         }
 
-        self.assertDictEqual(participant.serialize(), expected_participant)
+        self.assertDictEqual(participant.to_bson(), expected_participant)
 
 
 class PurchaseTestCase(unittest.TestCase):
@@ -54,7 +54,7 @@ class PurchaseTestCase(unittest.TestCase):
             'participants': ['Bob'],
             'description': None
         }
-        self.assertDictEqual(expected_purchase, purchase.serialize())
+        self.assertDictEqual(expected_purchase, purchase.to_bson())
 
 
 class EventTestCase(unittest.TestCase):
@@ -98,4 +98,4 @@ class EventTestCase(unittest.TestCase):
             'participants': [{'name': 'Bob', 'email': '', 'share': 1}, {'name': 'Kim', 'email': '', 'share': 1}],
             'purchases': [{'purchaser': 'Bob', 'label': 'Gas', 'amount': 10, 'participants': [], 'description': None}]
         }
-        self.assertDictEqual(expected_event, event.serialize())
+        self.assertDictEqual(expected_event, event.to_bson())
