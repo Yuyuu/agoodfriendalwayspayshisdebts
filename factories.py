@@ -15,7 +15,11 @@ class EventFactory:
 
     @staticmethod
     def __create_purchases(bson_purchase):
-        purchase = events.Purchase(bson_purchase['purchaser'], bson_purchase['label'], bson_purchase['amount'])
-        purchase.participants = bson_purchase['participants']
+        purchase = events.Purchase(
+            bson_purchase['purchaser'],
+            bson_purchase['amount'],
+            bson_purchase['participants'],
+            bson_purchase['label']
+        )
         purchase.description = bson_purchase['description']
         return purchase

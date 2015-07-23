@@ -4,7 +4,7 @@ import events
 
 
 class ParticipantTestCase(unittest.TestCase):
-    def test_serialization(self):
+    def test_conversion_to_bson(self):
         participant = events.Participant('Bob & Lea', 2, 'bob@email.com')
         expected_participant = {
             'name': 'Bob & Lea',
@@ -18,35 +18,33 @@ class ParticipantTestCase(unittest.TestCase):
 class PurchaseTestCase(unittest.TestCase):
     def test_has_purchaser(self):
         purchaser = 'Kim'
-        purchase = events.Purchase(purchaser, '', 1)
+        purchase = events.Purchase(purchaser, 1, [], '')
         self.assertEqual(purchaser, purchase.purchaser)
         
     def label(self):
         label = 'Shopping'
-        purchase = events.Purchase('', 'Shopping', 1)
+        purchase = events.Purchase('', 1, [], 'Shopping')
         self.assertEqual(label, purchase.label)
         
     def test_has_amount(self):
         amount = 10.04
-        purchase = events.Purchase('', '', amount)
+        purchase = events.Purchase('', amount, [], '')
         self.assertEqual(amount, purchase.amount)
         
     def test_has_no_participants_by_default(self):
-        purchase = events.Purchase('', '', 1)
+        purchase = events.Purchase('', 1, [], '')
         self.assertEqual(len(purchase.participants), 0)
 
     def test_has_no_description_by_default(self):
-        purchase = events.Purchase('', '', 1)
+        purchase = events.Purchase('', 1, [], '')
         self.assertIsNone(purchase.description)
 
     def test_can_add_a_participant(self):
-        purchase = events.Purchase('', '', 1)
-        purchase.add_participant('Bob')
+        purchase = events.Purchase('', 1, ['Bob'], '')
         self.assertListEqual(purchase.participants, ['Bob'])
 
-    def test_serialization(self):
-        purchase = events.Purchase('Kim', 'Shopping', 10.04)
-        purchase.add_participant('Bob')
+    def test_conversion_to_bson(self):
+        purchase = events.Purchase('Kim', 10.04, ['Bob'], 'Shopping')
         expected_purchase = {
             'purchaser': 'Kim',
             'label': 'Shopping',
@@ -83,14 +81,14 @@ class EventTestCase(unittest.TestCase):
         self.assertListEqual(event.participants, [participant])
 
     def test_can_add_a_purchase(self):
-        purchase = events.Purchase('Kim', 'Shopping', 2)
+        purchase = events.Purchase('Kim', [], 2, 'Shopping')
         event = events.Event('', [])
         event.add_purchase(purchase)
         self.assertListEqual(event.purchases, [purchase])
 
-    def test_serialization(self):
+    def test_conversion_to_bson(self):
         event = events.Event('Cool event', [events.Participant('Bob', 1), events.Participant('Kim', 1)])
-        purchase = events.Purchase('Bob', 'Gas', 10)
+        purchase = events.Purchase('Bob', 10, [], 'Gas')
         event.add_purchase(purchase)
         expected_event = {
             'uuid': event.uuid,

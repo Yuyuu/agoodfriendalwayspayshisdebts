@@ -73,7 +73,7 @@ class EventRepositoryTestCase(unittest.TestCase):
 
     def test_can_retrieve_an_event(self):
         event = events.Event('Cool event', [events.Participant('Kim', 1), events.Participant('Lea', 1)])
-        event.add_purchase(events.Purchase('Kim', 'Shopping', 5))
+        event.add_purchase(events.Purchase('Kim', 5, [], 'Shopping'))
         self.repository.add(event)
 
         found_event = self.repository.get(event.uuid)
@@ -90,7 +90,7 @@ class EventRepositoryTestCase(unittest.TestCase):
 
     def test_can_update_an_event(self):
         event = events.Event('Cool event', [events.Participant('Kim', 1), events.Participant('Lea', 1)])
-        event.add_purchase(events.Purchase('Kim', 'Shopping', 5))
+        event.add_purchase(events.Purchase('Kim', 5, [], 'Shopping'))
         self.repository.add(event)
 
         event.name = 'Weekend at the beach'

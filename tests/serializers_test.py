@@ -15,9 +15,8 @@ class ParticipantSerializerTestCase(unittest.TestCase):
 
 class PurchaseSerializerTestCase(unittest.TestCase):
     def test_a_purchase_is_properly_serialized(self):
-        purchase = events.Purchase('Bob', 'Errands', 14)
+        purchase = events.Purchase('Bob', 14, ['Kim'], 'Errands')
         purchase.description = 'hello'
-        purchase.add_participant('Kim')
 
         expected_result = {
             'purchaser': 'Bob',
@@ -34,7 +33,7 @@ class EventSerializerTestCase(unittest.TestCase):
     def test_an_event_is_properly_serialized(self):
         self.maxDiff = None
         event = events.Event('Cool event', [events.Participant('Bob', 1)])
-        event.add_purchase(events.Purchase('Bob', 'Errands', 14))
+        event.add_purchase(events.Purchase('Bob', 14, [], 'Errands'))
 
         expected_result = {
             'id': str(event.uuid),
