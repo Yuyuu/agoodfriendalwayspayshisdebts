@@ -2,7 +2,6 @@ import abc
 
 import repository
 
-
 db = None
 
 

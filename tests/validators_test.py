@@ -1,6 +1,6 @@
 import unittest
 
-import validators
+from agoodfriendalwayspayshisdebts import validators
 
 
 class CreateEventCommandValidatorTestCase(unittest.TestCase):

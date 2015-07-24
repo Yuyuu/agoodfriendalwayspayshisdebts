@@ -1,9 +1,9 @@
 import flask
 
 import bus
-import commands
-import searches
 import handlers
+import searches
+import commands
 
 
 class Server(flask.Flask):

@@ -1,8 +1,7 @@
 import flask
-
-import validators
-import commands
 import searches
+import commands
+import validators
 import serializers
 
 

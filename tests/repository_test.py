@@ -1,9 +1,9 @@
 import unittest
-import mongomock
 from uuid import uuid4
 
-import repository
-import events
+import mongomock
+
+from agoodfriendalwayspayshisdebts import repository, events
 
 
 class FakeEntity:

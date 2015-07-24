@@ -1,7 +1,7 @@
-import abc
 from uuid import UUID
 
-from locator import RepositoryLocator
+import abc
+from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
 import events
 
 

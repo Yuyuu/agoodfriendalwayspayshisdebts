@@ -1,11 +1,10 @@
 import sys
-from os import environ
 import logging
 
+from os import environ
 import pymongo
 import pymongo.errors
-
-import locator
+from agoodfriendalwayspayshisdebts import locator
 
 
 def initialize_repository():

@@ -1,7 +1,7 @@
 import flask
 
-from app import app
 import validators
+from app import app
 
 
 @app.errorhandler(validators.ValidationException)

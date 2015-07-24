@@ -1,6 +1,6 @@
 import unittest
 
-import events
+from agoodfriendalwayspayshisdebts import events
 
 
 class ParticipantTestCase(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 from uuid import uuid4
 
-import factories
+from agoodfriendalwayspayshisdebts import factories
 
 
 class EventFactoryTestCase(unittest.TestCase):

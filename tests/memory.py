@@ -1,4 +1,4 @@
-from locator import RepositoryLocator
+from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
 
 
 class MemoryRepository:

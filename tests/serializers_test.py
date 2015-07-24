@@ -1,7 +1,6 @@
 import unittest
 
-import serializers
-import events
+from agoodfriendalwayspayshisdebts import events, serializers
 
 
 class ParticipantSerializerTestCase(unittest.TestCase):

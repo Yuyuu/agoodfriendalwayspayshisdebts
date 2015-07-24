@@ -1,7 +1,6 @@
+import resources
 import config
 import server
-import resources
-
 
 config.configure_logging()
 config.initialize_repository()

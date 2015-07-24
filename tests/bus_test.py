@@ -1,8 +1,7 @@
 import unittest
 import logging
 
-import bus
-import handlers
+from agoodfriendalwayspayshisdebts import bus, handlers
 
 
 def bus_with(handler):

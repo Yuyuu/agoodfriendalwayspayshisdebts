@@ -1,7 +1,6 @@
 import unittest
 
-import calculation
-import events
+from agoodfriendalwayspayshisdebts import calculation, events
 
 
 class DebtsCalculatorTestCase(unittest.TestCase):

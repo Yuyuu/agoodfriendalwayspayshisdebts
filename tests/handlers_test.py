@@ -1,12 +1,9 @@
 import unittest
 from uuid import uuid4
 
-from locator import RepositoryLocator
+from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
 from memory import MemoryRepositoryLocator
-import events
-import commands
-import searches
-import handlers
+from agoodfriendalwayspayshisdebts import handlers, searches, commands, events
 
 
 def fake_event(uuid=uuid4()):
