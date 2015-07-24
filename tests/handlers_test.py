@@ -83,7 +83,7 @@ class EventDetailsSearchHandlerTestCase(unittest.TestCase):
 
     def test_can_return_an_event_and_its_properties(self):
         event = fake_event()
-        event.add_participant(events.Participant('Kim', '1'))
+        event.add_participant(events.Participant('Joe', '1'))
         RepositoryLocator.events().entities[event.uuid] = event
 
         result = handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)\
@@ -98,3 +98,28 @@ class EventDetailsSearchHandlerTestCase(unittest.TestCase):
         handler = handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)
 
         self.assertRaises(ValueError, handler.execute, searches.EventDetailsSearch("hello"))
+
+
+class SearchEventDebtsResultHandlerTestCase(unittest.TestCase):
+    def setUp(self):
+        RepositoryLocator.initialize(MemoryRepositoryLocator())
+
+    def tearDown(self):
+        RepositoryLocator.initialize(None)
+
+    def test_can_return_the_debts_result_of_the_event(self):
+        event = fake_event()
+        event.add_participant(events.Participant('Joe', 1))
+        event.add_purchase(events.Purchase('Kim', 10, ['Kim', 'Joe'], '1'))
+        event.add_purchase(events.Purchase('Joe', 6, ['Kim', 'Joe'], '2'))
+        RepositoryLocator.events().entities[event.uuid] = event
+
+        result = handlers.SearchEventDebtsResultHandler(searches.EventDebtsResultSearch)\
+            .execute(searches.EventDebtsResultSearch(str(event.uuid)))
+
+        self.assertEqual(10, result.of('Kim').total_spent)
+        self.assertEqual(0, result.of('Kim').get_debt_towards('Joe'))
+        self.assertEqual(0, result.of('Kim').total_debt)
+        self.assertEqual(6, result.of('Joe').total_spent)
+        self.assertEqual(2, result.of('Joe').get_debt_towards('Kim'))
+        self.assertEqual(2, result.of('Joe').total_debt)

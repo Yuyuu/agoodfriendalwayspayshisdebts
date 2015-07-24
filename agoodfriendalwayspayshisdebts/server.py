@@ -20,5 +20,8 @@ class Server(flask.Flask):
         self.command_bus = bus.CommandBus(command_handlers)
 
     def configure_searches(self):
-        search_handlers = [handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)]
+        search_handlers = [
+            handlers.SearchEventDetailsHandler(searches.EventDetailsSearch),
+            handlers.SearchEventDebtsResultHandler(searches.EventDebtsResultSearch)
+        ]
         self.search_bus = bus.SearchBus(search_handlers)

@@ -1,8 +1,9 @@
 from uuid import UUID
-
 import abc
+
 from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
 import events
+from calculation import DebtsCalculator
 
 
 class Handler:
@@ -51,3 +52,10 @@ class SearchEventDetailsHandler(Handler):
         event_uuid = UUID(hex=search.event_id)
         event = RepositoryLocator.events().get(event_uuid)
         return event
+
+
+class SearchEventDebtsResultHandler(Handler):
+    def execute(self, search):
+        event_uuid = UUID(hex=search.event_id)
+        event = RepositoryLocator.events().get(event_uuid)
+        return DebtsCalculator(event).calculate()

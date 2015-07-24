@@ -1,6 +1,6 @@
 import unittest
 
-from agoodfriendalwayspayshisdebts import events, serializers
+from agoodfriendalwayspayshisdebts import events, serializers, calculation
 
 
 class ParticipantSerializerTestCase(unittest.TestCase):
@@ -30,7 +30,6 @@ class PurchaseSerializerTestCase(unittest.TestCase):
 
 class EventSerializerTestCase(unittest.TestCase):
     def test_an_event_is_properly_serialized(self):
-        self.maxDiff = None
         event = events.Event('Cool event', [events.Participant('Bob', 1)])
         event.add_purchase(events.Purchase('Bob', 14, [], 'Errands'))
 
@@ -48,3 +47,47 @@ class EventSerializerTestCase(unittest.TestCase):
         }
 
         self.assertDictEqual(expected_result, serializers.EventSerializer.serialize(event))
+
+
+class CalculationResultSerializerTestCase(unittest.TestCase):
+    def test_the_calculation_result_is_properly_serialized(self):
+        kim_result = calculation.ParticipantResult()
+        kim_result.total_spent = 10
+        kim_result.total_debt = 5
+        kim_result.debts_detail = {'Joe': 0, 'Lea': 5}
+
+        joe_result = calculation.ParticipantResult()
+        joe_result.total_spent = 6
+        joe_result.total_debt = 7
+        joe_result.debts_detail = {'Kim': 2, 'Lea': 5}
+
+        lea_result = calculation.ParticipantResult()
+        lea_result.total_spent = 15
+        lea_result.total_debt = 0
+        lea_result.debts_detail = {'Kim': 0, 'Joe': 0}
+
+        result = calculation.CalculationResult({
+            'Kim': kim_result,
+            'Joe': joe_result,
+            'Lea': lea_result
+        })
+
+        expected_result = {
+            'Kim': {
+                'total_spent': 10,
+                'total_debt': 5,
+                'debts_detail': {'Joe': 0, 'Lea': 5}
+            },
+            'Joe': {
+                'total_spent': 6,
+                'total_debt': 7,
+                'debts_detail': {'Kim': 2, 'Lea': 5}
+            },
+            'Lea': {
+                'total_spent': 15,
+                'total_debt': 0,
+                'debts_detail': {'Kim': 0, 'Joe': 0}
+            }
+        }
+
+        self.assertDictEqual(expected_result, serializers.CalculationResultSerializer.serialize(result))

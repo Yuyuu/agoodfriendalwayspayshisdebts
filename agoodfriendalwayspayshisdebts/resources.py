@@ -58,3 +58,17 @@ class PurchasesResource:
         http_response = flask.jsonify(serializers.PurchaseSerializer.serialize(purchase))
         http_response.status_code = 201
         return http_response
+
+
+class ResultResource:
+    def __init__(self, search_bus):
+        self.search_bus = search_bus
+
+    def calculate(self, event_id):
+        search = searches.EventDebtsResultSearch(event_id)
+        result = self.search_bus.send_and_wait_response(search)
+        if not result.is_success():
+            raise result.error
+        debt_result = result.response
+        http_response = flask.jsonify(serializers.CalculationResultSerializer.serialize(debt_result))
+        return http_response

@@ -19,3 +19,9 @@ app.add_url_rule(
     resources.PurchasesResource(app.command_bus).add,
     methods=['POST']
 )
+app.add_url_rule(
+    '/events/<event_id>/results',
+    'get_results',
+    resources.ResultResource(app.search_bus).calculate,
+    methods=['GET']
+)
