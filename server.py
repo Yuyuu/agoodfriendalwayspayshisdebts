@@ -1,11 +1,9 @@
 import flask
 
 import bus
-import validators
 import commands
 import searches
 import handlers
-import serializers
 
 
 class Server(flask.Flask):
@@ -24,61 +22,3 @@ class Server(flask.Flask):
     def configure_searches(self):
         search_handlers = [handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)]
         self.search_bus = bus.SearchBus(search_handlers)
-
-app = Server(__name__)
-
-
-@app.route('/')
-def index():
-    return flask.Response(status=200)
-
-
-@app.route('/events', methods=['POST'])
-def create_event():
-    data = flask.request.json
-    validators.CreateEventCommandValidator(data).validate()
-    command = commands.CreateEventCommand(data['name'], data['participants'])
-    result = app.command_bus.send_and_wait_response(command)
-    if not result.is_success():
-        raise result.error
-    event_id = result.response
-    http_response = flask.jsonify({'id': str(event_id)})
-    http_response.status_code = 201
-    return http_response
-
-
-@app.route('/events/<event_id>', methods=['GET'])
-def get_event(event_id):
-    search = searches.EventDetailsSearch(event_id)
-    result = app.search_bus.send_and_wait_response(search)
-    if not result.is_success():
-        raise result.error
-    event = result.response
-    http_response = flask.jsonify(serializers.EventSerializer.serialize(event))
-    return http_response
-
-
-@app.route('/events/<event_id>/purchases', methods=['POST'])
-def add_purchase(event_id):
-    data = flask.request.json
-    validators.AddPurchaseCommandValidator(data).validate()
-    command = commands.AddPurchaseCommand(event_id, data['purchaser'], data['label'], data['amount'])
-    command.participants = data['participants'] if 'participants' in data else []
-    command.description = data['description'] if 'description' in data else ''
-    result = app.command_bus.send_and_wait_response(command)
-    if not result.is_success():
-        raise result.error
-    purchase = result.response
-    http_response = flask.jsonify(serializers.PurchaseSerializer.serialize(purchase))
-    http_response.status_code = 201
-    return http_response
-
-
-@app.errorhandler(validators.ValidationException)
-def handle_validation_exception(exception):
-    errors = []
-    for message in exception.messages:
-        errors.append({'message': message})
-    response = flask.jsonify({'errors': errors})
-    response.status_code = exception.status_code
-    return response
