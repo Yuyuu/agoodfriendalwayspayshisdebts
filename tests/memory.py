@@ -9,7 +9,11 @@ class MemoryRepository:
         self.entities[entity.uuid] = entity
 
     def get(self, uuid):
-        return self.entities[uuid]
+        try:
+            entity = self.entities[uuid]
+        except KeyError:
+            return None
+        return entity
 
     def update(self, uuid, entity):
         self.entities[uuid] = entity

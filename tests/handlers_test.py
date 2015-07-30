@@ -4,7 +4,7 @@ from uuid import uuid4
 from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
 from memory import MemoryRepositoryLocator
 from agoodfriendalwayspayshisdebts import handlers, searches, commands, events
-from agoodfriendalwayspayshisdebts.errors import InvalidUUIDError
+from agoodfriendalwayspayshisdebts.errors import InvalidUUIDError, EntityNotFoundError
 
 
 def fake_event(uuid=uuid4()):
@@ -101,6 +101,11 @@ class EventDetailsSearchHandlerTestCase(unittest.TestCase):
 
         self.assertRaises(InvalidUUIDError, handler.execute, searches.EventDetailsSearch("hello"))
 
+    def test_an_error_is_raised_if_the_event_does_not_exist(self):
+        handler = handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)
+
+        self.assertRaises(EntityNotFoundError, handler.execute, searches.EventDetailsSearch(str(uuid4())))
+
 
 class SearchEventDebtsResultHandlerTestCase(unittest.TestCase):
     def setUp(self):
@@ -132,3 +137,8 @@ class SearchEventDebtsResultHandlerTestCase(unittest.TestCase):
         handler = handlers.SearchEventDebtsResultHandler(searches.EventDebtsResultSearch)
 
         self.assertRaises(InvalidUUIDError, handler.execute, searches.EventDebtsResultSearch("hello"))
+
+    def test_an_error_is_raised_if_the_event_does_not_exist(self):
+        handler = handlers.SearchEventDebtsResultHandler(searches.EventDebtsResultSearch)
+
+        self.assertRaises(EntityNotFoundError, handler.execute, searches.EventDebtsResultSearch(str(uuid4())))

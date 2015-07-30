@@ -7,3 +7,7 @@ class ValidationError(RuntimeError):
 
     def __init__(self, messages):
         self.messages = messages
+
+
+class EntityNotFoundError(RuntimeError):
+    status_code = 404

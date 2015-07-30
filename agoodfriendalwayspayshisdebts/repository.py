@@ -17,11 +17,13 @@ class MongoRepository:
         self.collection.insert(entity.to_bson())
 
     def update(self, uuid, entity):
-        current_entity = self.collection.find_one({"uuid": uuid})
-        self.collection.update({'_id': current_entity['_id']}, entity.to_bson())
+        current_entity_document = self.collection.find_one({"uuid": uuid})
+        self.collection.update({'_id': current_entity_document['_id']}, entity.to_bson())
 
 
 class EventRepository(MongoRepository):
     def get(self, uuid):
         document = self.collection.find_one({'uuid': uuid})
+        if document is None:
+            return None
         return factories.EventFactory.create_event_from_document(document)

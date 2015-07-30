@@ -58,6 +58,11 @@ def handle_validation_error(error):
     return response
 
 
-@app.errorhandler(errors.InvalidUUIDError)
-def handle_invalid_uuid_error(error):
-    return flask.Response(status=error.status_code)
+@app.errorhandler(Exception)
+def handle_remaining_errors(error):
+    try:
+        status_code = error.status_code
+    except AttributeError:
+        status_code = 500
+
+    return flask.Response(status=status_code)
