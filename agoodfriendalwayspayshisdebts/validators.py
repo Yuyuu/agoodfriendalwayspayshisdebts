@@ -1,5 +1,7 @@
 import abc
 
+import errors
+
 
 class Validator:
     def __init__(self, data):
@@ -13,18 +15,18 @@ class Validator:
 
 class CreateEventCommandValidator(Validator):
     def __validate_participants(self, participants):
-        errors = set([])
+        validation_errors = set([])
         for participant in participants:
             if 'name' not in participant or not participant['name']:
-                errors.add('PARTICIPANT_NAME_REQUIRED')
+                validation_errors.add('PARTICIPANT_NAME_REQUIRED')
             if 'share' not in participant or not participant['share']:
-                errors.add('PARTICIPANT_SHARE_REQUIRED')
+                validation_errors.add('PARTICIPANT_SHARE_REQUIRED')
             else:
                 if participant['share'] < 1:
-                    errors.add('INVALID_SHARE')
-            if len(errors) == 3:
+                    validation_errors.add('INVALID_SHARE')
+            if len(validation_errors) == 3:
                 break
-        self.errors.extend(errors)
+        self.errors.extend(validation_errors)
 
     def validate(self):
         if 'name' not in self.data or not self.data['name']:
@@ -34,7 +36,7 @@ class CreateEventCommandValidator(Validator):
         else:
             self.__validate_participants(self.data['participants'])
         if len(self.errors) > 0:
-            raise ValidationException(self.errors)
+            raise errors.ValidationError(self.errors)
 
 
 class AddPurchaseCommandValidator(Validator):
@@ -49,11 +51,4 @@ class AddPurchaseCommandValidator(Validator):
             if self.data['amount'] <= 0:
                 self.errors.append('INVALID_AMOUNT')
         if len(self.errors) > 0:
-            raise ValidationException(self.errors)
-
-
-class ValidationException(RuntimeError):
-    status_code = 400
-
-    def __init__(self, messages):
-        self.messages = messages
+            raise errors.ValidationError(self.errors)

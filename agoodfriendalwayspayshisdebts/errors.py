@@ -1,14 +1,9 @@
-import flask
-
-import validators
-from app import app
+class InvalidUUIDError(ValueError):
+    status_code = 404
 
 
-@app.errorhandler(validators.ValidationException)
-def handle_validation_exception(exception):
-    errors = []
-    for message in exception.messages:
-        errors.append({'message': message})
-    response = flask.jsonify({'errors': errors})
-    response.status_code = exception.status_code
-    return response
+class ValidationError(RuntimeError):
+    status_code = 400
+
+    def __init__(self, messages):
+        self.messages = messages

@@ -4,6 +4,7 @@ from uuid import uuid4
 from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
 from memory import MemoryRepositoryLocator
 from agoodfriendalwayspayshisdebts import handlers, searches, commands, events
+from agoodfriendalwayspayshisdebts.errors import InvalidUUIDError
 
 
 def fake_event(uuid=uuid4()):
@@ -95,10 +96,10 @@ class EventDetailsSearchHandlerTestCase(unittest.TestCase):
         self.assertEqual(result.participants[0].name, 'Kim')
         self.assertListEqual(result.purchases, [])
 
-    def test_an_exception_is_thrown_if_the_given_uuid_is_not_valid(self):
+    def test_an_error_is_raised_if_the_given_uuid_is_not_valid(self):
         handler = handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)
 
-        self.assertRaises(ValueError, handler.execute, searches.EventDetailsSearch("hello"))
+        self.assertRaises(InvalidUUIDError, handler.execute, searches.EventDetailsSearch("hello"))
 
 
 class SearchEventDebtsResultHandlerTestCase(unittest.TestCase):
@@ -126,3 +127,8 @@ class SearchEventDebtsResultHandlerTestCase(unittest.TestCase):
         self.assertEqual(6, result.of(joe.id).total_spent)
         self.assertEqual(2, result.of(joe.id).get_debt_towards(kim.id))
         self.assertEqual(2, result.of(joe.id).total_debt)
+
+    def test_an_error_is_raised_if_the_given_uuid_is_not_valid(self):
+        handler = handlers.SearchEventDebtsResultHandler(searches.EventDebtsResultSearch)
+
+        self.assertRaises(InvalidUUIDError, handler.execute, searches.EventDebtsResultSearch("hello"))
