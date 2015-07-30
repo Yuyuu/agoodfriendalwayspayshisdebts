@@ -4,9 +4,14 @@ from agoodfriendalwayspayshisdebts import events
 
 
 class ParticipantTestCase(unittest.TestCase):
+    def test_generates_an_uuid_upon_creation_if_none_is_provided(self):
+        participant = events.Participant('Bob & Lea', 2, 'bob@email.com')
+        self.assertIsNotNone(participant.id)
+
     def test_conversion_to_bson(self):
         participant = events.Participant('Bob & Lea', 2, 'bob@email.com')
         expected_participant = {
+            'id': participant.id,
             'name': 'Bob & Lea',
             'email': 'bob@email.com',
             'share': 2
@@ -17,9 +22,9 @@ class ParticipantTestCase(unittest.TestCase):
 
 class PurchaseTestCase(unittest.TestCase):
     def test_has_purchaser(self):
-        purchaser = 'Kim'
-        purchase = events.Purchase(purchaser, 1, [], '')
-        self.assertEqual(purchaser, purchase.purchaser)
+        purchaser_id = 123
+        purchase = events.Purchase(purchaser_id, 1, [], '')
+        self.assertEqual(purchaser_id, purchase.purchaser_id)
         
     def label(self):
         label = 'Shopping'
@@ -33,23 +38,24 @@ class PurchaseTestCase(unittest.TestCase):
         
     def test_has_no_participants_by_default(self):
         purchase = events.Purchase('', 1, [], '')
-        self.assertEqual(len(purchase.participants), 0)
+        self.assertEqual(len(purchase.participants_ids), 0)
 
     def test_has_no_description_by_default(self):
         purchase = events.Purchase('', 1, [], '')
         self.assertIsNone(purchase.description)
 
     def test_can_add_a_participant(self):
-        purchase = events.Purchase('', 1, ['Bob'], '')
-        self.assertListEqual(purchase.participants, ['Bob'])
+        purchase = events.Purchase('', 1, [123], '')
+        purchase.add_participant(456)
+        self.assertListEqual(purchase.participants_ids, [123, 456])
 
     def test_conversion_to_bson(self):
-        purchase = events.Purchase('Kim', 10.04, ['Bob'], 'Shopping')
+        purchase = events.Purchase(123, 10.04, [456], 'Shopping')
         expected_purchase = {
-            'purchaser': 'Kim',
+            'purchaser_id': 123,
             'label': 'Shopping',
             'amount': 10.04,
-            'participants': ['Bob'],
+            'participants_ids': [456],
             'description': None
         }
         self.assertDictEqual(expected_purchase, purchase.to_bson())
@@ -66,7 +72,7 @@ class EventTestCase(unittest.TestCase):
         self.assertEqual(event.name, name)
 
     def test_has_participants(self):
-        participants = ['Kim', 'Lea', 'Bob']
+        participants = [{'name': 'Kim'}, {'name': 'Lea'}]
         event = events.Event('', participants)
         self.assertListEqual(event.participants, participants)
 
@@ -81,19 +87,30 @@ class EventTestCase(unittest.TestCase):
         self.assertListEqual(event.participants, [participant])
 
     def test_can_add_a_purchase(self):
-        purchase = events.Purchase('Kim', [], 2, 'Shopping')
+        purchase = events.Purchase(123, 2, [], 'Shopping')
         event = events.Event('', [])
         event.add_purchase(purchase)
         self.assertListEqual(event.purchases, [purchase])
 
     def test_conversion_to_bson(self):
-        event = events.Event('Cool event', [events.Participant('Bob', 1), events.Participant('Kim', 1)])
-        purchase = events.Purchase('Bob', 10, [], 'Gas')
+        bob = events.Participant('Bob', 1)
+        kim = events.Participant('Kim', 1)
+        event = events.Event('Cool event', [bob, kim])
+        purchase = events.Purchase(bob.id, 10, [bob.id], 'Gas')
         event.add_purchase(purchase)
         expected_event = {
             'uuid': event.uuid,
             'name': 'Cool event',
-            'participants': [{'name': 'Bob', 'email': '', 'share': 1}, {'name': 'Kim', 'email': '', 'share': 1}],
-            'purchases': [{'purchaser': 'Bob', 'label': 'Gas', 'amount': 10, 'participants': [], 'description': None}]
+            'participants': [
+                {'id': bob.id, 'name': 'Bob', 'email': '', 'share': 1},
+                {'id': kim.id, 'name': 'Kim', 'email': '', 'share': 1}
+            ],
+            'purchases': [{
+                'purchaser_id': bob.id,
+                'label': 'Gas',
+                'amount': 10,
+                'participants_ids': [bob.id],
+                'description': None
+            }]
         }
         self.assertDictEqual(expected_event, event.to_bson())

@@ -37,41 +37,42 @@ class CreateEventCommandHandlerTestCase(unittest.TestCase):
 
 
 class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
-    event_uuid = uuid4()
-
     def setUp(self):
+        self.event = fake_event()
         RepositoryLocator.initialize(MemoryRepositoryLocator())
-        RepositoryLocator.events().entities[self.event_uuid] = fake_event(self.event_uuid)
+        RepositoryLocator.events().entities[self.event.uuid] = self.event
 
     def tearDown(self):
         RepositoryLocator.initialize(None)
 
     def test_the_purchase_is_added_to_the_repository(self):
+        bob = events.Participant('Bob', 1)
+        self.event.add_participant(bob)
         handler = handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
-        command = commands.AddPurchaseCommand(str(self.event_uuid), 'Kim', 'Gas', 10)
-        command.participants = ['Bob']
+        command = commands.AddPurchaseCommand(str(self.event.uuid), str(self.event.participants[0].id), 'Gas', 10)
+        command.participants_ids = [str(bob.id)]
         command.description = '10km at 1e/km'
 
         handler.execute(command)
 
-        entity = RepositoryLocator.events().entities[self.event_uuid]
+        entity = RepositoryLocator.events().entities[self.event.uuid]
 
-        self.assertEqual('Kim', entity.purchases[0].purchaser)
+        self.assertEqual(self.event.participants[0].id, entity.purchases[0].purchaser_id)
         self.assertEqual('Gas', entity.purchases[0].label)
         self.assertEqual(10, entity.purchases[0].amount)
-        self.assertListEqual(['Bob'], entity.purchases[0].participants)
+        self.assertListEqual([bob.id], entity.purchases[0].participants_ids)
         self.assertEqual('10km at 1e/km', entity.purchases[0].description)
 
     def test_the_purchase_is_shared_between_all_participants_if_none_is_specified(self):
-        RepositoryLocator.events().entities[self.event_uuid].participants.append(events.Participant('Bob', 1))
+        RepositoryLocator.events().entities[self.event.uuid].participants.append(events.Participant('Bob', 1))
         handler = handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
-        command = commands.AddPurchaseCommand(str(self.event_uuid), 'Kim', 'Gas', 10)
+        command = commands.AddPurchaseCommand(str(self.event.uuid), str(self.event.participants[0].id), 'Gas', 10)
 
         handler.execute(command)
 
-        entity = RepositoryLocator.events().entities[self.event_uuid]
+        entity = RepositoryLocator.events().entities[self.event.uuid]
 
-        self.assertListEqual(['Kim', 'Bob'], entity.purchases[0].participants)
+        self.assertEqual(2, len(entity.purchases[0].participants_ids))
 
 
 class EventDetailsSearchHandlerTestCase(unittest.TestCase):
@@ -109,17 +110,19 @@ class SearchEventDebtsResultHandlerTestCase(unittest.TestCase):
 
     def test_can_return_the_debts_result_of_the_event(self):
         event = fake_event()
-        event.add_participant(events.Participant('Joe', 1))
-        event.add_purchase(events.Purchase('Kim', 10, ['Kim', 'Joe'], '1'))
-        event.add_purchase(events.Purchase('Joe', 6, ['Kim', 'Joe'], '2'))
+        kim = event.participants[0]
+        joe = events.Participant('Joe', 1)
+        event.add_participant(joe)
+        event.add_purchase(events.Purchase(kim.id, 10, [kim.id, joe.id], '1'))
+        event.add_purchase(events.Purchase(joe.id, 6, [kim.id, joe.id], '2'))
         RepositoryLocator.events().entities[event.uuid] = event
 
         result = handlers.SearchEventDebtsResultHandler(searches.EventDebtsResultSearch)\
             .execute(searches.EventDebtsResultSearch(str(event.uuid)))
 
-        self.assertEqual(10, result.of('Kim').total_spent)
-        self.assertEqual(0, result.of('Kim').get_debt_towards('Joe'))
-        self.assertEqual(0, result.of('Kim').total_debt)
-        self.assertEqual(6, result.of('Joe').total_spent)
-        self.assertEqual(2, result.of('Joe').get_debt_towards('Kim'))
-        self.assertEqual(2, result.of('Joe').total_debt)
+        self.assertEqual(10, result.of(kim.id).total_spent)
+        self.assertEqual(0, result.of(kim.id).get_debt_towards(joe.id))
+        self.assertEqual(0, result.of(kim.id).total_debt)
+        self.assertEqual(6, result.of(joe.id).total_spent)
+        self.assertEqual(2, result.of(joe.id).get_debt_towards(kim.id))
+        self.assertEqual(2, result.of(joe.id).total_debt)

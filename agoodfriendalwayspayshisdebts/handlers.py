@@ -35,16 +35,23 @@ class CreateEventCommandHandler(Handler):
 class AddPurchaseCommandHandler(Handler):
     def execute(self, command):
         event = RepositoryLocator.events().get(UUID(command.event_id))
-        participants = command.participants or self.__get_all_event_participants_names(event)
-        purchase = events.Purchase(command.purchaser, command.amount, participants, command.label)
+        participants_ids = self.__to_uuids(command.participants_ids) if command.participants_ids\
+            else self.__get_all_event_participants_ids(event)
+        purchase = events.Purchase(UUID(command.purchaser_id), command.amount, participants_ids, command.label)
         purchase.description = command.description
+
         event.add_purchase(purchase)
         RepositoryLocator.events().update(event.uuid, event)
+
         return purchase
 
     @staticmethod
-    def __get_all_event_participants_names(event):
-        return map((lambda participant: participant.name), event.participants)
+    def __to_uuids(participants_ids):
+        return map((lambda participant_id: UUID(participant_id)), participants_ids)
+
+    @staticmethod
+    def __get_all_event_participants_ids(event):
+        return map((lambda participant: participant.id), event.participants)
 
 
 class SearchEventDetailsHandler(Handler):

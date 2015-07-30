@@ -56,9 +56,11 @@ class EventRepositoryTestCase(unittest.TestCase):
     def setUp(self):
         self.collection = mongomock.Connection().db['collection']
         self.repository = repository.EventRepository(self.collection)
+        self.kim = events.Participant('Kim', 1)
+        self.lea = events.Participant('Lea', 1)
 
     def test_can_add_an_event(self):
-        event = events.Event('Cool event', [events.Participant('Kim', 1), events.Participant('Lea', 1)])
+        event = events.Event('Cool event', [self.kim, self.lea])
         self.repository.add(event)
 
         found_event = self.collection.find_one()
@@ -66,31 +68,33 @@ class EventRepositoryTestCase(unittest.TestCase):
         self.assertIsNotNone(found_event['_id'])
         self.assertEqual('Cool event', found_event['name'])
         self.assertListEqual([
-            {'name': 'Kim', 'email': '', 'share': 1},
-            {'name': 'Lea', 'email': '', 'share': 1}
+            {'id': self.kim.id, 'name': 'Kim', 'email': '', 'share': 1},
+            {'id': self.lea.id, 'name': 'Lea', 'email': '', 'share': 1}
         ], found_event['participants'])
         self.assertEqual(0, len(found_event['purchases']))
 
     def test_can_retrieve_an_event(self):
-        event = events.Event('Cool event', [events.Participant('Kim', 1), events.Participant('Lea', 1)])
-        event.add_purchase(events.Purchase('Kim', 5, [], 'Shopping'))
+        event = events.Event('Cool event', [self.kim, self.lea])
+        event.add_purchase(events.Purchase(self.kim.id, 5, [self.kim.id], 'Shopping'))
         self.repository.add(event)
 
         found_event = self.repository.get(event.uuid)
 
         self.assertEqual(event.uuid, found_event.uuid)
         self.assertEqual('Cool event', found_event.name)
+        self.assertEqual(self.kim.id, found_event.participants[0].id)
         self.assertEqual('Kim', found_event.participants[0].name)
         self.assertEqual(1, found_event.participants[0].share)
+        self.assertEqual(self.lea.id, found_event.participants[1].id)
         self.assertEqual('Lea', found_event.participants[1].name)
         self.assertEqual(1, found_event.participants[1].share)
-        self.assertEqual('Kim', found_event.purchases[0].purchaser)
+        self.assertEqual(self.kim.id, found_event.purchases[0].purchaser_id)
+        self.assertListEqual([self.kim.id], found_event.purchases[0].participants_ids)
         self.assertEqual('Shopping', found_event.purchases[0].label)
         self.assertEqual(5, found_event.purchases[0].amount)
 
     def test_can_update_an_event(self):
-        event = events.Event('Cool event', [events.Participant('Kim', 1), events.Participant('Lea', 1)])
-        event.add_purchase(events.Purchase('Kim', 5, [], 'Shopping'))
+        event = events.Event('Cool event', [self.kim, self.lea])
         self.repository.add(event)
 
         event.name = 'Weekend at the beach'

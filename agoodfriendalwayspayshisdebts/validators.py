@@ -39,7 +39,7 @@ class CreateEventCommandValidator(Validator):
 
 class AddPurchaseCommandValidator(Validator):
     def validate(self):
-        if 'purchaser' not in self.data or not self.data['purchaser']:
+        if 'purchaserId' not in self.data or not self.data['purchaserId']:
             self.errors.append('PURCHASE_PURCHASER_REQUIRED')
         if 'label' not in self.data or not self.data['label']:
             self.errors.append('PURCHASE_LABEL_REQUIRED')
