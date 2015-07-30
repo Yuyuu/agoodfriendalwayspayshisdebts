@@ -49,7 +49,7 @@ class PurchasesResource:
         data = flask.request.json
         validators.AddPurchaseCommandValidator(data).validate()
         command = commands.AddPurchaseCommand(event_id, data['purchaserId'], data['label'], data['amount'])
-        command.participants = data['participantsIds'] if 'participantsIds' in data else []
+        command.participants_ids = data['participantsIds'] if 'participantsIds' in data else []
         command.description = data['description'] if 'description' in data else ''
         result = self.command_bus.send_and_wait_response(command)
         if not result.is_success():
