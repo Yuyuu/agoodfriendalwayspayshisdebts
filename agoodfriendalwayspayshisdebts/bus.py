@@ -1,8 +1,11 @@
 import abc
 import logging
+import concurrent.futures as futures
 
 
 logger = logging.getLogger(__name__)
+
+MAX_WORKER_THREADS = 30
 
 
 class BusSynchronization:
@@ -55,15 +58,20 @@ class Bus:
         self.handlers = {}
         self.__init(self.handlers, handlers)
 
+        self.executor_service = futures.ThreadPoolExecutor(MAX_WORKER_THREADS)
+
     def send_and_wait_response(self, command):
+        return self.send(command).result()
+
+    def send(self, command):
         handlers = self.handlers.get(command.__class__, [])
         if len(handlers) == 0:
             logger.warning('Impossible to find a handler for %s' % command.__class__)
-            return ExecutionResult.error(BusError('Impossible to find a handler'))
+            return CompletedFuture(ExecutionResult.error(BusError('Impossible to find a handler')))
         logger.debug('Executing handler for %s' % command.__class__)
         results = []
         for handler in handlers:
-            results.append(self.__execute(command, handler))
+            results.append(self.executor_service.submit(self.__execute, command, handler))
         return results[0]
 
     def __execute(self, command, handler):
@@ -105,3 +113,11 @@ class SearchBus(Bus):
 class BusError(RuntimeError):
     def __init__(self, message):
         self.message = message
+
+
+class CompletedFuture:
+    def __init__(self, future_result):
+        self.future_result = future_result
+
+    def result(self):
+        return self.future_result
