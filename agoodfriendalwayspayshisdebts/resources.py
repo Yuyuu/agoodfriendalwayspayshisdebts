@@ -1,26 +1,31 @@
 import flask
 import searches
 import commands
-import validators
 import serializers
 
 
-class IndexResource:
+class Resource(object):
+    @staticmethod
+    def _get_data(key):
+        return flask.request.json.get(key, None)
+
+
+class IndexResource(Resource):
     def index(self):
         return flask.Response(status=200)
 
 
-class EventsResource:
+class EventsResource(Resource):
     def __init__(self, command_bus):
         self.command_bus = command_bus
 
     def create(self):
-        data = flask.request.json
-        validators.CreateEventCommandValidator(data).validate()
-        command = commands.CreateEventCommand(data['name'], data['participants'])
+        command = commands.CreateEventCommand(self._get_data('name'), self._get_data('participants'))
+
         result = self.command_bus.send_and_wait_response(command)
         if not result.is_success():
             raise result.error
+
         event_id = result.response
         http_response = flask.jsonify({'id': str(event_id)})
         http_response.status_code = 201
@@ -41,26 +46,31 @@ class EventResource:
         return http_response
 
 
-class PurchasesResource:
+class PurchasesResource(Resource):
     def __init__(self, command_bus):
         self.command_bus = command_bus
 
     def add(self, event_id):
-        data = flask.request.json
-        validators.AddPurchaseCommandValidator(data).validate()
-        command = commands.AddPurchaseCommand(event_id, data['purchaserId'], data['label'], data['amount'])
-        command.participants_ids = data['participantsIds'] if 'participantsIds' in data else []
-        command.description = data['description'] if 'description' in data else ''
+        command = commands.AddPurchaseCommand(
+            event_id,
+            self._get_data('purchaserId'),
+            self._get_data('label'),
+            self._get_data('amount')
+        )
+        command.participants_ids = self._get_data('participantsIds')
+        command.description = self._get_data('description')
+
         result = self.command_bus.send_and_wait_response(command)
         if not result.is_success():
             raise result.error
+
         purchase = result.response
         http_response = flask.jsonify(serializers.PurchaseSerializer.serialize(purchase))
         http_response.status_code = 201
         return http_response
 
 
-class ResultResource:
+class ResultResource(Resource):
     def __init__(self, search_bus):
         self.search_bus = search_bus
 

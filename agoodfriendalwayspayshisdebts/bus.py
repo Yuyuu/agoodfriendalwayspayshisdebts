@@ -1,7 +1,27 @@
+import abc
 import logging
 
 
 logger = logging.getLogger(__name__)
+
+
+class BusSynchronization:
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self, message_type):
+        self.message_type = message_type
+
+    def before_execution(self, message):
+        pass
+
+    def on_error(self):
+        pass
+
+    def after_execution(self):
+        pass
+
+    def ultimately(self):
+        pass
 
 
 class ExecutionResult:
@@ -26,12 +46,14 @@ class ExecutionResult:
 
 
 class Bus:
-    def __init__(self, handlers):
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self, synchronizations, handlers):
+        self.synchronizations = {}
+        self.__init(self.synchronizations, synchronizations)
+
         self.handlers = {}
-        for handler in handlers:
-            if self.handlers.get(handler.message_type, None) is None:
-                self.handlers[handler.message_type] = []
-            self.handlers[handler.message_type].append(handler)
+        self.__init(self.handlers, handlers)
 
     def send_and_wait_response(self, command):
         handlers = self.handlers.get(command.__class__, [])
@@ -44,24 +66,40 @@ class Bus:
             results.append(self.__execute(command, handler))
         return results[0]
 
-    @staticmethod
-    def __execute(command, handler):
+    def __execute(self, command, handler):
+        synchronizations = self.synchronizations.get(command.__class__, [])
         try:
+            for synchronization in synchronizations:
+                synchronization.before_execution(command)
             response = handler.execute(command)
+            for synchronization in synchronizations:
+                synchronization.after_execution()
             return ExecutionResult.success(response=response)
         except Exception as e:
+            for synchronization in synchronizations:
+                synchronization.on_error()
             logger.exception(e)
             return ExecutionResult.error(e)
+        finally:
+            for synchronization in synchronizations:
+                synchronization.ultimately()
+
+    @staticmethod
+    def __init(class_property, init_values):
+        for value in init_values:
+            if class_property.get(value.message_type, None) is None:
+                class_property[value.message_type] = []
+            class_property[value.message_type].append(value)
 
 
 class CommandBus(Bus):
-    def __init__(self, handlers):
-        Bus.__init__(self, handlers)
+    def __init__(self, synchronizations, handlers):
+        Bus.__init__(self, synchronizations, handlers)
 
 
 class SearchBus(Bus):
     def __init__(self, handlers):
-        Bus.__init__(self, handlers)
+        Bus.__init__(self, [], handlers)
 
 
 class BusError(RuntimeError):

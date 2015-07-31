@@ -6,10 +6,10 @@ db = None
 
 
 class RepositoryLocator:
+    instance = None
+
     def __init__(self):
         pass
-
-    instance = None
 
     @staticmethod
     def initialize(repository_locator):
