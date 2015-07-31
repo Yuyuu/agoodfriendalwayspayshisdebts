@@ -5,11 +5,8 @@ import repository
 db = None
 
 
-class RepositoryLocator:
+class RepositoryLocator(object):
     instance = None
-
-    def __init__(self):
-        pass
 
     @staticmethod
     def initialize(repository_locator):
@@ -27,3 +24,15 @@ class RepositoryLocator:
 class MongoRepositoryLocator(RepositoryLocator):
     def _get_events(self):
         return repository.EventRepository(db['event'])
+
+
+class EventBusLocator(object):
+    instance = None
+
+    @staticmethod
+    def get_instance():
+        return EventBusLocator.instance
+
+    @staticmethod
+    def initialize(instance):
+        EventBusLocator.instance = instance

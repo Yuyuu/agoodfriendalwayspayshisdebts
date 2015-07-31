@@ -26,6 +26,7 @@ class BusTestCase(unittest.TestCase):
 
         self.assertTrue(synchronization.before_execution_called)
         self.assertTrue(synchronization.after_execution_called)
+        self.assertTrue(synchronization.ultimately_called)
 
     def test_the_synchronizations_are_still_called_on_error(self):
         handler = FakeCommandHandler()

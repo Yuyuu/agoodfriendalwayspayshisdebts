@@ -1,11 +1,16 @@
 import abc
 import logging
+import Queue
 import concurrent.futures as futures
+import threading
+
+from locator import EventBusLocator
 
 
 logger = logging.getLogger(__name__)
 
 MAX_WORKER_THREADS = 30
+GLOBAL_SYNCHRONIZATION = 'ALL'
 
 
 class BusSynchronization:
@@ -75,7 +80,8 @@ class Bus:
         return results[0]
 
     def __execute(self, command, handler):
-        synchronizations = self.synchronizations.get(command.__class__, [])
+        synchronizations = self.synchronizations.get(command.__class__, []) +\
+            self.synchronizations.get(GLOBAL_SYNCHRONIZATION, [])
         try:
             for synchronization in synchronizations:
                 synchronization.before_execution(command)
@@ -108,6 +114,41 @@ class CommandBus(Bus):
 class SearchBus(Bus):
     def __init__(self, handlers):
         Bus.__init__(self, [], handlers)
+
+
+class EventBus:
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def publish(self, event):
+        pass
+
+    @staticmethod
+    def get_instance():
+        return EventBusLocator.get_instance()
+
+
+class AsynchronousEventBus(Bus, EventBus, BusSynchronization):
+    def __init__(self, synchronizations, handlers):
+        Bus.__init__(self, synchronizations, handlers)
+        BusSynchronization.__init__(self, GLOBAL_SYNCHRONIZATION)
+        self.local_thread = threading.local()
+        self.local_thread.events = Queue.Queue()
+
+    def after_execution(self):
+        logger.debug('Propagating events')
+        while not self.local_thread.events.empty():
+            event = self.local_thread.events.get()
+            if event.is_synchronous:
+                self.send_and_wait_response(event)
+            else:
+                self.send(event)
+
+    def on_error(self):
+        self.local_thread.events.queue.clear()
+
+    def publish(self, event):
+        self.local_thread.events.put(event)
 
 
 class BusError(RuntimeError):

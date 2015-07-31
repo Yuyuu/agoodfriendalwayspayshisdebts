@@ -6,6 +6,7 @@ import config
 import server
 
 config.configure_logging()
+config.initialize_events()
 config.initialize_repository()
 
 app = server.Server(__name__)

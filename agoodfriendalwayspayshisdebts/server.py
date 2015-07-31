@@ -15,6 +15,7 @@ class Server(flask.Flask):
 
     def configure_commands(self):
         command_synchronizations = [
+            bus.EventBus.get_instance(),
             validators.CreateEventCommandValidator(commands.CreateEventCommand),
             validators.AddPurchaseCommandValidator(commands.AddPurchaseCommand)
         ]

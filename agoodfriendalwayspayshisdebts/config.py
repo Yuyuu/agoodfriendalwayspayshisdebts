@@ -1,10 +1,18 @@
 import sys
 import logging
-
 from os import environ
+
 import pymongo
 import pymongo.errors
-from agoodfriendalwayspayshisdebts import locator
+
+import locator
+from bus import AsynchronousEventBus
+
+
+def initialize_events():
+    event_synchronizations = []
+    event_handlers = []
+    locator.EventBusLocator.initialize(AsynchronousEventBus(event_synchronizations, event_handlers))
 
 
 def initialize_repository():
