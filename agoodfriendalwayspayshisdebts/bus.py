@@ -4,7 +4,7 @@ import Queue
 import concurrent.futures as futures
 import threading
 
-from locator import EventBusLocator
+import locator
 
 
 logger = logging.getLogger(__name__)
@@ -125,7 +125,7 @@ class EventBus:
 
     @staticmethod
     def get_instance():
-        return EventBusLocator.get_instance()
+        return locator.EventBusLocator.get_instance()
 
 
 class InitializedThreadLocal(threading.local):

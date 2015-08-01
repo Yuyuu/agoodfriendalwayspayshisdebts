@@ -1,7 +1,8 @@
 import flask
 
 import bus
-import command_handlers
+import command_handlers as ch
+import event_search_handlers as esh
 import searches
 import commands
 import validators
@@ -19,15 +20,15 @@ class Server(flask.Flask):
             validators.CreateEventCommandValidator(commands.CreateEventCommand),
             validators.AddPurchaseCommandValidator(commands.AddPurchaseCommand)
         ]
-        command_handlers = [
-            command_handlers.CreateEventCommandHandler(commands.CreateEventCommand),
-            command_handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
+        c_handlers = [
+            ch.CreateEventCommandHandler(commands.CreateEventCommand),
+            ch.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
         ]
-        self.command_bus = bus.CommandBus(command_synchronizations, command_handlers)
+        self.command_bus = bus.CommandBus(command_synchronizations, c_handlers)
 
     def configure_searches(self):
         search_handlers = [
-            command_handlers.SearchEventDetailsHandler(searches.EventDetailsSearch),
-            command_handlers.SearchEventDebtsResultHandler(searches.EventDebtsResultSearch)
+            esh.SearchEventDetailsHandler(),
+            ch.SearchEventDebtsResultHandler(searches.EventDebtsResultSearch)
         ]
         self.search_bus = bus.SearchBus(search_handlers)
