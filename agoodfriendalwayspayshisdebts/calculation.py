@@ -7,11 +7,31 @@ NO_DEBT = 0
 
 
 class CalculationResult:
-    def __init__(self, results_per_participant):
+    def __init__(self, event_id, results_per_participant):
+        self.event_id = event_id
         self.results_per_participant = results_per_participant
 
     def of(self, participant_id):
         return self.results_per_participant[participant_id]
+
+    def to_bson(self):
+        return {
+            'event_id': self.event_id,
+            'detail': {
+                str(participant_id): self.__participant_result_to_bson(participant_result)
+                for participant_id, participant_result in self.results_per_participant.iteritems()
+            }
+        }
+
+    @staticmethod
+    def __participant_result_to_bson(participant_result):
+        return {
+            'total_spent': participant_result.total_spent,
+            'total_debt': participant_result.total_debt,
+            'debts_detail': {
+                str(creditor_id): amount for creditor_id, amount in participant_result.debts_detail.iteritems()
+            }
+        }
 
 
 class ParticipantResult:
@@ -44,7 +64,7 @@ class DebtsCalculator:
         self.__mitigate_individual_debts()
         self.__calculate_mitigated_total_debt()
 
-        return CalculationResult(self.results)
+        return CalculationResult(self.event.uuid, self.results)
 
     def __split_purchase_between_participants(self, purchase):
         total_purchase_shares = self.__calculate_total_purchase_shares(purchase)

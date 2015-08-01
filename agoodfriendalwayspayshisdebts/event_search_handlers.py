@@ -6,6 +6,7 @@ import internal_events
 import searches
 from errors import EntityNotFoundError
 from factories import EventFactory
+import calculation
 
 
 DB = None
@@ -51,3 +52,13 @@ class OnPurchaseAddedUpdateView(EventHandler):
     def execute_event(self, event):
         updated_event = RepositoryLocator.events().get(event.event_id)
         DB['eventdetails_view'].update({'uuid': updated_event.uuid}, updated_event.to_bson())
+
+
+class OnPurchaseAddedUpdateResult(EventHandler):
+    def __init__(self):
+        super(OnPurchaseAddedUpdateResult, self).__init__(internal_events.PurchaseAddedEvent)
+
+    def execute_event(self, event):
+        updated_event = RepositoryLocator.events().get(event.event_id)
+        calculation_result = calculation.DebtsCalculator(updated_event).calculate()
+        DB['eventresult_view'].update({'event_id': event.event_id}, calculation_result.to_bson(), upsert=True)

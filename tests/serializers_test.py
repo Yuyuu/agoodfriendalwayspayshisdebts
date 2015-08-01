@@ -75,11 +75,7 @@ class CalculationResultSerializerTestCase(unittest.TestCase):
         lea_result.total_debt = 0
         lea_result.debts_detail = {kim.id: 0, joe.id: 0}
 
-        result = calculation.CalculationResult({
-            kim.id: kim_result,
-            joe.id: joe_result,
-            lea.id: lea_result
-        })
+        result = calculation.CalculationResult('id123', {kim.id: kim_result, joe.id: joe_result, lea.id: lea_result})
 
         expected_result = {
             kim_id_as_string: {

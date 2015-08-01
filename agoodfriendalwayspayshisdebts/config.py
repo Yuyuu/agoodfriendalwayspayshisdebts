@@ -12,7 +12,7 @@ from bus import AsynchronousEventBus
 
 def initialize_events():
     event_synchronizations = []
-    event_handlers = [esh.OnEventCreated(), esh.OnPurchaseAddedUpdateView()]
+    event_handlers = [esh.OnEventCreated(), esh.OnPurchaseAddedUpdateView(), esh.OnPurchaseAddedUpdateResult()]
     locator.EventBusLocator.initialize(AsynchronousEventBus(event_synchronizations, event_handlers))
 
 

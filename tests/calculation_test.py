@@ -109,3 +109,24 @@ class DebtsCalculatorTestCase(unittest.TestCase):
         self.assertAlmostEqual(3.44, result.of(self.participant_a.id).total_debt)
         self.assertAlmostEqual(13.9, result.of(self.participant_bc.id).total_debt)
         self.assertAlmostEqual(0.3, result.of(self.participant_d.id).total_debt)
+
+
+class CalculationResultTestCase(unittest.TestCase):
+    def test_conversion_to_bson(self):
+        result_123 = calculation.ParticipantResult()
+        result_123.total_spent = 1
+        result_123.total_debt = 1
+        result_123.debts_detail = {'456': 1}
+
+        result_456 = calculation.ParticipantResult()
+        result_456.total_spent = 1
+        result_456.total_debt = 1
+        result_456.debts_detail = {'123': 1}
+        result = calculation.CalculationResult('event_id', {'123': result_123, '456': result_456})
+
+        expected_result = {'event_id': 'event_id', 'detail': {
+            '123': {'total_spent': 1, 'total_debt': 1, 'debts_detail': {'456': 1}},
+            '456': {'total_spent': 1, 'total_debt': 1, 'debts_detail': {'123': 1}}
+        }}
+
+        self.assertDictEqual(result.to_bson(), expected_result)
