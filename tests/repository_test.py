@@ -1,9 +1,8 @@
 import unittest
 from uuid import uuid4
 
-import mongomock
-
 from agoodfriendalwayspayshisdebts import repository, events
+from rules import WithMongoMock
 
 
 class FakeEntity:
@@ -21,9 +20,15 @@ class FakeEntityRepository(repository.MongoRepository):
 
 
 class MongoRepositoryTestCase(unittest.TestCase):
+    with_mongomock = WithMongoMock()
+
     def setUp(self):
-        self.collection = mongomock.Connection().db['collection']
+        self.with_mongomock.before()
+        self.collection = self.with_mongomock.collection('collection')
         self.repository = FakeEntityRepository(self.collection)
+
+    def tearDown(self):
+        self.with_mongomock.after()
 
     def test_can_add_an_entity(self):
         entity = FakeEntity()
@@ -53,11 +58,17 @@ class MongoRepositoryTestCase(unittest.TestCase):
 
 
 class EventRepositoryTestCase(unittest.TestCase):
+    with_mongomock = WithMongoMock()
+
     def setUp(self):
-        self.collection = mongomock.Connection().db['collection']
+        self.with_mongomock.before()
+        self.collection = self.with_mongomock.collection('collection')
         self.repository = repository.EventRepository(self.collection)
         self.kim = events.Participant('Kim', 1)
         self.lea = events.Participant('Lea', 1)
+
+    def tearDown(self):
+        self.with_mongomock.after()
 
     def test_can_add_an_event(self):
         event = events.Event('Cool event', [self.kim, self.lea])

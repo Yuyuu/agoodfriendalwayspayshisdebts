@@ -6,12 +6,13 @@ import pymongo
 import pymongo.errors
 
 import locator
+import event_search_handlers
 from bus import AsynchronousEventBus
 
 
 def initialize_events():
     event_synchronizations = []
-    event_handlers = []
+    event_handlers = [event_search_handlers.OnEventCreated()]
     locator.EventBusLocator.initialize(AsynchronousEventBus(event_synchronizations, event_handlers))
 
 
@@ -19,6 +20,7 @@ def initialize_repository():
     mongo_uri = environ.get('AGFAPHD_API_MONGO_URI', 'mongodb://localhost:27017/agoodfriendalwayspayshisdebts')
     try:
         database = pymongo.MongoClient(mongo_uri).get_default_database()
+        event_search_handlers.DB = database
         locator.db = database
         locator.RepositoryLocator.initialize(locator.MongoRepositoryLocator())
     except (pymongo.errors.ConnectionFailure, pymongo.errors.AutoReconnect):

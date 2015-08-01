@@ -9,7 +9,7 @@ from locator import EventBusLocator
 
 logger = logging.getLogger(__name__)
 
-MAX_WORKER_THREADS = 30
+MAX_WORKER_THREADS_PER_BUS = 30
 GLOBAL_SYNCHRONIZATION = 'ALL'
 
 
@@ -63,7 +63,7 @@ class Bus:
         self.handlers = {}
         self.__init(self.handlers, handlers)
 
-        self.executor_service = futures.ThreadPoolExecutor(MAX_WORKER_THREADS)
+        self.executor_service = futures.ThreadPoolExecutor(MAX_WORKER_THREADS_PER_BUS)
 
     def send_and_wait_response(self, command):
         return self.send(command).result()

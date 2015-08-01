@@ -1,7 +1,7 @@
 import unittest
 import logging
 
-from agoodfriendalwayspayshisdebts import bus, handlers
+from agoodfriendalwayspayshisdebts import bus, command_handlers
 
 
 class BusTestCase(unittest.TestCase):
@@ -110,9 +110,9 @@ class FakeCommandSynchronization(bus.BusSynchronization):
         self.ultimately_called = True
 
 
-class FakeCommandHandler(handlers.Handler):
+class FakeCommandHandler(command_handlers.Handler):
     def __init__(self):
-        handlers.Handler.__init__(self, FakeCommand)
+        command_handlers.Handler.__init__(self, FakeCommand)
         self.raise_exception = False
         self.command_received = None
 

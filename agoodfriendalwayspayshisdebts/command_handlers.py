@@ -5,6 +5,8 @@ from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
 import events
 from errors import InvalidUUIDError, EntityNotFoundError
 from calculation import DebtsCalculator
+from bus import EventBus
+from internal_events import EventCreatedEvent
 
 
 class Handler:
@@ -23,6 +25,7 @@ class CreateEventCommandHandler(Handler):
         participants = map(self.__create_participant_from_json, command.participants)
         event = events.Event(command.name, participants)
         RepositoryLocator.events().add(event)
+        EventBus.get_instance().publish(EventCreatedEvent(event.uuid))
         return event.uuid
 
     @staticmethod
