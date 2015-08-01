@@ -133,7 +133,7 @@ class InitializedThreadLocal(threading.local):
 
 
 class AsynchronousEventBus(Bus, EventBus, BusSynchronization):
-    local_thread = InitializedThreadLocal()
+    thread_local = InitializedThreadLocal()
 
     def __init__(self, synchronizations, handlers):
         Bus.__init__(self, synchronizations, handlers)
@@ -141,18 +141,18 @@ class AsynchronousEventBus(Bus, EventBus, BusSynchronization):
 
     def after_execution(self):
         logger.debug('Propagating events')
-        while not self.local_thread.events.empty():
-            event = self.local_thread.events.get()
+        while not self.thread_local.events.empty():
+            event = self.thread_local.events.get()
             if event.is_synchronous:
                 self.send_and_wait_response(event)
             else:
                 self.send(event)
 
     def on_error(self):
-        self.local_thread.events.queue.clear()
+        self.thread_local.events.queue.clear()
 
     def publish(self, event):
-        self.local_thread.events.put(event)
+        self.thread_local.events.put(event)
 
 
 class BusError(RuntimeError):
