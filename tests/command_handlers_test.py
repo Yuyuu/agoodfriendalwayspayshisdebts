@@ -44,20 +44,23 @@ class CreateEventCommandHandlerTestCase(unittest.TestCase):
 
 class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
     with_memory_repository = WithMemoryRepository()
+    with_event_bus = WithEventBus()
 
     def setUp(self):
         self.with_memory_repository.before()
+        self.with_event_bus.before()
         self.event = fake_event()
         RepositoryLocator.events().entities[self.event.uuid] = self.event
 
     def tearDown(self):
         self.with_memory_repository.after()
+        self.with_event_bus.after()
 
     def test_the_purchase_is_added_to_the_repository(self):
         bob = events.Participant('Bob', 1)
         self.event.add_participant(bob)
         handler = command_handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
-        command = commands.AddPurchaseCommand(str(self.event.uuid), str(self.event.participants[0].id), 'Gas', 10)
+        command = commands.AddPurchaseCommand(self.event.uuid, self.event.participants[0].id, 'Gas', 10)
         command.participants_ids = [str(bob.id)]
         command.description = '10km at 1e/km'
 
@@ -74,7 +77,7 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
     def test_the_purchase_is_shared_between_all_participants_if_none_is_specified(self):
         RepositoryLocator.events().entities[self.event.uuid].participants.append(events.Participant('Bob', 1))
         handler = command_handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
-        command = commands.AddPurchaseCommand(str(self.event.uuid), str(self.event.participants[0].id), 'Gas', 10)
+        command = commands.AddPurchaseCommand(self.event.uuid, self.event.participants[0].id, 'Gas', 10)
 
         handler.execute(command)
 
@@ -97,8 +100,8 @@ class SearchEventDebtsResultHandlerTestCase(unittest.TestCase):
         kim = event.participants[0]
         joe = events.Participant('Joe', 1)
         event.add_participant(joe)
-        event.add_purchase(events.Purchase(kim.id, 10, [kim.id, joe.id], '1'))
-        event.add_purchase(events.Purchase(joe.id, 6, [kim.id, joe.id], '2'))
+        event.purchases += [events.Purchase(kim.id, 10, [kim.id, joe.id], '1'),
+                            events.Purchase(joe.id, 6, [kim.id, joe.id], '2')]
         RepositoryLocator.events().entities[event.uuid] = event
 
         result = command_handlers.SearchEventDebtsResultHandler(searches.EventDebtsResultSearch)\

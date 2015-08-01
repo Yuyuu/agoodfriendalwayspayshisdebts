@@ -86,7 +86,7 @@ class EventRepositoryTestCase(unittest.TestCase):
 
     def test_can_retrieve_an_event(self):
         event = events.Event('Cool event', [self.kim, self.lea])
-        event.add_purchase(events.Purchase(self.kim.id, 5, [self.kim.id], 'Shopping'))
+        event.purchases.append(events.Purchase(self.kim.id, 5, [self.kim.id], 'Shopping'))
         self.repository.add(event)
 
         found_event = self.repository.get(event.uuid)

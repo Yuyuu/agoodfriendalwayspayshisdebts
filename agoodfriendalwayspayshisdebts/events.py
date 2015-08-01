@@ -1,4 +1,6 @@
 from uuid import uuid4
+import bus
+from internal_events import PurchaseAddedEvent
 
 
 class Event:
@@ -15,6 +17,7 @@ class Event:
 
     def add_purchase(self, purchase):
         self.purchases.append(purchase)
+        bus.EventBus.get_instance().publish(PurchaseAddedEvent(self.uuid))
 
     def __get_bson_participants(self):
         return map((lambda participant: participant.to_bson()), self.participants)

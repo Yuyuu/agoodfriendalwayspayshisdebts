@@ -54,8 +54,8 @@ class PurchasesResource(Resource):
 
     def add(self, event_id):
         command = commands.AddPurchaseCommand(
-            event_id,
-            self._get_data('purchaserId'),
+            UUID(hex=event_id, version=4),
+            UUID(hex=self._get_data('purchaserId'), version=4),
             self._get_data('label'),
             self._get_data('amount')
         )

@@ -42,3 +42,12 @@ class OnEventCreated(EventHandler):
     def execute_event(self, event):
         created_event = RepositoryLocator.events().get(event.event_id)
         DB['eventdetails_view'].insert(created_event.to_bson())
+
+
+class OnPurchaseAddedUpdateView(EventHandler):
+    def __init__(self):
+        super(OnPurchaseAddedUpdateView, self).__init__(internal_events.PurchaseAddedEvent)
+
+    def execute_event(self, event):
+        updated_event = RepositoryLocator.events().get(event.event_id)
+        DB['eventdetails_view'].update({'uuid': updated_event.uuid}, updated_event.to_bson())

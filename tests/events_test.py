@@ -1,6 +1,8 @@
 import unittest
 
 from agoodfriendalwayspayshisdebts import events
+from rules import WithEventBus
+from agoodfriendalwayspayshisdebts.internal_events import PurchaseAddedEvent
 
 
 class ParticipantTestCase(unittest.TestCase):
@@ -62,6 +64,14 @@ class PurchaseTestCase(unittest.TestCase):
 
 
 class EventTestCase(unittest.TestCase):
+    with_event_bus = WithEventBus()
+
+    def setUp(self):
+        self.with_event_bus.before()
+
+    def tearDown(self):
+        self.with_event_bus.after()
+
     def test_generates_an_uuid_upon_creation_if_none_is_provided(self):
         event = events.Event('', [])
         self.assertIsNotNone(event.uuid)
@@ -92,12 +102,20 @@ class EventTestCase(unittest.TestCase):
         event.add_purchase(purchase)
         self.assertListEqual(event.purchases, [purchase])
 
+    def test_an_event_is_emitted_when_a_purchase_is_added(self):
+        event = events.Event('cool event', [events.Participant('Kim', 1, uuid='1')], uuid='id123')
+
+        event.add_purchase(events.Purchase('1', 1, ['1'], 'label'))
+
+        emitted_event = self.with_event_bus.bus().last_event_of_type(PurchaseAddedEvent)
+        self.assertIsNotNone(emitted_event)
+        self.assertEqual('id123', emitted_event.event_id)
+
     def test_conversion_to_bson(self):
         bob = events.Participant('Bob', 1)
         kim = events.Participant('Kim', 1)
         event = events.Event('Cool event', [bob, kim])
-        purchase = events.Purchase(bob.id, 10, [bob.id], 'Gas')
-        event.add_purchase(purchase)
+        event.purchases.append(events.Purchase(bob.id, 10, [bob.id], 'Gas'))
         expected_event = {
             'uuid': event.uuid,
             'name': 'Cool event',

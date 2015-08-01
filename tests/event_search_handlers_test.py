@@ -2,7 +2,7 @@ import unittest
 
 from rules import WithMemoryRepository, WithMongoMock
 import agoodfriendalwayspayshisdebts.event_search_handlers as handlers
-from agoodfriendalwayspayshisdebts.events import Event
+from agoodfriendalwayspayshisdebts.events import Event, Participant, Purchase
 from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
 from agoodfriendalwayspayshisdebts.errors import EntityNotFoundError
 from agoodfriendalwayspayshisdebts import internal_events, searches
@@ -54,7 +54,7 @@ class OnEventCreatedTestCase(unittest.TestCase):
         handlers.DB = None
 
     def test_can_create_the_event_details(self):
-        event = Event('cool event', [], 'id123')
+        event = Event('cool event', [Participant('Kim', 1, uuid='1')], 'id123')
         internal_event = internal_events.EventCreatedEvent(event.uuid)
         RepositoryLocator.events().add(event)
 
@@ -64,3 +64,35 @@ class OnEventCreatedTestCase(unittest.TestCase):
         self.assertIsNotNone(document)
         self.assertEqual('id123', document['uuid'])
         self.assertEqual('cool event', document['name'])
+        self.assertEqual('Kim', document['participants'][0]['name'])
+
+
+class OnPurchaseAddedTestCase(unittest.TestCase):
+    with_memory_repository = WithMemoryRepository()
+    with_mongomock = WithMongoMock()
+
+    def setUp(self):
+        self.with_memory_repository.before()
+        self.with_mongomock.before()
+        handlers.DB = self.with_mongomock.db
+        self.handler = handlers.OnPurchaseAddedUpdateView()
+
+    def tearDown(self):
+        self.with_memory_repository.after()
+        self.with_mongomock.after()
+        handlers.DB = None
+
+    def test_the_event_details_is_updated(self):
+        self.with_mongomock.collection('eventdetails_view').insert({
+            'uuid': 'id123', 'name': 'cool event', 'purchases': [],
+            'participants': [{'id': '1', 'name': 'Kim', 'share': 1, 'email': ''}]
+        })
+        event = Event('cool event', [Participant('Kim', 1, uuid='1')], 'id123')
+        event.purchases.append(Purchase('1', 1, ['1'], 'label'))
+        RepositoryLocator.events().add(event)
+        internal_event = internal_events.PurchaseAddedEvent(event.uuid)
+
+        self.handler.execute(internal_event)
+
+        document = self.with_mongomock.collection('eventdetails_view').find_one()
+        self.assertEqual('label', document['purchases'][0]['label'])

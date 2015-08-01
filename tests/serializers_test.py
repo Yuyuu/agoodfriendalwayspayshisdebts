@@ -33,7 +33,7 @@ class EventSerializerTestCase(unittest.TestCase):
         bob = events.Participant('Bob', 1)
         bob_id = str(bob.id)
         event = events.Event('Cool event', [bob])
-        event.add_purchase(events.Purchase(bob.id, 14, [bob.id], 'Errands'))
+        event.purchases.append(events.Purchase(bob.id, 14, [bob.id], 'Errands'))
 
         expected_result = {
             'id': str(event.uuid),

@@ -1,7 +1,7 @@
 from uuid import UUID
 import abc
 
-from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
+from locator import RepositoryLocator
 import events
 from errors import InvalidUUIDError, EntityNotFoundError
 from calculation import DebtsCalculator
@@ -38,15 +38,10 @@ class CreateEventCommandHandler(Handler):
 
 class AddPurchaseCommandHandler(Handler):
     def execute(self, command):
-        event = find_event_or_raise_error(command.event_id)
+        event = RepositoryLocator.events().get(command.event_id)
         participants_ids = self.__to_uuids(command.participants_ids) if command.participants_ids\
             else self.__get_all_event_participants_ids(event)
-        purchase = events.Purchase(
-            UUID(command.purchaser_id, version=4),
-            command.amount,
-            participants_ids,
-            command.label
-        )
+        purchase = events.Purchase(command.purchaser_id, command.amount, participants_ids, command.label)
         purchase.description = command.description
 
         event.add_purchase(purchase)

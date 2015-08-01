@@ -41,6 +41,9 @@ class WithEventBus(Rule):
     def after(self):
         EventBusLocator.initialize(None)
 
+    def bus(self):
+        return self.fake_event_bus
+
 
 class WithMemoryRepository(Rule):
     def before(self):
