@@ -63,11 +63,6 @@ class AddPurchaseCommandHandler(Handler):
         return map((lambda participant: participant.id), event.participants)
 
 
-class SearchEventDetailsHandler(Handler):
-    def execute(self, search):
-        return find_event_or_raise_error(search.event_id)
-
-
 class SearchEventDebtsResultHandler(Handler):
     def execute(self, search):
         event = find_event_or_raise_error(search.event_id)

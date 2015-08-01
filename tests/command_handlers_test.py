@@ -83,39 +83,6 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
         self.assertEqual(2, len(entity.purchases[0].participants_ids))
 
 
-class EventDetailsSearchHandlerTestCase(unittest.TestCase):
-    with_memory_repository = WithMemoryRepository()
-
-    def setUp(self):
-        self.with_memory_repository.before()
-
-    def tearDown(self):
-        self.with_memory_repository.after()
-
-    def test_can_return_an_event_and_its_properties(self):
-        event = fake_event()
-        event.add_participant(events.Participant('Joe', '1'))
-        RepositoryLocator.events().entities[event.uuid] = event
-
-        result = command_handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)\
-            .execute(searches.EventDetailsSearch(str(event.uuid)))
-
-        self.assertEqual(result.uuid, event.uuid)
-        self.assertEqual(result.name, 'Cool event')
-        self.assertEqual(result.participants[0].name, 'Kim')
-        self.assertListEqual(result.purchases, [])
-
-    def test_an_error_is_raised_if_the_given_uuid_is_not_valid(self):
-        handler = command_handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)
-
-        self.assertRaises(InvalidUUIDError, handler.execute, searches.EventDetailsSearch("hello"))
-
-    def test_an_error_is_raised_if_the_event_does_not_exist(self):
-        handler = command_handlers.SearchEventDetailsHandler(searches.EventDetailsSearch)
-
-        self.assertRaises(EntityNotFoundError, handler.execute, searches.EventDetailsSearch(str(uuid4())))
-
-
 class SearchEventDebtsResultHandlerTestCase(unittest.TestCase):
     with_memory_repository = WithMemoryRepository()
 

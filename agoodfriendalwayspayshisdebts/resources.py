@@ -1,3 +1,5 @@
+from uuid import UUID
+
 import flask
 import searches
 import commands
@@ -37,7 +39,7 @@ class EventResource:
         self.search_bus = search_bus
 
     def represent(self, event_id):
-        search = searches.EventDetailsSearch(event_id)
+        search = searches.EventDetailsSearch(UUID(hex=event_id, version=4))
         result = self.search_bus.send_and_wait_response(search)
         if not result.is_success():
             raise result.error

@@ -4,7 +4,38 @@ from rules import WithMemoryRepository, WithMongoMock
 import agoodfriendalwayspayshisdebts.event_search_handlers as handlers
 from agoodfriendalwayspayshisdebts.events import Event
 from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
-import agoodfriendalwayspayshisdebts.internal_events as internal_events
+from agoodfriendalwayspayshisdebts.errors import EntityNotFoundError
+from agoodfriendalwayspayshisdebts import internal_events, searches
+
+
+class EventDetailsSearchHandlerTestCase(unittest.TestCase):
+    with_mongomock = WithMongoMock()
+
+    def setUp(self):
+        self.with_mongomock.before()
+        handlers.DB = self.with_mongomock.db
+
+    def tearDown(self):
+        self.with_mongomock.after()
+        handlers.DB = None
+
+    def test_can_return_an_event_and_its_properties(self):
+        self.with_mongomock.collection('eventdetails_view').insert({
+            'uuid': 'id123', 'name': 'cool event', 'purchases': [],
+            'participants': [{'id': '1', 'name': 'Kim', 'share': 1, 'email': ''}]
+        })
+
+        event = handlers.SearchEventDetailsHandler().execute(searches.EventDetailsSearch('id123'))
+
+        self.assertEqual('id123', event.uuid)
+        self.assertEqual('cool event', event.name)
+        self.assertEqual('Kim', event.participants[0].name)
+        self.assertListEqual([], event.purchases)
+
+    def test_an_error_is_raised_if_the_event_does_not_exist(self):
+        handler = handlers.SearchEventDetailsHandler()
+
+        self.assertRaises(EntityNotFoundError, handler.execute, searches.EventDetailsSearch('hello'))
 
 
 class OnEventCreatedTestCase(unittest.TestCase):
