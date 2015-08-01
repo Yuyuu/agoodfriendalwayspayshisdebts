@@ -128,12 +128,16 @@ class EventBus:
         return EventBusLocator.get_instance()
 
 
+class InitializedThreadLocal(threading.local):
+    events = Queue.Queue()
+
+
 class AsynchronousEventBus(Bus, EventBus, BusSynchronization):
+    local_thread = InitializedThreadLocal()
+
     def __init__(self, synchronizations, handlers):
         Bus.__init__(self, synchronizations, handlers)
         BusSynchronization.__init__(self, GLOBAL_SYNCHRONIZATION)
-        self.local_thread = threading.local()
-        self.local_thread.events = Queue.Queue()
 
     def after_execution(self):
         logger.debug('Propagating events')
