@@ -35,7 +35,7 @@ class EventsResource(Resource):
         return http_response
 
 
-class EventResource:
+class EventResource(Resource):
     def __init__(self, search_bus):
         self.search_bus = search_bus
 
