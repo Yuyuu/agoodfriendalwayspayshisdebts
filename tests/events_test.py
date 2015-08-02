@@ -74,7 +74,7 @@ class EventTestCase(unittest.TestCase):
 
     def test_generates_an_uuid_upon_creation_if_none_is_provided(self):
         event = events.Event('', [])
-        self.assertIsNotNone(event.uuid)
+        self.assertIsNotNone(event.id)
 
     def test_has_name(self):
         name = 'Cool event'
@@ -117,7 +117,7 @@ class EventTestCase(unittest.TestCase):
         event = events.Event('Cool event', [bob, kim])
         event.purchases.append(events.Purchase(bob.id, 10, [bob.id], 'Gas'))
         expected_event = {
-            'uuid': event.uuid,
+            '_id': event.id,
             'name': 'Cool event',
             'participants': [
                 {'id': bob.id, 'name': 'Bob', 'email': '', 'share': 1},

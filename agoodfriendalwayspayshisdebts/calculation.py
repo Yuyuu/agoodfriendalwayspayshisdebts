@@ -64,7 +64,7 @@ class DebtsCalculator:
         self.__mitigate_individual_debts()
         self.__calculate_mitigated_total_debt()
 
-        return CalculationResult(self.event.uuid, self.results)
+        return CalculationResult(self.event.id, self.results)
 
     def __split_purchase_between_participants(self, purchase):
         total_purchase_shares = self.__calculate_total_purchase_shares(purchase)

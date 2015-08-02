@@ -21,13 +21,13 @@ class EventDetailsSearchHandlerTestCase(unittest.TestCase):
 
     def test_can_return_an_event_and_its_properties(self):
         self.with_mongomock.collection('eventdetails_view').insert({
-            'uuid': 'id123', 'name': 'cool event', 'purchases': [],
+            '_id': 'id123', 'name': 'cool event', 'purchases': [],
             'participants': [{'id': '1', 'name': 'Kim', 'share': 1, 'email': ''}]
         })
 
         event = handlers.SearchEventDetailsHandler().execute(searches.EventDetailsSearch('id123'))
 
-        self.assertEqual('id123', event.uuid)
+        self.assertEqual('id123', event.id)
         self.assertEqual('cool event', event.name)
         self.assertEqual('Kim', event.participants[0].name)
         self.assertListEqual([], event.purchases)
@@ -87,14 +87,14 @@ class OnEventCreatedTestCase(unittest.TestCase):
 
     def test_can_create_the_event_details(self):
         event = Event('cool event', [Participant('Kim', 1, uuid='1')], 'id123')
-        internal_event = internal_events.EventCreatedEvent(event.uuid)
+        internal_event = internal_events.EventCreatedEvent(event.id)
         RepositoryLocator.events().add(event)
 
         self.handler.execute(internal_event)
 
         document = self.with_mongomock.collection('eventdetails_view').find_one()
         self.assertIsNotNone(document)
-        self.assertEqual('id123', document['uuid'])
+        self.assertEqual('id123', document['_id'])
         self.assertEqual('cool event', document['name'])
         self.assertEqual('Kim', document['participants'][0]['name'])
 
@@ -116,13 +116,13 @@ class OnPurchaseAddedUpdateViewTestCase(unittest.TestCase):
 
     def test_the_event_details_is_updated(self):
         self.with_mongomock.collection('eventdetails_view').insert({
-            'uuid': 'id123', 'name': 'cool event', 'purchases': [],
+            '_id': 'id123', 'name': 'cool event', 'purchases': [],
             'participants': [{'id': '1', 'name': 'Kim', 'share': 1, 'email': ''}]
         })
         event = Event('cool event', [Participant('Kim', 1, uuid='1')], 'id123')
         event.purchases.append(Purchase('1', 1, ['1'], 'label'))
         RepositoryLocator.events().add(event)
-        internal_event = internal_events.PurchaseAddedEvent(event.uuid)
+        internal_event = internal_events.PurchaseAddedEvent(event.id)
 
         self.handler.execute(internal_event)
 
@@ -151,7 +151,7 @@ class OnPurchaseAddedUpdateResultTestCase(unittest.TestCase):
         event = Event('cool event', [Participant('Kim', 1, uuid='1'), Participant('Lea', 1, uuid='2')], 'id123')
         event.purchases.append(Purchase('1', 1, ['1', '2'], 'label'))
         RepositoryLocator.events().add(event)
-        internal_event = internal_events.PurchaseAddedEvent(event.uuid)
+        internal_event = internal_events.PurchaseAddedEvent(event.id)
 
         self.handler.execute(internal_event)
 

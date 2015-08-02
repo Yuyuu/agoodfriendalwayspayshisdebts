@@ -49,7 +49,7 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
         self.with_memory_repository.before()
         self.with_event_bus.before()
         self.event = fake_event()
-        RepositoryLocator.events().entities[self.event.uuid] = self.event
+        RepositoryLocator.events().entities[self.event.id] = self.event
 
     def tearDown(self):
         self.with_memory_repository.after()
@@ -59,13 +59,13 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
         bob = events.Participant('Bob', 1)
         self.event.add_participant(bob)
         handler = command_handlers.AddPurchaseCommandHandler()
-        command = commands.AddPurchaseCommand(self.event.uuid, self.event.participants[0].id, 'Gas', 10)
+        command = commands.AddPurchaseCommand(self.event.id, self.event.participants[0].id, 'Gas', 10)
         command.participants_ids = [str(bob.id)]
         command.description = '10km at 1e/km'
 
         handler.execute(command)
 
-        entity = RepositoryLocator.events().entities[self.event.uuid]
+        entity = RepositoryLocator.events().entities[self.event.id]
 
         self.assertEqual(self.event.participants[0].id, entity.purchases[0].purchaser_id)
         self.assertEqual('Gas', entity.purchases[0].label)
@@ -74,12 +74,12 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
         self.assertEqual('10km at 1e/km', entity.purchases[0].description)
 
     def test_the_purchase_is_shared_between_all_participants_if_none_is_specified(self):
-        RepositoryLocator.events().entities[self.event.uuid].participants.append(events.Participant('Bob', 1))
+        RepositoryLocator.events().entities[self.event.id].participants.append(events.Participant('Bob', 1))
         handler = command_handlers.AddPurchaseCommandHandler()
-        command = commands.AddPurchaseCommand(self.event.uuid, self.event.participants[0].id, 'Gas', 10)
+        command = commands.AddPurchaseCommand(self.event.id, self.event.participants[0].id, 'Gas', 10)
 
         handler.execute(command)
 
-        entity = RepositoryLocator.events().entities[self.event.uuid]
+        entity = RepositoryLocator.events().entities[self.event.id]
 
         self.assertEqual(2, len(entity.purchases[0].participants_ids))

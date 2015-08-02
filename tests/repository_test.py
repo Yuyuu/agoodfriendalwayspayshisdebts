@@ -6,17 +6,18 @@ from rules import WithMongoMock
 
 
 class FakeEntity:
-    def __init__(self, uuid=uuid4()):
-        self.uuid = uuid
+    def __init__(self, _id=uuid4(), prop=None):
+        self.id = _id
+        self.prop = prop
 
     def to_bson(self):
-        return {'uuid': self.uuid}
+        return {'_id': self.id, 'prop': self.prop}
 
 
 class FakeEntityRepository(repository.MongoRepository):
-    def get(self, uuid):
-        element = self.collection.find_one({'uuid': uuid})
-        return FakeEntity(element['uuid'])
+    def get(self, _id):
+        element = self.collection.find_one({'_id': _id})
+        return FakeEntity(element['_id'], element['prop'])
 
 
 class MongoRepositoryTestCase(unittest.TestCase):
@@ -36,25 +37,24 @@ class MongoRepositoryTestCase(unittest.TestCase):
 
         found_element = self.collection.find_one()
 
-        self.assertEqual(entity.uuid, found_element['uuid'])
+        self.assertEqual(entity.id, found_element['_id'])
 
     def test_can_retrieve_an_entity(self):
         entity = FakeEntity()
         self.repository.add(entity)
 
-        found_entity = self.repository.get(entity.uuid)
+        found_entity = self.repository.get(entity.id)
 
         self.assertIsNotNone(found_entity)
 
     def test_can_update_an_entity(self):
-        initial_uuid = uuid4()
-        entity = FakeEntity(initial_uuid)
+        entity = FakeEntity()
         self.repository.add(entity)
 
-        entity.uuid = uuid4()
-        self.repository.update(initial_uuid, entity)
+        entity.prop = 'updated'
+        self.repository.update(entity.id, entity)
 
-        self.assertIsNotNone(self.repository.get(entity.uuid))
+        self.assertEqual('updated', self.repository.get(entity.id).prop)
 
 
 class EventRepositoryTestCase(unittest.TestCase):
@@ -89,9 +89,9 @@ class EventRepositoryTestCase(unittest.TestCase):
         event.purchases.append(events.Purchase(self.kim.id, 5, [self.kim.id], 'Shopping'))
         self.repository.add(event)
 
-        found_event = self.repository.get(event.uuid)
+        found_event = self.repository.get(event.id)
 
-        self.assertEqual(event.uuid, found_event.uuid)
+        self.assertEqual(event.id, found_event.id)
         self.assertEqual('Cool event', found_event.name)
         self.assertEqual(self.kim.id, found_event.participants[0].id)
         self.assertEqual('Kim', found_event.participants[0].name)
@@ -109,7 +109,7 @@ class EventRepositoryTestCase(unittest.TestCase):
         self.repository.add(event)
 
         event.name = 'Weekend at the beach'
-        self.repository.update(event.uuid, event)
+        self.repository.update(event.id, event)
 
-        updated_event = self.repository.get(event.uuid)
+        updated_event = self.repository.get(event.id)
         self.assertEqual('Weekend at the beach', updated_event.name)

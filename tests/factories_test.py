@@ -6,11 +6,11 @@ from agoodfriendalwayspayshisdebts import factories
 
 class EventFactoryTestCase(unittest.TestCase):
     def test_can_create_an_event_from_a_document(self):
-        event_uuid = uuid4()
+        event_id = uuid4()
         lea_id = uuid4()
         kim_id = uuid4()
         document = {
-            'uuid': event_uuid,
+            '_id': event_id,
             'name': 'Cool event',
             'participants': [
                 {'id': lea_id, 'name': 'Lea', 'email': '', 'share': 1},
@@ -36,7 +36,7 @@ class EventFactoryTestCase(unittest.TestCase):
 
         event = factories.EventFactory.create_event_from_document(document)
 
-        self.assertEqual(event_uuid, event.uuid)
+        self.assertEqual(event_id, event.id)
         self.assertEqual('Cool event', event.name)
         self.assertEqual(lea_id, event.participants[0].id)
         self.assertEqual('Lea', event.participants[0].name)

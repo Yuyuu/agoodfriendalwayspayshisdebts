@@ -2,7 +2,7 @@ class EventSerializer(object):
     @staticmethod
     def serialize(event):
         return {
-            'id': str(event.uuid),
+            'id': str(event.id),
             'name': event.name,
             'participants': map(ParticipantSerializer.serialize, event.participants),
             'purchases': map(PurchaseSerializer.serialize, event.purchases)

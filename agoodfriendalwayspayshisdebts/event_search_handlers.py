@@ -17,7 +17,7 @@ class SearchEventDetailsHandler(Handler):
         super(SearchEventDetailsHandler, self).__init__(searches.EventDetailsSearch)
 
     def execute(self, search):
-        event_details_document = DB['eventdetails_view'].find_one({'uuid': search.event_id})
+        event_details_document = DB['eventdetails_view'].find_one({'_id': search.event_id})
         if event_details_document is None:
             raise EntityNotFoundError()
 
@@ -63,7 +63,7 @@ class OnPurchaseAddedUpdateView(EventHandler):
 
     def execute_event(self, event):
         updated_event = RepositoryLocator.events().get(event.event_id)
-        DB['eventdetails_view'].update({'uuid': updated_event.uuid}, updated_event.to_bson())
+        DB['eventdetails_view'].update({'_id': updated_event.id}, updated_event.to_bson())
 
 
 class OnPurchaseAddedUpdateResult(EventHandler):

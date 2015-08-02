@@ -36,7 +36,7 @@ class EventSerializerTestCase(unittest.TestCase):
         event.purchases.append(events.Purchase(bob.id, 14, [bob.id], 'Errands'))
 
         expected_result = {
-            'id': str(event.uuid),
+            'id': str(event.id),
             'name': 'Cool event',
             'participants': [{'id': bob_id, 'name': 'Bob', 'share': 1, 'email': ''}],
             'purchases': [{

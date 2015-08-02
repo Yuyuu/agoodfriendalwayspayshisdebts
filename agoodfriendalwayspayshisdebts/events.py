@@ -7,7 +7,7 @@ class Event:
     def __init__(self, name, participants, uuid=None):
         if uuid is None:
             uuid = uuid4()
-        self.uuid = uuid
+        self.id = uuid
         self.name = name
         self.participants = participants
         self.purchases = []
@@ -17,7 +17,7 @@ class Event:
 
     def add_purchase(self, purchase):
         self.purchases.append(purchase)
-        bus.EventBus.get_instance().publish(PurchaseAddedEvent(self.uuid))
+        bus.EventBus.get_instance().publish(PurchaseAddedEvent(self.id))
 
     def __get_bson_participants(self):
         return map((lambda participant: participant.to_bson()), self.participants)
@@ -27,7 +27,7 @@ class Event:
 
     def to_bson(self):
         return {
-            'uuid': self.uuid,
+            '_id': self.id,
             'name': self.name,
             'participants': self.__get_bson_participants(),
             'purchases': self.__get_bson_purchases()
