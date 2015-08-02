@@ -38,6 +38,38 @@ class EventDetailsSearchHandlerTestCase(unittest.TestCase):
         self.assertRaises(EntityNotFoundError, handler.execute, searches.EventDetailsSearch('hello'))
 
 
+class EventDebtsResultSearchHandler(unittest.TestCase):
+    with_mongomock = WithMongoMock()
+
+    def setUp(self):
+        self.with_mongomock.before()
+        handlers.DB = self.with_mongomock.db
+
+    def tearDown(self):
+        self.with_mongomock.after()
+        handlers.DB = None
+
+    def test_can_return_an_event_debts_result(self):
+        self.with_mongomock.collection('eventresult_view').insert({
+            'event_id': 'id123', 'detail': {
+                '123': {'total_spent': 1, 'total_debt': 5.4, 'debts_detail': {'456': 5.4}},
+                '456': {'total_spent': 5, 'total_debt': 0, 'debts_detail': {'456': 0}}
+            }
+        })
+
+        debts_result = handlers.SearchEventDebtsResultHandler().execute(searches.EventDebtsResultSearch('id123'))
+
+        self.assertEqual(2, len(debts_result.participants_results))
+        self.assertEqual('123', debts_result.participants_results[0][0])
+        self.assertEqual(5.4, debts_result.participants_results[0][1]['debts_detail']['456'])
+        self.assertEqual(5, debts_result.participants_results[1][1]['total_spent'])
+
+    def test_an_error_is_raised_if_the_event_does_not_exist(self):
+        handler = handlers.SearchEventDetailsHandler()
+
+        self.assertRaises(EntityNotFoundError, handler.execute, searches.EventDetailsSearch('hello'))
+
+
 class OnEventCreatedTestCase(unittest.TestCase):
     with_memory_repository = WithMemoryRepository()
     with_mongomock = WithMongoMock()

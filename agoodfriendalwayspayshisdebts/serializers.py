@@ -1,4 +1,4 @@
-class EventSerializer:
+class EventSerializer(object):
     @staticmethod
     def serialize(event):
         return {
@@ -9,7 +9,7 @@ class EventSerializer:
         }
 
 
-class ParticipantSerializer:
+class ParticipantSerializer(object):
     @staticmethod
     def serialize(participant):
         return {
@@ -20,7 +20,7 @@ class ParticipantSerializer:
         }
 
 
-class PurchaseSerializer:
+class PurchaseSerializer(object):
     @staticmethod
     def serialize(purchase):
         return {
@@ -32,20 +32,20 @@ class PurchaseSerializer:
         }
 
 
-class CalculationResultSerializer:
+class DebtsResultDetailSerializer(object):
     @staticmethod
-    def serialize(result):
+    def serialize(debts_result_detail):
         return {
-            str(participant_id): CalculationResultSerializer.__serialize_participant_result(participant_result)
-            for participant_id, participant_result in result.results_per_participant.iteritems()
+            participant_id: DebtsResultDetailSerializer.__serialize_result(result)
+            for (participant_id, result) in debts_result_detail.participants_results
         }
 
     @staticmethod
-    def __serialize_participant_result(participant_result):
+    def __serialize_result(result):
         return {
-            'totalSpent': participant_result.total_spent,
-            'totalDebt': participant_result.total_debt,
+            'totalSpent': result['total_spent'],
+            'totalDebt': result['total_debt'],
             'debtsDetail': {
-                str(creditor_id): amount for creditor_id, amount in participant_result.debts_detail.iteritems()
+                creditor_id: amount for creditor_id, amount in result['debts_detail'].iteritems()
             }
         }

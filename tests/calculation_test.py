@@ -130,3 +130,12 @@ class CalculationResultTestCase(unittest.TestCase):
         }}
 
         self.assertDictEqual(result.to_bson(), expected_result)
+
+
+class DebtsResultDetailTestCase(unittest.TestCase):
+    def test_can_add_a_result(self):
+        debts_result = calculation.DebtsResultDetail()
+        debts_result.add_result('123', {'key': 'hello'})
+
+        self.assertEqual('123', debts_result.participants_results[0][0])
+        self.assertEqual('hello', debts_result.participants_results[0][1]['key'])

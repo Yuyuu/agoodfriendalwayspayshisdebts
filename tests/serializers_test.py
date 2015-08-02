@@ -53,46 +53,21 @@ class EventSerializerTestCase(unittest.TestCase):
 
 class CalculationResultSerializerTestCase(unittest.TestCase):
     def test_the_calculation_result_is_properly_serialized(self):
-        kim = events.Participant('Kim', 1)
-        kim_id_as_string = str(kim.id)
-        joe = events.Participant('Joe', 1)
-        joe_id_as_string = str(joe.id)
-        lea = events.Participant('Lea', 1)
-        lea_id_as_string = str(lea.id)
-
-        kim_result = calculation.ParticipantResult()
-        kim_result.total_spent = 10
-        kim_result.total_debt = 5
-        kim_result.debts_detail = {joe.id: 0, lea.id: 5}
-
-        joe_result = calculation.ParticipantResult()
-        joe_result.total_spent = 6
-        joe_result.total_debt = 7
-        joe_result.debts_detail = {kim.id: 2, lea.id: 5}
-
-        lea_result = calculation.ParticipantResult()
-        lea_result.total_spent = 15
-        lea_result.total_debt = 0
-        lea_result.debts_detail = {kim.id: 0, joe.id: 0}
-
-        result = calculation.CalculationResult('id123', {kim.id: kim_result, joe.id: joe_result, lea.id: lea_result})
+        debts_result = calculation.DebtsResultDetail()
+        debts_result.add_result('123', {'total_spent': 3, 'total_debt': 1.3, 'debts_detail': {'456': 2.4}})
+        debts_result.add_result('456', {'total_spent': 6, 'total_debt': 0, 'debts_detail': {'123': 0}})
 
         expected_result = {
-            kim_id_as_string: {
-                'totalSpent': 10,
-                'totalDebt': 5,
-                'debtsDetail': {joe_id_as_string: 0, lea_id_as_string: 5}
+            '123': {
+                'totalSpent': 3,
+                'totalDebt': 1.3,
+                'debtsDetail': {'456': 2.4}
             },
-            joe_id_as_string: {
+            '456': {
                 'totalSpent': 6,
-                'totalDebt': 7,
-                'debtsDetail': {kim_id_as_string: 2, lea_id_as_string: 5}
-            },
-            lea_id_as_string: {
-                'totalSpent': 15,
                 'totalDebt': 0,
-                'debtsDetail': {kim_id_as_string: 0, joe_id_as_string: 0}
-            }
+                'debtsDetail': {'123': 0}
+            },
         }
 
-        self.assertDictEqual(expected_result, serializers.CalculationResultSerializer.serialize(result))
+        self.assertDictEqual(expected_result, serializers.DebtsResultDetailSerializer.serialize(debts_result))

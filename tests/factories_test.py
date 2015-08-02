@@ -47,3 +47,18 @@ class EventFactoryTestCase(unittest.TestCase):
         self.assertEqual(10, event.purchases[0].amount)
         self.assertListEqual([lea_id], event.purchases[1].participants_ids)
         self.assertEqual('10 cards at 1euro', event.purchases[1].description)
+
+
+class DebtsResultDetailFactoryTestCase(unittest.TestCase):
+    def test_can_create_a_debts_result_detail_from_a_document(self):
+        document = {'_id': 'an_id', 'event_id': 'id123', 'detail': {
+            '123': {'total_spent': 1, 'total_debt': 1, 'debts_detail': {'456': 1}},
+            '456': {'total_spent': 1, 'total_debt': 3, 'debts_detail': {'123': 1.6}}
+        }}
+
+        debts_result_detail = factories.ResultDetailFactory.create_from_document(document)
+
+        self.assertEqual(2, len(debts_result_detail.participants_results))
+        self.assertEqual('123', debts_result_detail.participants_results[0][0])
+        self.assertEqual(3, debts_result_detail.participants_results[1][1]['total_debt'])
+        self.assertEqual(1.6, debts_result_detail.participants_results[1][1]['debts_detail']['123'])

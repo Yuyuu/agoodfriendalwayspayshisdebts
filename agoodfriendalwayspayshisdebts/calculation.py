@@ -101,3 +101,11 @@ class DebtsCalculator:
 
     def __participant_2_tuple_combinations(self):
         return combinations(self.event.participants, 2)
+
+
+class DebtsResultDetail(object):
+    def __init__(self):
+        self.participants_results = []
+
+    def add_result(self, participant_id, participant_results):
+        self.participants_results.append((participant_id, participant_results))

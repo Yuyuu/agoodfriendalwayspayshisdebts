@@ -77,10 +77,12 @@ class ResultResource(Resource):
         self.search_bus = search_bus
 
     def calculate(self, event_id):
-        search = searches.EventDebtsResultSearch(event_id)
+        search = searches.EventDebtsResultSearch(UUID(hex=event_id, version=4))
+
         result = self.search_bus.send_and_wait_response(search)
         if not result.is_success():
             raise result.error
-        debt_result = result.response
-        http_response = flask.jsonify(serializers.CalculationResultSerializer.serialize(debt_result))
+
+        debts_result = result.response
+        http_response = flask.jsonify(serializers.DebtsResultDetailSerializer.serialize(debts_result))
         return http_response

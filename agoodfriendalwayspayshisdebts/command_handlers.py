@@ -4,7 +4,6 @@ import abc
 from locator import RepositoryLocator
 import events
 from errors import InvalidUUIDError, EntityNotFoundError
-from calculation import DebtsCalculator
 from bus import EventBus
 from internal_events import EventCreatedEvent
 
@@ -56,12 +55,6 @@ class AddPurchaseCommandHandler(Handler):
     @staticmethod
     def __get_all_event_participants_ids(event):
         return map((lambda participant: participant.id), event.participants)
-
-
-class SearchEventDebtsResultHandler(Handler):
-    def execute(self, search):
-        event = find_event_or_raise_error(search.event_id)
-        return DebtsCalculator(event).calculate()
 
 
 def find_event_or_raise_error(uuid_to_parse):

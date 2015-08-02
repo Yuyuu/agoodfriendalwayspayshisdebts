@@ -1,7 +1,8 @@
 import events
+from calculation import DebtsResultDetail
 
 
-class EventFactory:
+class EventFactory(object):
     @staticmethod
     def create_event_from_document(document):
         participants = map(EventFactory.__create_participants, document['participants'])
@@ -28,3 +29,12 @@ class EventFactory:
         )
         purchase.description = bson_purchase['description']
         return purchase
+
+
+class ResultDetailFactory(object):
+    @staticmethod
+    def create_from_document(document):
+        debts_result_detail = DebtsResultDetail()
+        for participant_id, participant_debts in document['detail'].iteritems():
+            debts_result_detail.add_result(participant_id, participant_debts)
+        return debts_result_detail

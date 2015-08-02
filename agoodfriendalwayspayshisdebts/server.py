@@ -3,7 +3,6 @@ import flask
 import bus
 import command_handlers as ch
 import event_search_handlers as esh
-import searches
 import commands
 import validators
 
@@ -29,6 +28,6 @@ class Server(flask.Flask):
     def configure_searches(self):
         search_handlers = [
             esh.SearchEventDetailsHandler(),
-            ch.SearchEventDebtsResultHandler(searches.EventDebtsResultSearch)
+            esh.SearchEventDebtsResultHandler()
         ]
         self.search_bus = bus.SearchBus(search_handlers)
