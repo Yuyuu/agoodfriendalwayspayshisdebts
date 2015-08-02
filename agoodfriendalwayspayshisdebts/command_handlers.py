@@ -3,7 +3,6 @@ import abc
 
 from locator import RepositoryLocator
 import events
-from errors import InvalidUUIDError, EntityNotFoundError
 from bus import EventBus
 from internal_events import EventCreatedEvent
 import commands
@@ -62,15 +61,3 @@ class AddPurchaseCommandHandler(Handler):
     @staticmethod
     def __get_all_event_participants_ids(event):
         return map((lambda participant: participant.id), event.participants)
-
-
-def find_event_or_raise_error(id_to_parse):
-    try:
-        event_id = UUID(hex=id_to_parse, version=4)
-    except ValueError:
-        raise InvalidUUIDError()
-
-    event = RepositoryLocator.events().get(event_id)
-    if event is None:
-        raise EntityNotFoundError()
-    return event

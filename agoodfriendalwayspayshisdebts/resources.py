@@ -4,6 +4,7 @@ import flask
 import searches
 import commands
 import serializers
+from errors import InvalidUUIDError
 
 
 class Resource(object):
@@ -39,10 +40,12 @@ class EventResource:
         self.search_bus = search_bus
 
     def represent(self, event_id):
-        search = searches.EventDetailsSearch(UUID(hex=event_id, version=4))
+        search = searches.EventDetailsSearch(parse_uuid_or_raise_error(event_id))
+
         result = self.search_bus.send_and_wait_response(search)
         if not result.is_success():
             raise result.error
+
         event = result.response
         http_response = flask.jsonify(serializers.EventSerializer.serialize(event))
         return http_response
@@ -54,8 +57,8 @@ class PurchasesResource(Resource):
 
     def add(self, event_id):
         command = commands.AddPurchaseCommand(
-            UUID(hex=event_id, version=4),
-            UUID(hex=self._get_data('purchaserId'), version=4),
+            parse_uuid_or_raise_error(event_id),
+            parse_uuid_or_raise_error(self._get_data('purchaserId')),
             self._get_data('label'),
             self._get_data('amount')
         )
@@ -77,7 +80,7 @@ class ResultResource(Resource):
         self.search_bus = search_bus
 
     def calculate(self, event_id):
-        search = searches.EventDebtsResultSearch(UUID(hex=event_id, version=4))
+        search = searches.EventDebtsResultSearch(parse_uuid_or_raise_error(event_id))
 
         result = self.search_bus.send_and_wait_response(search)
         if not result.is_success():
@@ -86,3 +89,10 @@ class ResultResource(Resource):
         debts_result = result.response
         http_response = flask.jsonify(serializers.DebtsResultDetailSerializer.serialize(debts_result))
         return http_response
+
+
+def parse_uuid_or_raise_error(uuid_to_parse):
+    try:
+        return UUID(hex=uuid_to_parse, version=4)
+    except ValueError:
+        raise InvalidUUIDError()
