@@ -1,7 +1,7 @@
 import unittest
 from uuid import uuid4
 
-from agoodfriendalwayspayshisdebts import repository, events
+from agoodfriendalwayspayshisdebts import repository, model
 from rules import WithMongoMock
 
 
@@ -64,14 +64,14 @@ class EventRepositoryTestCase(unittest.TestCase):
         self.with_mongomock.before()
         self.collection = self.with_mongomock.collection('collection')
         self.repository = repository.EventRepository(self.collection)
-        self.kim = events.Participant('Kim', 1)
-        self.lea = events.Participant('Lea', 1)
+        self.kim = model.Participant('Kim', 1)
+        self.lea = model.Participant('Lea', 1)
 
     def tearDown(self):
         self.with_mongomock.after()
 
     def test_can_add_an_event(self):
-        event = events.Event('Cool event', [self.kim, self.lea])
+        event = model.Event('Cool event', [self.kim, self.lea])
         self.repository.add(event)
 
         found_event = self.collection.find_one()
@@ -85,8 +85,8 @@ class EventRepositoryTestCase(unittest.TestCase):
         self.assertEqual(0, len(found_event['purchases']))
 
     def test_can_retrieve_an_event(self):
-        event = events.Event('Cool event', [self.kim, self.lea])
-        event.purchases.append(events.Purchase(self.kim.id, 5, [self.kim.id], 'Shopping'))
+        event = model.Event('Cool event', [self.kim, self.lea])
+        event.purchases.append(model.Purchase(self.kim.id, 5, [self.kim.id], 'Shopping'))
         self.repository.add(event)
 
         found_event = self.repository.get(event.id)
@@ -105,7 +105,7 @@ class EventRepositoryTestCase(unittest.TestCase):
         self.assertEqual(5, found_event.purchases[0].amount)
 
     def test_can_update_an_event(self):
-        event = events.Event('Cool event', [self.kim, self.lea])
+        event = model.Event('Cool event', [self.kim, self.lea])
         self.repository.add(event)
 
         event.name = 'Weekend at the beach'

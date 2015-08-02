@@ -2,9 +2,9 @@ from uuid import UUID
 import abc
 
 from locator import RepositoryLocator
-import events
+import model
 from bus import EventBus
-from internal_events import EventCreatedEvent
+from events import EventCreatedEvent
 import commands
 
 
@@ -25,14 +25,14 @@ class CreateEventCommandHandler(Handler):
 
     def execute(self, command):
         participants = map(self.__create_participant_from_json, command.participants)
-        event = events.Event(command.name, participants)
+        event = model.Event(command.name, participants)
         RepositoryLocator.events().add(event)
         EventBus.get_instance().publish(EventCreatedEvent(event.id))
         return event.id
 
     @staticmethod
     def __create_participant_from_json(json_participant):
-        participant = events.Participant(json_participant['name'], json_participant['share'])
+        participant = model.Participant(json_participant['name'], json_participant['share'])
         if 'email' in json_participant and json_participant['email']:
             participant.email = json_participant['email']
         return participant
@@ -46,7 +46,7 @@ class AddPurchaseCommandHandler(Handler):
         event = RepositoryLocator.events().get(command.event_id)
         participants_ids = self.__to_uuids(command.participants_ids) if command.participants_ids\
             else self.__get_all_event_participants_ids(event)
-        purchase = events.Purchase(command.purchaser_id, command.amount, participants_ids, command.label)
+        purchase = model.Purchase(command.purchaser_id, command.amount, participants_ids, command.label)
         purchase.description = command.description
 
         event.add_purchase(purchase)

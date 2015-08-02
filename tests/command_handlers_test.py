@@ -2,12 +2,12 @@ import unittest
 from uuid import uuid4
 
 from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
-from agoodfriendalwayspayshisdebts import command_handlers, commands, events
+from agoodfriendalwayspayshisdebts import command_handlers, commands, model
 from rules import WithEventBus, WithMemoryRepository
 
 
 def fake_event(uuid=uuid4()):
-    event = events.Event('Cool event', [events.Participant('Kim', 1)], uuid)
+    event = model.Event('Cool event', [model.Participant('Kim', 1)], uuid)
     return event
 
 
@@ -56,7 +56,7 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
         self.with_event_bus.after()
 
     def test_the_purchase_is_added_to_the_repository(self):
-        bob = events.Participant('Bob', 1)
+        bob = model.Participant('Bob', 1)
         self.event.add_participant(bob)
         handler = command_handlers.AddPurchaseCommandHandler()
         command = commands.AddPurchaseCommand(self.event.id, self.event.participants[0].id, 'Gas', 10)
@@ -74,7 +74,7 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
         self.assertEqual('10km at 1e/km', entity.purchases[0].description)
 
     def test_the_purchase_is_shared_between_all_participants_if_none_is_specified(self):
-        RepositoryLocator.events().entities[self.event.id].participants.append(events.Participant('Bob', 1))
+        RepositoryLocator.events().entities[self.event.id].participants.append(model.Participant('Bob', 1))
         handler = command_handlers.AddPurchaseCommandHandler()
         command = commands.AddPurchaseCommand(self.event.id, self.event.participants[0].id, 'Gas', 10)
 

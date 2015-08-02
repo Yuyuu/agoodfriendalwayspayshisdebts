@@ -1,11 +1,11 @@
 import unittest
 
-from agoodfriendalwayspayshisdebts import events, serializers, calculation
+from agoodfriendalwayspayshisdebts import model, serializers, calculation
 
 
 class ParticipantSerializerTestCase(unittest.TestCase):
     def test_a_participant_is_properly_serialized(self):
-        participant = events.Participant('Bob', 1, 'bob@email.com')
+        participant = model.Participant('Bob', 1, 'bob@email.com')
 
         expected_result = {'id': str(participant.id), 'name': 'Bob', 'share': 1, 'email': 'bob@email.com'}
 
@@ -14,7 +14,7 @@ class ParticipantSerializerTestCase(unittest.TestCase):
 
 class PurchaseSerializerTestCase(unittest.TestCase):
     def test_a_purchase_is_properly_serialized(self):
-        purchase = events.Purchase(123, 14, [123, 456], 'Errands')
+        purchase = model.Purchase(123, 14, [123, 456], 'Errands')
         purchase.description = 'hello'
 
         expected_result = {
@@ -30,10 +30,10 @@ class PurchaseSerializerTestCase(unittest.TestCase):
 
 class EventSerializerTestCase(unittest.TestCase):
     def test_an_event_is_properly_serialized(self):
-        bob = events.Participant('Bob', 1)
+        bob = model.Participant('Bob', 1)
         bob_id = str(bob.id)
-        event = events.Event('Cool event', [bob])
-        event.purchases.append(events.Purchase(bob.id, 14, [bob.id], 'Errands'))
+        event = model.Event('Cool event', [bob])
+        event.purchases.append(model.Purchase(bob.id, 14, [bob.id], 'Errands'))
 
         expected_result = {
             'id': str(event.id),

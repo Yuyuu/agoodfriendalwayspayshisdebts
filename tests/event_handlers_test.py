@@ -1,73 +1,10 @@
 import unittest
 
 from rules import WithMemoryRepository, WithMongoMock
-import agoodfriendalwayspayshisdebts.event_search_handlers as handlers
-from agoodfriendalwayspayshisdebts.events import Event, Participant, Purchase
+import agoodfriendalwayspayshisdebts.event_handlers as handlers
+from agoodfriendalwayspayshisdebts.model import Event, Participant, Purchase
+from agoodfriendalwayspayshisdebts import events
 from agoodfriendalwayspayshisdebts.locator import RepositoryLocator
-from agoodfriendalwayspayshisdebts.errors import EntityNotFoundError
-from agoodfriendalwayspayshisdebts import internal_events, searches
-
-
-class EventDetailsSearchHandlerTestCase(unittest.TestCase):
-    with_mongomock = WithMongoMock()
-
-    def setUp(self):
-        self.with_mongomock.before()
-        handlers.DB = self.with_mongomock.db
-
-    def tearDown(self):
-        self.with_mongomock.after()
-        handlers.DB = None
-
-    def test_can_return_an_event_and_its_properties(self):
-        self.with_mongomock.collection('eventdetails_view').insert({
-            '_id': 'id123', 'name': 'cool event', 'purchases': [],
-            'participants': [{'id': '1', 'name': 'Kim', 'share': 1, 'email': ''}]
-        })
-
-        event = handlers.SearchEventDetailsHandler().execute(searches.EventDetailsSearch('id123'))
-
-        self.assertEqual('id123', event.id)
-        self.assertEqual('cool event', event.name)
-        self.assertEqual('Kim', event.participants[0].name)
-        self.assertListEqual([], event.purchases)
-
-    def test_an_error_is_raised_if_the_event_does_not_exist(self):
-        handler = handlers.SearchEventDetailsHandler()
-
-        self.assertRaises(EntityNotFoundError, handler.execute, searches.EventDetailsSearch('hello'))
-
-
-class EventDebtsResultSearchHandler(unittest.TestCase):
-    with_mongomock = WithMongoMock()
-
-    def setUp(self):
-        self.with_mongomock.before()
-        handlers.DB = self.with_mongomock.db
-
-    def tearDown(self):
-        self.with_mongomock.after()
-        handlers.DB = None
-
-    def test_can_return_an_event_debts_result(self):
-        self.with_mongomock.collection('eventresult_view').insert({
-            'event_id': 'id123', 'detail': {
-                '123': {'total_spent': 1, 'total_debt': 5.4, 'debts_detail': {'456': 5.4}},
-                '456': {'total_spent': 5, 'total_debt': 0, 'debts_detail': {'456': 0}}
-            }
-        })
-
-        debts_result = handlers.SearchEventDebtsResultHandler().execute(searches.EventDebtsResultSearch('id123'))
-
-        self.assertEqual(2, len(debts_result.participants_results))
-        self.assertEqual('123', debts_result.participants_results[0][0])
-        self.assertEqual(5.4, debts_result.participants_results[0][1]['debts_detail']['456'])
-        self.assertEqual(5, debts_result.participants_results[1][1]['total_spent'])
-
-    def test_an_error_is_raised_if_the_event_does_not_exist(self):
-        handler = handlers.SearchEventDetailsHandler()
-
-        self.assertRaises(EntityNotFoundError, handler.execute, searches.EventDetailsSearch('hello'))
 
 
 class OnEventCreatedTestCase(unittest.TestCase):
@@ -87,7 +24,7 @@ class OnEventCreatedTestCase(unittest.TestCase):
 
     def test_can_create_the_event_details(self):
         event = Event('cool event', [Participant('Kim', 1, uuid='1')], 'id123')
-        internal_event = internal_events.EventCreatedEvent(event.id)
+        internal_event = events.EventCreatedEvent(event.id)
         RepositoryLocator.events().add(event)
 
         self.handler.execute(internal_event)
@@ -122,7 +59,7 @@ class OnPurchaseAddedUpdateViewTestCase(unittest.TestCase):
         event = Event('cool event', [Participant('Kim', 1, uuid='1')], 'id123')
         event.purchases.append(Purchase('1', 1, ['1'], 'label'))
         RepositoryLocator.events().add(event)
-        internal_event = internal_events.PurchaseAddedEvent(event.id)
+        internal_event = events.PurchaseAddedEvent(event.id)
 
         self.handler.execute(internal_event)
 
@@ -151,7 +88,7 @@ class OnPurchaseAddedUpdateResultTestCase(unittest.TestCase):
         event = Event('cool event', [Participant('Kim', 1, uuid='1'), Participant('Lea', 1, uuid='2')], 'id123')
         event.purchases.append(Purchase('1', 1, ['1', '2'], 'label'))
         RepositoryLocator.events().add(event)
-        internal_event = internal_events.PurchaseAddedEvent(event.id)
+        internal_event = events.PurchaseAddedEvent(event.id)
 
         self.handler.execute(internal_event)
 

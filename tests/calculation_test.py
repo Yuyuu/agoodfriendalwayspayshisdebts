@@ -1,29 +1,29 @@
 import unittest
 
-from agoodfriendalwayspayshisdebts import calculation, events
+from agoodfriendalwayspayshisdebts import calculation, model
 
 
 class DebtsCalculatorTestCase(unittest.TestCase):
     def setUp(self):
-        self.participant_a = events.Participant('A', 1)
-        self.participant_bc = events.Participant('B & C', 2)
-        self.participant_d = events.Participant('D', 1)
-        self.participant_e = events.Participant('E', 1)
-        self.participant_fgh = events.Participant('f, G & H', 3)
+        self.participant_a = model.Participant('A', 1)
+        self.participant_bc = model.Participant('B & C', 2)
+        self.participant_d = model.Participant('D', 1)
+        self.participant_e = model.Participant('E', 1)
+        self.participant_fgh = model.Participant('f, G & H', 3)
 
     def test_can_calculate_the_total_amount_spent_by_each_participant(self):
         participants = [self.participant_a, self.participant_bc, self.participant_d]
-        event = events.Event(None, participants)
+        event = model.Event(None, participants)
         all_participants = map(lambda participant: participant.id, participants)
         event.purchases = [
-            events.Purchase(self.participant_a.id, 10.5, all_participants, None),
-            events.Purchase(self.participant_bc.id, 15, all_participants, None),
-            events.Purchase(self.participant_d.id, 20, all_participants, None),
-            events.Purchase(self.participant_a.id, 25.34, all_participants, None),
-            events.Purchase(self.participant_bc.id, 30, all_participants, None),
-            events.Purchase(self.participant_a.id, 3.5, all_participants, None),
-            events.Purchase(self.participant_a.id, 0.99, all_participants, None),
-            events.Purchase(self.participant_bc.id, 13.37, all_participants, None)
+            model.Purchase(self.participant_a.id, 10.5, all_participants, None),
+            model.Purchase(self.participant_bc.id, 15, all_participants, None),
+            model.Purchase(self.participant_d.id, 20, all_participants, None),
+            model.Purchase(self.participant_a.id, 25.34, all_participants, None),
+            model.Purchase(self.participant_bc.id, 30, all_participants, None),
+            model.Purchase(self.participant_a.id, 3.5, all_participants, None),
+            model.Purchase(self.participant_a.id, 0.99, all_participants, None),
+            model.Purchase(self.participant_bc.id, 13.37, all_participants, None)
         ]
 
         result = calculation.DebtsCalculator(event).calculate()
@@ -40,14 +40,14 @@ class DebtsCalculatorTestCase(unittest.TestCase):
             self.participant_e,
             self.participant_fgh,
         ]
-        event = events.Event(None, participants)
+        event = model.Event(None, participants)
         all_participants = map(lambda participant: participant.id, participants)
         event.purchases = [
-            events.Purchase(self.participant_a.id, 10.5, all_participants, None),
-            events.Purchase(self.participant_bc.id, 15, all_participants, None),
-            events.Purchase(self.participant_d.id, 20.67, all_participants, None),
-            events.Purchase(self.participant_e.id, 25.34, all_participants, None),
-            events.Purchase(self.participant_fgh.id, 30, all_participants, None)
+            model.Purchase(self.participant_a.id, 10.5, all_participants, None),
+            model.Purchase(self.participant_bc.id, 15, all_participants, None),
+            model.Purchase(self.participant_d.id, 20.67, all_participants, None),
+            model.Purchase(self.participant_e.id, 25.34, all_participants, None),
+            model.Purchase(self.participant_fgh.id, 30, all_participants, None)
         ]
 
         result = calculation.DebtsCalculator(event).calculate()
@@ -66,14 +66,14 @@ class DebtsCalculatorTestCase(unittest.TestCase):
             self.participant_e,
             self.participant_fgh,
         ]
-        event = events.Event(None, participants)
+        event = model.Event(None, participants)
         all_participants = map(lambda participant: participant.id, participants)
         event.purchases = [
-            events.Purchase(self.participant_a.id, 10.5, all_participants, None),
-            events.Purchase(self.participant_bc.id, 15, all_participants, None),
-            events.Purchase(self.participant_d.id, 20.67, all_participants, None),
-            events.Purchase(self.participant_e.id, 25.34, all_participants, None),
-            events.Purchase(self.participant_fgh.id, 30, all_participants, None)
+            model.Purchase(self.participant_a.id, 10.5, all_participants, None),
+            model.Purchase(self.participant_bc.id, 15, all_participants, None),
+            model.Purchase(self.participant_d.id, 20.67, all_participants, None),
+            model.Purchase(self.participant_e.id, 25.34, all_participants, None),
+            model.Purchase(self.participant_fgh.id, 30, all_participants, None)
         ]
 
         result = calculation.DebtsCalculator(event).calculate()
@@ -90,18 +90,18 @@ class DebtsCalculatorTestCase(unittest.TestCase):
             self.participant_bc,
             self.participant_d
         ]
-        event = events.Event(None, participants)
+        event = model.Event(None, participants)
         event.purchases = [
-            events.Purchase(self.participant_a.id, 30, [self.participant_a.id, self.participant_bc.id], None),
-            events.Purchase(self.participant_bc.id, 4.4, [
+            model.Purchase(self.participant_a.id, 30, [self.participant_a.id, self.participant_bc.id], None),
+            model.Purchase(self.participant_bc.id, 4.4, [
                 self.participant_a.id,
                 self.participant_bc.id,
                 self.participant_d.id
             ], None),
-            events.Purchase(self.participant_d.id, 12.88, [self.participant_a.id, self.participant_d.id], None),
-            events.Purchase(self.participant_a.id, 6, [self.participant_a.id, self.participant_d.id], None),
-            events.Purchase(self.participant_d.id, 1.20, [self.participant_bc.id, self.participant_d.id], None),
-            events.Purchase(self.participant_bc.id, 15, [self.participant_bc.id, self.participant_a.id], None),
+            model.Purchase(self.participant_d.id, 12.88, [self.participant_a.id, self.participant_d.id], None),
+            model.Purchase(self.participant_a.id, 6, [self.participant_a.id, self.participant_d.id], None),
+            model.Purchase(self.participant_d.id, 1.20, [self.participant_bc.id, self.participant_d.id], None),
+            model.Purchase(self.participant_bc.id, 15, [self.participant_bc.id, self.participant_a.id], None),
         ]
 
         result = calculation.DebtsCalculator(event).calculate()
