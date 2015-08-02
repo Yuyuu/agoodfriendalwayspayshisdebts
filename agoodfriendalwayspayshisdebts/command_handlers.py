@@ -6,6 +6,7 @@ import events
 from errors import InvalidUUIDError, EntityNotFoundError
 from bus import EventBus
 from internal_events import EventCreatedEvent
+import commands
 
 
 class Handler:
@@ -20,6 +21,9 @@ class Handler:
 
 
 class CreateEventCommandHandler(Handler):
+    def __init__(self):
+        super(CreateEventCommandHandler, self).__init__(commands.CreateEventCommand)
+
     def execute(self, command):
         participants = map(self.__create_participant_from_json, command.participants)
         event = events.Event(command.name, participants)
@@ -36,6 +40,9 @@ class CreateEventCommandHandler(Handler):
 
 
 class AddPurchaseCommandHandler(Handler):
+    def __init__(self):
+        super(AddPurchaseCommandHandler, self).__init__(commands.AddPurchaseCommand)
+
     def execute(self, command):
         event = RepositoryLocator.events().get(command.event_id)
         participants_ids = self.__to_uuids(command.participants_ids) if command.participants_ids\

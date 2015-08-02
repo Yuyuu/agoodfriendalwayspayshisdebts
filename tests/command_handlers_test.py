@@ -24,7 +24,7 @@ class CreateEventCommandHandlerTestCase(unittest.TestCase):
         self.with_event_bus.after()
 
     def test_the_event_is_added_to_the_repository(self):
-        handler = command_handlers.CreateEventCommandHandler(commands.CreateEventCommand)
+        handler = command_handlers.CreateEventCommandHandler()
 
         event_id = handler.execute(commands.CreateEventCommand('Cool event', [
             {'name': 'Lea', 'email': 'lea@email.com', 'share': 1},
@@ -58,7 +58,7 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
     def test_the_purchase_is_added_to_the_repository(self):
         bob = events.Participant('Bob', 1)
         self.event.add_participant(bob)
-        handler = command_handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
+        handler = command_handlers.AddPurchaseCommandHandler()
         command = commands.AddPurchaseCommand(self.event.uuid, self.event.participants[0].id, 'Gas', 10)
         command.participants_ids = [str(bob.id)]
         command.description = '10km at 1e/km'
@@ -75,7 +75,7 @@ class AddPurchaseCommandHandlerTestCase(unittest.TestCase):
 
     def test_the_purchase_is_shared_between_all_participants_if_none_is_specified(self):
         RepositoryLocator.events().entities[self.event.uuid].participants.append(events.Participant('Bob', 1))
-        handler = command_handlers.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
+        handler = command_handlers.AddPurchaseCommandHandler()
         command = commands.AddPurchaseCommand(self.event.uuid, self.event.participants[0].id, 'Gas', 10)
 
         handler.execute(command)

@@ -3,7 +3,6 @@ import flask
 import bus
 import command_handlers as ch
 import event_search_handlers as esh
-import commands
 import validators
 
 
@@ -16,12 +15,12 @@ class Server(flask.Flask):
     def configure_commands(self):
         command_synchronizations = [
             bus.EventBus.get_instance(),
-            validators.CreateEventCommandValidator(commands.CreateEventCommand),
-            validators.AddPurchaseCommandValidator(commands.AddPurchaseCommand)
+            validators.CreateEventCommandValidator(),
+            validators.AddPurchaseCommandValidator()
         ]
         c_handlers = [
-            ch.CreateEventCommandHandler(commands.CreateEventCommand),
-            ch.AddPurchaseCommandHandler(commands.AddPurchaseCommand)
+            ch.CreateEventCommandHandler(),
+            ch.AddPurchaseCommandHandler()
         ]
         self.command_bus = bus.CommandBus(command_synchronizations, c_handlers)
 

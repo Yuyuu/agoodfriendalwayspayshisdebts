@@ -1,5 +1,6 @@
 from bus import BusSynchronization
 import errors
+import commands
 
 
 class Validator(BusSynchronization):
@@ -9,6 +10,9 @@ class Validator(BusSynchronization):
 
 
 class CreateEventCommandValidator(Validator):
+    def __init__(self):
+        super(CreateEventCommandValidator, self).__init__(commands.CreateEventCommand)
+
     def before_execution(self, command):
         self.__validate(command)
 
@@ -38,6 +42,9 @@ class CreateEventCommandValidator(Validator):
 
 
 class AddPurchaseCommandValidator(Validator):
+    def __init__(self):
+        super(AddPurchaseCommandValidator, self).__init__(commands.AddPurchaseCommand)
+
     def before_execution(self, command):
         self.__validate(command)
 

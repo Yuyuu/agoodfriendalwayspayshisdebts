@@ -6,7 +6,7 @@ from agoodfriendalwayspayshisdebts import validators, commands, errors
 class CreateEventCommandValidatorTestCase(unittest.TestCase):
     def test_create_event_command_without_a_name_is_invalid(self):
         command = commands.CreateEventCommand(None, [{'name': 'Bob', 'share': 1}])
-        validator = validators.CreateEventCommandValidator(None)
+        validator = validators.CreateEventCommandValidator()
         with self.assertRaises(errors.ValidationError) as cm:
             validator.before_execution(command)
 
@@ -15,7 +15,7 @@ class CreateEventCommandValidatorTestCase(unittest.TestCase):
 
     def test_create_event_command_with_an_empty_name_is_invalid(self):
         command = commands.CreateEventCommand('', [{'name': 'Bob', 'share': 1}])
-        validator = validators.CreateEventCommandValidator(None)
+        validator = validators.CreateEventCommandValidator()
         with self.assertRaises(errors.ValidationError) as cm:
             validator.before_execution(command)
 
@@ -24,7 +24,7 @@ class CreateEventCommandValidatorTestCase(unittest.TestCase):
 
     def test_create_event_command_without_participants_is_invalid(self):
         command = commands.CreateEventCommand('Cool event', None)
-        validator = validators.CreateEventCommandValidator(None)
+        validator = validators.CreateEventCommandValidator()
         with self.assertRaises(errors.ValidationError) as cm:
             validator.before_execution(command)
 
@@ -33,7 +33,7 @@ class CreateEventCommandValidatorTestCase(unittest.TestCase):
 
     def test_create_event_command_requires_at_least_one_participant(self):
         command = commands.CreateEventCommand('Cool event', [])
-        validator = validators.CreateEventCommandValidator(None)
+        validator = validators.CreateEventCommandValidator()
 
         self.assertRaises(errors.ValidationError, validator.before_execution, command)
 
@@ -42,7 +42,7 @@ class CreateEventCommandValidatorTestCase(unittest.TestCase):
             {'name': 'Bob', 'share': 1},
             {'name': '', 'share': 1}
         ])
-        validator = validators.CreateEventCommandValidator(None)
+        validator = validators.CreateEventCommandValidator()
 
         self.assertRaises(errors.ValidationError, validator.before_execution, command)
 
@@ -51,7 +51,7 @@ class CreateEventCommandValidatorTestCase(unittest.TestCase):
             {'name': 'Bob', 'share': 1},
             {'name': 'Lea', 'email': 'lea@email.com'}
         ])
-        validator = validators.CreateEventCommandValidator(None)
+        validator = validators.CreateEventCommandValidator()
 
         self.assertRaises(errors.ValidationError, validator.before_execution, command)
 
@@ -61,7 +61,7 @@ class CreateEventCommandValidatorTestCase(unittest.TestCase):
             {'name': ''},
             {}
         ])
-        validator = validators.CreateEventCommandValidator(None)
+        validator = validators.CreateEventCommandValidator()
 
         with self.assertRaises(errors.ValidationError) as cm:
             validator.before_execution(command)
@@ -71,7 +71,7 @@ class CreateEventCommandValidatorTestCase(unittest.TestCase):
 
     def test_can_collect_all_errors(self):
         command = commands.CreateEventCommand(None, None)
-        validator = validators.CreateEventCommandValidator(None)
+        validator = validators.CreateEventCommandValidator()
         with self.assertRaises(errors.ValidationError) as cm:
             validator.before_execution(command)
 
@@ -82,7 +82,7 @@ class CreateEventCommandValidatorTestCase(unittest.TestCase):
 class AddPurchaseCommandValidatorTestCase(unittest.TestCase):
     def test_the_command_requires_a_purchaser(self):
         command = commands.AddPurchaseCommand(None, None, 'Gas', 10)
-        validator = validators.AddPurchaseCommandValidator(None)
+        validator = validators.AddPurchaseCommandValidator()
         with self.assertRaises(errors.ValidationError) as cm:
             validator.before_execution(command)
 
@@ -91,7 +91,7 @@ class AddPurchaseCommandValidatorTestCase(unittest.TestCase):
 
     def test_the_command_requires_a_label(self):
         command = commands.AddPurchaseCommand(None, '123', None, 10)
-        validator = validators.AddPurchaseCommandValidator(None)
+        validator = validators.AddPurchaseCommandValidator()
         with self.assertRaises(errors.ValidationError) as cm:
             validator.before_execution(command)
 
@@ -100,7 +100,7 @@ class AddPurchaseCommandValidatorTestCase(unittest.TestCase):
 
     def test_the_command_requires_an_amount(self):
         command = commands.AddPurchaseCommand(None, '123', 'Gas', None)
-        validator = validators.AddPurchaseCommandValidator(None)
+        validator = validators.AddPurchaseCommandValidator()
         with self.assertRaises(errors.ValidationError) as cm:
             validator.before_execution(command)
 
@@ -109,7 +109,7 @@ class AddPurchaseCommandValidatorTestCase(unittest.TestCase):
 
     def test_the_amount_must_be_superior_to_0(self):
         command = commands.AddPurchaseCommand(None, '123', 'Gas', 0)
-        validator = validators.AddPurchaseCommandValidator(None)
+        validator = validators.AddPurchaseCommandValidator()
         with self.assertRaises(errors.ValidationError) as cm:
             validator.before_execution(command)
 
