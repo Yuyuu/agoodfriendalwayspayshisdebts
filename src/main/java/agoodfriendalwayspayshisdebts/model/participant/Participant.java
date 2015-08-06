@@ -1,11 +1,10 @@
 package agoodfriendalwayspayshisdebts.model.participant;
 
 import com.google.common.base.Objects;
-import com.vter.model.EntityWithUuid;
 
 import java.util.UUID;
 
-public class Participant implements EntityWithUuid {
+public class Participant {
 
   private UUID id;
   private String name;
@@ -23,8 +22,7 @@ public class Participant implements EntityWithUuid {
     this.email = email;
   }
 
-  @Override
-  public UUID getId() {
+  public UUID id() {
     return id;
   }
 

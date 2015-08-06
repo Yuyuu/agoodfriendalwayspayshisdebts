@@ -2,6 +2,7 @@ package agoodfriendalwayspayshisdebts.model.event;
 
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.Lists;
 import com.vter.model.EntityWithUuid;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class Event implements EntityWithUuid {
 
   private UUID id;
   private String name;
-  private List<Participant> participants;
+  private List<Participant> participants = Lists.newArrayList();
 
   /* This is used by mongolink */
   @SuppressWarnings("unused")
@@ -20,7 +21,7 @@ public class Event implements EntityWithUuid {
   public Event(String name, List<Participant> participants) {
     id = UUID.randomUUID();
     this.name = name;
-    this.participants = participants;
+    this.participants.addAll(participants);
   }
 
   @Override
