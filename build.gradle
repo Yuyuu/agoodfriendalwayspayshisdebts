@@ -35,6 +35,10 @@ dependencies {
     exclude module: "slf4j-simple"
   }
 
+  compile "org.hibernate:hibernate-validator:5.2.1.Final"
+  compile "javax.el:javax.el-api:2.2.5"
+  compile "org.glassfish.web:javax.el:2.2.5"
+
   compile "org.mongolink:mongolink:$mongoLinkVersion"
   compile "org.jongo:jongo:1.2"
 
