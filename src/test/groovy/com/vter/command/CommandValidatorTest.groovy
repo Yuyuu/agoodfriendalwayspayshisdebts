@@ -35,7 +35,7 @@ class CommandValidatorTest extends Specification {
   }
 
   private CommandValidator commandValidator() {
-    new CommandValidator(validatorFactory.validator) {}
+    new CommandValidator(validatorFactory.validator)
   }
 
   private class FakeMessage implements Message<String> {

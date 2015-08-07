@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class CommandValidator implements CommandSynchronization {
+public class CommandValidator implements CommandSynchronization {
 
   @Inject
   public CommandValidator(Validator validator) {
