@@ -31,7 +31,7 @@ public abstract class AsynchronousBus implements Bus {
   @Override
   public <TResponse> CompletableFuture<ExecutionResult<TResponse>> send(Message<TResponse> message) {
     final Collection<MessageHandler> handlers = this.handlers.get(message.getClass());
-    if (handlers.size() == 0) {
+    if (handlers.isEmpty()) {
       LOGGER.warn("Impossible to find a handler for {}", message.getClass());
       return CompletableFuture.completedFuture(ExecutionResult.error(new BusError("Impossible to find a handler")));
     }
@@ -49,10 +49,10 @@ public abstract class AsynchronousBus implements Bus {
         final TResponse response = messageHandler.execute(message);
         synchronizations.forEach(BusSynchronization::afterExecution);
         return ExecutionResult.success(response);
-      } catch (Throwable e) {
+      } catch (Throwable error) {
         synchronizations.forEach(BusSynchronization::onError);
-        LOGGER.error("Error on message", e);
-        return ExecutionResult.error(e);
+        LOGGER.error("Error on message", error);
+        return ExecutionResult.error(error);
       } finally {
         synchronizations.forEach(BusSynchronization::ultimately);
       }
