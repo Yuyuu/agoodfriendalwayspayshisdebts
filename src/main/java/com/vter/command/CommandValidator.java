@@ -29,9 +29,7 @@ public class CommandValidator implements CommandSynchronization {
   }
 
   private List<String> asMessages(Set<ConstraintViolation<Message<?>>> violations) {
-    return violations.stream().map(
-        violation -> violation.getPropertyPath() + " " + violation.getMessage()
-    ).collect(Collectors.toList());
+    return violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
   }
 
   private final Validator validator;

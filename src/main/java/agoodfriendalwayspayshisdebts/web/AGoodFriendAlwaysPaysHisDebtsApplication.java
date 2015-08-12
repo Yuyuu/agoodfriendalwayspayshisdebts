@@ -6,6 +6,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 import com.vter.web.fluent.BaseApplication;
+import com.vter.web.fluent.extension.ApplicationExtensions;
+import com.vter.web.fluent.status.ApplicationStatusService;
 import net.codestory.http.Configuration;
 import net.codestory.http.injection.GuiceAdapter;
 import net.codestory.http.payload.Payload;
@@ -20,9 +22,9 @@ public class AGoodFriendAlwaysPaysHisDebtsApplication extends BaseApplication {
   }
 
   private Stage stage() {
-    final Optional<String> env = Optional.ofNullable(System.getenv("env"));
-    LOGGER.info("Configuration mode: {}", env.orElse("dev"));
-    if (env.orElse("dev").equals("dev")) {
+    final String env = Optional.ofNullable(System.getenv("env")).orElse("dev");
+    LOGGER.info("Configuration mode: {}", env);
+    if (env.equals("dev")) {
       return Stage.DEVELOPMENT;
     }
     return Stage.PRODUCTION;
@@ -31,6 +33,7 @@ public class AGoodFriendAlwaysPaysHisDebtsApplication extends BaseApplication {
   @Override
   protected Configuration routes() {
     return routes -> routes
+        .setExtensions(ApplicationExtensions.withStatusService(new ApplicationStatusService()))
         .setIocAdapter(new GuiceAdapter(injector))
         .get("/", Payload.ok())
         .autoDiscover("agoodfriendalwayspayshisdebts.web.action");
