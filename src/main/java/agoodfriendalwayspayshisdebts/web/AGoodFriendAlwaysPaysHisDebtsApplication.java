@@ -5,6 +5,8 @@ import agoodfriendalwayspayshisdebts.web.configuration.GuiceConfiguration;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
+import com.vter.model.internal_event.InternalEventBus;
+import com.vter.model.internal_event.InternalEventBusLocator;
 import com.vter.web.fluent.BaseApplication;
 import com.vter.web.fluent.extension.ApplicationExtensions;
 import com.vter.web.fluent.status.ApplicationStatusService;
@@ -18,6 +20,7 @@ public class AGoodFriendAlwaysPaysHisDebtsApplication extends BaseApplication {
 
   public AGoodFriendAlwaysPaysHisDebtsApplication() {
     injector = Guice.createInjector(stage(), new GuiceConfiguration());
+    InternalEventBusLocator.initialize(injector.getInstance(InternalEventBus.class));
     RepositoryLocator.initialize(injector.getInstance(RepositoryLocator.class));
   }
 

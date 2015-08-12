@@ -13,6 +13,10 @@ import com.vter.command.CommandSynchronization;
 import com.vter.command.CommandValidator;
 import com.vter.infrastructure.bus.guice.HandlerScanner;
 import com.vter.infrastructure.persistence.mongo.MongoLinkContext;
+import com.vter.model.internal_event.AsynchronousInternalEventBus;
+import com.vter.model.internal_event.InternalEventBus;
+import com.vter.model.internal_event.InternalEventHandler;
+import com.vter.model.internal_event.InternalEventSynchronization;
 import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
 import org.mongolink.UpdateStrategies;
@@ -28,6 +32,7 @@ public class GuiceConfiguration extends AbstractModule {
   protected void configure() {
     configurePersistence();
     configureCommands();
+    configureEvents();
   }
 
   private void configurePersistence() {
@@ -40,8 +45,16 @@ public class GuiceConfiguration extends AbstractModule {
     final Multibinder<CommandSynchronization> multibinder = Multibinder.newSetBinder(binder(), CommandSynchronization.class);
     multibinder.addBinding().to(MongoLinkContext.class);
     multibinder.addBinding().to(CommandValidator.class);
+    multibinder.addBinding().to(AsynchronousInternalEventBus.class);
     HandlerScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.command", CommandHandler.class, binder());
     bind(CommandBus.class).asEagerSingleton();
+  }
+
+  private void configureEvents() {
+    final Multibinder<InternalEventSynchronization> multibinder = Multibinder.newSetBinder(binder(), InternalEventSynchronization.class);
+    multibinder.addBinding().to(MongoLinkContext.class);
+    HandlerScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.search", InternalEventHandler.class, binder());
+    bind(InternalEventBus.class).to(AsynchronousInternalEventBus.class).asEagerSingleton();
   }
 
   @Provides
