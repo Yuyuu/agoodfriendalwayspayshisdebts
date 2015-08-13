@@ -19,6 +19,8 @@ import com.vter.model.internal_event.AsynchronousInternalEventBus;
 import com.vter.model.internal_event.InternalEventBus;
 import com.vter.model.internal_event.InternalEventHandler;
 import com.vter.model.internal_event.InternalEventSynchronization;
+import com.vter.search.SearchBus;
+import com.vter.search.SearchHandler;
 import org.jongo.Jongo;
 import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
@@ -38,6 +40,7 @@ public class GuiceConfiguration extends AbstractModule {
     configurePersistence();
     configureCommands();
     configureEvents();
+    configureSearches();
   }
 
   private void configurePersistence() {
@@ -60,6 +63,11 @@ public class GuiceConfiguration extends AbstractModule {
     multibinder.addBinding().to(MongoLinkContext.class);
     HandlerScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.search", InternalEventHandler.class, binder());
     bind(InternalEventBus.class).to(AsynchronousInternalEventBus.class).asEagerSingleton();
+  }
+
+  private void configureSearches() {
+    HandlerScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.search", SearchHandler.class, binder());
+    bind(SearchBus.class).asEagerSingleton();
   }
 
   @Provides
