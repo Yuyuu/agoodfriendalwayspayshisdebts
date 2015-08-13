@@ -1,4 +1,6 @@
-package com.vter.web.fluent.status;
+package com.vter.web.fluent.status.resolver;
+
+import com.vter.web.fluent.status.ErrorRepresentation;
 
 public interface ExceptionResolver {
 

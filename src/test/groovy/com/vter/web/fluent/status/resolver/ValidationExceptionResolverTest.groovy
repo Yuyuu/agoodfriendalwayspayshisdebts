@@ -1,4 +1,4 @@
-package com.vter.web.fluent.status
+package com.vter.web.fluent.status.resolver
 
 import com.vter.command.ValidationException
 import spock.lang.Specification

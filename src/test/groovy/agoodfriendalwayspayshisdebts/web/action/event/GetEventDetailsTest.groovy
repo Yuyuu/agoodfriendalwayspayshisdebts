@@ -17,9 +17,9 @@ class GetEventDetailsTest extends Specification {
     searchBus.sendAndWaitResponse(_ as EventDetailsSearch) >> ExecutionResult.success(eventDetails)
 
     when:
-    def response = action.retrieve(UUID.randomUUID().toString())
+    def optionalEvent = action.retrieve(UUID.randomUUID().toString())
 
     then:
-    response == eventDetails
+    optionalEvent.get() == eventDetails
   }
 }

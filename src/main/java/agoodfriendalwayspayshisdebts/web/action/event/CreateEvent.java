@@ -20,7 +20,7 @@ public class CreateEvent {
 
   @Post("/events")
   public UUID create(CreateEventCommand command) {
-    ExecutionResult<UUID> result = commandBus.sendAndWaitResponse(command);
+    final ExecutionResult<UUID> result = commandBus.sendAndWaitResponse(command);
     if (!result.isSuccess()) {
       Throwables.propagate(result.error());
     }

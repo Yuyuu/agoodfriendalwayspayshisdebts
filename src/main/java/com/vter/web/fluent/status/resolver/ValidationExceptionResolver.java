@@ -1,6 +1,7 @@
-package com.vter.web.fluent.status;
+package com.vter.web.fluent.status.resolver;
 
 import com.vter.command.ValidationException;
+import com.vter.web.fluent.status.ErrorRepresentation;
 import net.codestory.http.constants.HttpStatus;
 
 public class ValidationExceptionResolver implements ExceptionResolver {

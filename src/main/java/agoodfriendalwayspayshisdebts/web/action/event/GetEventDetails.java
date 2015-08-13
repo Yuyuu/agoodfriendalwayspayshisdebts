@@ -2,12 +2,14 @@ package agoodfriendalwayspayshisdebts.web.action.event;
 
 import agoodfriendalwayspayshisdebts.search.event.details.model.EventDetails;
 import agoodfriendalwayspayshisdebts.search.event.details.search.EventDetailsSearch;
+import agoodfriendalwayspayshisdebts.web.action.UuidParser;
 import com.vter.infrastructure.bus.ExecutionResult;
 import com.vter.search.SearchBus;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Resource;
 
 import javax.inject.Inject;
+import java.util.Optional;
 import java.util.UUID;
 
 @Resource
@@ -19,10 +21,10 @@ public class GetEventDetails {
   }
 
   @Get("/events/:stringifiedUuid")
-  public EventDetails retrieve(String stringifiedUuid) {
-    UUID uuid = UUID.fromString(stringifiedUuid);
+  public Optional<EventDetails> retrieve(String stringifiedUuid) {
+    final UUID uuid = UuidParser.createOrThrowNotFoundExceptionOnInvalidUuid(stringifiedUuid);
     final ExecutionResult<EventDetails> result = searchBus.sendAndWaitResponse(new EventDetailsSearch(uuid));
-    return result.data();
+    return Optional.ofNullable(result.data());
   }
 
   private final SearchBus searchBus;
