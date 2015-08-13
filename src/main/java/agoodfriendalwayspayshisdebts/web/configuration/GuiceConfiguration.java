@@ -69,23 +69,19 @@ public class GuiceConfiguration extends AbstractModule {
 
   @Provides
   @Singleton
-  AsynchronousInternalEventBus asynchronousInternalEventBus(Set<InternalEventSynchronization> internalEventSynchronizations, Set<InternalEventHandler> internalEventHandlers) {
+  private AsynchronousInternalEventBus asynchronousInternalEventBus(Set<InternalEventSynchronization> internalEventSynchronizations, Set<InternalEventHandler> internalEventHandlers) {
     return new AsynchronousInternalEventBus(internalEventSynchronizations, internalEventHandlers);
   }
 
   @Provides
   @Singleton
-  public MongoSessionManager mongoLink() {
-    final MongoClientURI uri = new MongoClientURI(
-        Optional.ofNullable(System.getenv("AGFAPHD_API_MONGO_URI"))
-            .orElseThrow(() -> new IllegalStateException("Missing database configuration"))
-    );
+  public MongoSessionManager mongoLink(MongoClientURI mongoUri) {
     Settings settings = Settings.defaultInstance().withDefaultUpdateStrategy(UpdateStrategies.DIFF)
-        .withHost(extractHostname(uri.getHosts().get(0)))
-        .withPort(extractPort(uri.getHosts().get(0)))
-        .withDbName(uri.getDatabase());
-    if (uri.getCredentials() != null) {
-      settings = settings.withAuthentication(uri.getUsername(), new String(uri.getPassword()));
+        .withHost(extractHostname(mongoUri.getHosts().get(0)))
+        .withPort(extractPort(mongoUri.getHosts().get(0)))
+        .withDbName(mongoUri.getDatabase());
+    if (mongoUri.getCredentials() != null) {
+      settings = settings.withAuthentication(mongoUri.getUsername(), new String(mongoUri.getPassword()));
     }
 
     return MongoSessionManager.create(
@@ -96,14 +92,19 @@ public class GuiceConfiguration extends AbstractModule {
 
   @Provides
   @Singleton
-  public Jongo jongo() throws UnknownHostException {
-    final MongoClientURI uri = new MongoClientURI(
-        Optional.ofNullable(System.getenv("AGFAPHD_API_MONGO_URI"))
-            .orElseThrow(() -> new IllegalStateException("Missing database configuration"))
-    );
-    final MongoClient mongoClient = new MongoClient(uri);
-    final DB db = mongoClient.getDB(uri.getDatabase());
+  public Jongo jongo(MongoClientURI mongoUri) throws UnknownHostException {
+    final MongoClient mongoClient = new MongoClient(mongoUri);
+    final DB db = mongoClient.getDB(mongoUri.getDatabase());
     return new Jongo(db);
+  }
+
+  @Provides
+  @Singleton
+  private MongoClientURI mongoClientURI() {
+    Optional<String> optionalMongoUri = Optional.ofNullable(System.getenv("AGFAPHD_API_MONGO_URI"));
+    return new MongoClientURI(
+        optionalMongoUri.orElseThrow(() -> new IllegalStateException("Missing database configuration"))
+    );
   }
 
   private static String extractHostname(String host) {
