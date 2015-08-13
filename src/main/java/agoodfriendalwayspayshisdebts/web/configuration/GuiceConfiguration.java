@@ -6,6 +6,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.vter.command.CommandBus;
 import com.vter.command.CommandHandler;
@@ -17,6 +19,7 @@ import com.vter.model.internal_event.AsynchronousInternalEventBus;
 import com.vter.model.internal_event.InternalEventBus;
 import com.vter.model.internal_event.InternalEventHandler;
 import com.vter.model.internal_event.InternalEventSynchronization;
+import org.jongo.Jongo;
 import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
 import org.mongolink.UpdateStrategies;
@@ -24,7 +27,9 @@ import org.mongolink.domain.mapper.ContextBuilder;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.net.UnknownHostException;
 import java.util.Optional;
+import java.util.Set;
 
 public class GuiceConfiguration extends AbstractModule {
 
@@ -64,6 +69,12 @@ public class GuiceConfiguration extends AbstractModule {
 
   @Provides
   @Singleton
+  AsynchronousInternalEventBus asynchronousInternalEventBus(Set<InternalEventSynchronization> internalEventSynchronizations, Set<InternalEventHandler> internalEventHandlers) {
+    return new AsynchronousInternalEventBus(internalEventSynchronizations, internalEventHandlers);
+  }
+
+  @Provides
+  @Singleton
   public MongoSessionManager mongoLink() {
     final MongoClientURI uri = new MongoClientURI(
         Optional.ofNullable(System.getenv("AGFAPHD_API_MONGO_URI"))
@@ -81,6 +92,18 @@ public class GuiceConfiguration extends AbstractModule {
         new ContextBuilder("agoodfriendalwayspayshisdebts.infrastructure.persistence.mongo.mapping"),
         settings
     );
+  }
+
+  @Provides
+  @Singleton
+  public Jongo jongo() throws UnknownHostException {
+    final MongoClientURI uri = new MongoClientURI(
+        Optional.ofNullable(System.getenv("AGFAPHD_API_MONGO_URI"))
+            .orElseThrow(() -> new IllegalStateException("Missing database configuration"))
+    );
+    final MongoClient mongoClient = new MongoClient(uri);
+    final DB db = mongoClient.getDB(uri.getDatabase());
+    return new Jongo(db);
   }
 
   private static String extractHostname(String host) {
