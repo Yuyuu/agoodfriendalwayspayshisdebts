@@ -20,7 +20,7 @@ public class ValidParticipantsValidator implements ConstraintValidator<ValidPart
       return true;
     }
 
-    Set<String> violationCodes = Sets.newHashSet();
+    final Set<String> violationCodes = Sets.newHashSet();
     participants.stream().forEach(participant -> violationCodes.addAll(participantViolations(participant)));
 
     context.disableDefaultConstraintViolation();
@@ -32,10 +32,10 @@ public class ValidParticipantsValidator implements ConstraintValidator<ValidPart
   }
 
   private static List<String> participantViolations(Map<String, Object> participant) {
-    List<String> participantViolations = Lists.newArrayList();
+    final List<String> participantViolations = Lists.newArrayList();
 
-    Object name = participant.get("name");
-    Object share = participant.get("share");
+    final Object name = participant.get("name");
+    final Object share = participant.get("share");
 
     if (nameIsEmpty(name)) {
       participantViolations.add(PARTICIPANT_NAME_REQUIRED_CODE);

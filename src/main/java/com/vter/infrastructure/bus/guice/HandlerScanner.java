@@ -15,9 +15,9 @@ public final class HandlerScanner {
   private HandlerScanner() {}
 
   public static <T> void scanPackageAndBind(String packageName, Class<T> type, Binder binder) {
-    Reflections reflections = new Reflections(ClasspathHelper.forPackage("com.vter"), ClasspathHelper.forPackage(packageName));
-    Set<Class<? extends T>> searches = reflections.getSubTypesOf(type);
-    Multibinder<T> searchMultibinder = Multibinder.newSetBinder(binder, type);
+    final Reflections reflections = new Reflections(ClasspathHelper.forPackage("com.vter"), ClasspathHelper.forPackage(packageName));
+    final Set<Class<? extends T>> searches = reflections.getSubTypesOf(type);
+    final Multibinder<T> searchMultibinder = Multibinder.newSetBinder(binder, type);
     searches.forEach(foundType -> {
       if (!Modifier.isAbstract(foundType.getModifiers())) {
         LOGGER.debug("Found implementation for {}: {}", type, foundType);

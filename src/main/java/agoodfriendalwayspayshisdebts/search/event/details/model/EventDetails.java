@@ -17,7 +17,7 @@ public class EventDetails {
   public EventDetails() {}
 
   public static EventDetails fromEvent(Event event) {
-    EventDetails eventDetails = new EventDetails();
+    final EventDetails eventDetails = new EventDetails();
     eventDetails.id = event.getId();
     eventDetails.name = event.name();
     eventDetails.participants.addAll(

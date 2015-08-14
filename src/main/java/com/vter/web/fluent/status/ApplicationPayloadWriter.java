@@ -32,8 +32,8 @@ public class ApplicationPayloadWriter extends PayloadWriter {
 
   @Override
   protected Payload errorPage(Throwable e) {
-    int statusCode = statusService.getStatus(e);
-    ErrorRepresentation representation = statusService.getRepresentation(e);
+    final int statusCode = statusService.getStatus(e);
+    final ErrorRepresentation representation = statusService.getRepresentation(e);
     return new Payload("application/json;charset=UTF-8", representation, statusCode);
   }
 

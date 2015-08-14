@@ -19,7 +19,7 @@ public class ValidationExceptionResolver implements ExceptionResolver {
   @Override
   public ErrorRepresentation representation(Throwable throwable) {
     assert isAbleToResolve(throwable);
-    ValidationException exception = (ValidationException) throwable;
+    final ValidationException exception = (ValidationException) throwable;
     return ErrorRepresentation.fromErrorMessages(exception.messages());
   }
 }

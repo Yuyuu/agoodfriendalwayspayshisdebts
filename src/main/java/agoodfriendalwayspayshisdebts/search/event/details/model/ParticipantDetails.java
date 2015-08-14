@@ -13,7 +13,7 @@ public class ParticipantDetails {
   public ParticipantDetails() {}
 
   public static ParticipantDetails fromParticipant(Participant participant) {
-    ParticipantDetails participantDetails = new ParticipantDetails();
+    final ParticipantDetails participantDetails = new ParticipantDetails();
     participantDetails.id = participant.id();
     participantDetails.name = participant.name();
     participantDetails.share = participant.share();

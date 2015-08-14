@@ -22,7 +22,7 @@ public class CommandValidator implements CommandSynchronization {
   }
 
   private void validate(Message<?> command) {
-    Set<ConstraintViolation<Message<?>>> violations = validator.validate(command);
+    final Set<ConstraintViolation<Message<?>>> violations = validator.validate(command);
     if (!violations.isEmpty()) {
       throw new ValidationException(asMessages(violations));
     }

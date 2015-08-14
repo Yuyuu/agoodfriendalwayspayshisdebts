@@ -13,7 +13,7 @@ public class ApplicationStatusService implements StatusService {
 
   @Override
   public int getStatus(Throwable throwable) {
-    Optional<ExceptionResolver> resolver = resolver(throwable);
+    final Optional<ExceptionResolver> resolver = resolver(throwable);
     if (resolver.isPresent()) {
       return resolver.get().status();
     }
@@ -22,7 +22,7 @@ public class ApplicationStatusService implements StatusService {
 
   @Override
   public ErrorRepresentation getRepresentation(Throwable throwable) {
-    Optional<ExceptionResolver> resolver = resolver(throwable);
+    final Optional<ExceptionResolver> resolver = resolver(throwable);
     if (resolver.isPresent()) {
       return resolver.get().representation(throwable);
     }

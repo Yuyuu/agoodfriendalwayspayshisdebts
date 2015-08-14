@@ -11,13 +11,13 @@ public class ErrorRepresentation {
   private ErrorRepresentation() {}
 
   public static ErrorRepresentation fromErrorMessages(List<String> messages) {
-    ErrorRepresentation representation = new ErrorRepresentation();
+    final ErrorRepresentation representation = new ErrorRepresentation();
     messages.stream().forEach(representation::addErrorMessage);
     return representation;
   }
 
   public void addErrorMessage(String errorMessage) {
-    Map<String, String> error = Maps.newHashMap();
+    final Map<String, String> error = Maps.newHashMap();
     error.put("message", errorMessage);
     errors.add(error);
   }

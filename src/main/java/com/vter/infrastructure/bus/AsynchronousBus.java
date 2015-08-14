@@ -37,7 +37,7 @@ public abstract class AsynchronousBus implements Bus {
     }
 
     LOGGER.debug("Executing handler for {}", message.getClass());
-    List<CompletableFuture<ExecutionResult<TResponse>>> futures = Lists.newArrayList();
+    final List<CompletableFuture<ExecutionResult<TResponse>>> futures = Lists.newArrayList();
     handlers.forEach(handler -> futures.add(CompletableFuture.supplyAsync(execute(message, handler), executorService)));
     return futures.get(0);
   }
