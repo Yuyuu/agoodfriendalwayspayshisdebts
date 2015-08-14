@@ -50,6 +50,10 @@ public class Event implements EntityWithUuid {
     return name;
   }
 
+  public void addExpense(Expense expense) {
+    expenses.add(expense);
+  }
+
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(getClass())

@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.model.event
 
+import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import com.vter.model.internal_event.WithEventBus
 import org.junit.Rule
@@ -28,5 +29,19 @@ class EventTest extends Specification {
     def internalEvent = eventBus.bus.lastEvent(EventCreatedInternalEvent)
     internalEvent != null
     internalEvent.eventId == event.id
+  }
+
+  def "contains expenses"() {
+    given:
+    def kim = new Participant("kim", 1, null)
+    def event = new Event("cool event", [kim])
+
+    when:
+    def expense = new Expense("label", kim.id(), 5, [kim.id()])
+    event.addExpense(expense)
+
+    then:
+    event.expenses().size() == 1
+    event.expenses()[0] == expense
   }
 }
