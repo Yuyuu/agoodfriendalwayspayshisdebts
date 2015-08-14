@@ -17,10 +17,11 @@ class CreateEventTest extends Specification {
     bus.sendAndWaitResponse(command) >> ExecutionResult.success(id)
 
     when:
-    def result = action.create(command)
+    def payload = action.create(command)
 
     then:
-    result == id
+    payload.rawContent() == id
+    payload.code() == 201
   }
 
   def "propagates the error if any occurred"() {

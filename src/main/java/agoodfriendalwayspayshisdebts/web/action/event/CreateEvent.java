@@ -6,6 +6,8 @@ import com.vter.command.CommandBus;
 import com.vter.infrastructure.bus.ExecutionResult;
 import net.codestory.http.annotations.Post;
 import net.codestory.http.annotations.Resource;
+import net.codestory.http.constants.HttpStatus;
+import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
 import java.util.UUID;
@@ -19,12 +21,12 @@ public class CreateEvent {
   }
 
   @Post("/events")
-  public UUID create(CreateEventCommand command) {
+  public Payload create(CreateEventCommand command) {
     final ExecutionResult<UUID> result = commandBus.sendAndWaitResponse(command);
     if (!result.isSuccess()) {
       Throwables.propagate(result.error());
     }
-    return result.data();
+    return new Payload(result.data()).withCode(HttpStatus.CREATED);
   }
 
   private final CommandBus commandBus;

@@ -23,10 +23,11 @@ class AddExpenseToEventTest extends Specification {
     commandBus.sendAndWaitResponse(command) >> ExecutionResult.success(Void)
 
     when:
-    action.add(eventId.toString(), command)
+    def payload = action.add(eventId.toString(), command)
 
     then:
     noExceptionThrown()
+    payload.code() == 201
   }
 
   def "propagates the error if any occurred"() {
