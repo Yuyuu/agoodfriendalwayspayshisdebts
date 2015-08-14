@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.model.event;
 
+import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
@@ -14,6 +15,7 @@ public class Event implements EntityWithUuid {
   private UUID id;
   private String name;
   private List<Participant> participants = Lists.newArrayList();
+  private List<Expense> expenses = Lists.newArrayList();
 
   /* This is used by mongolink */
   @SuppressWarnings("unused")
@@ -38,6 +40,10 @@ public class Event implements EntityWithUuid {
 
   public List<Participant> participants() {
     return participants;
+  }
+
+  public List<Expense> expenses() {
+    return expenses;
   }
 
   public String name() {

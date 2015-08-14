@@ -1,5 +1,7 @@
 package agoodfriendalwayspayshisdebts.model.expense;
 
+import com.google.common.collect.Lists;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -8,7 +10,7 @@ public class Expense {
   private String label;
   private UUID purchaserId;
   private double amount;
-  private List<UUID> participantIds;
+  private List<UUID> participantsIds = Lists.newArrayList();
   private String description;
 
   /* Used by mongolink */
@@ -19,7 +21,7 @@ public class Expense {
     this.label = label;
     this.purchaserId = purchaserId;
     this.amount = amount;
-    this.participantIds = participantsIds;
+    this.participantsIds.addAll(participantsIds);
   }
 
   public double amount() {
@@ -34,8 +36,8 @@ public class Expense {
     return label;
   }
 
-  public List<UUID> participantIds() {
-    return participantIds;
+  public List<UUID> participantsIds() {
+    return participantsIds;
   }
 
   public UUID purchaserId() {

@@ -12,5 +12,6 @@ public class EventMapping extends AggregateMap<Event> {
     id().onProperty(Event::getId).natural();
     property().onField("name");
     collection().onField("participants");
+    collection().onField("expenses");
   }
 }

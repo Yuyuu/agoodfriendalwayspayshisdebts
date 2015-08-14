@@ -13,7 +13,7 @@ class ExpenseTest extends Specification {
     expense.label() == "food"
     expense.purchaserId() == purchaserId
     expense.amount() == 10
-    expense.participantIds().first() == purchaserId
+    expense.participantsIds().first() == purchaserId
   }
 
   def "has an optional description"() {

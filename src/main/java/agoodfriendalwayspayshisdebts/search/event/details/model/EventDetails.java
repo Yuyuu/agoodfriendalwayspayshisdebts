@@ -13,6 +13,7 @@ public class EventDetails {
   public UUID id;
   public String name;
   public List<ParticipantDetails> participants = Lists.newArrayList();
+  public List<ExpenseDetails> expenses = Lists.newArrayList();
 
   public EventDetails() {}
 
@@ -22,6 +23,9 @@ public class EventDetails {
     eventDetails.name = event.name();
     eventDetails.participants.addAll(
         event.participants().stream().map(ParticipantDetails::fromParticipant).collect(Collectors.toList())
+    );
+    eventDetails.expenses.addAll(
+        event.expenses().stream().map(ExpenseDetails::fromExpense).collect(Collectors.toList())
     );
     return eventDetails;
   }

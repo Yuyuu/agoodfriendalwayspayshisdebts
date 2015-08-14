@@ -21,7 +21,11 @@ class MongoLinkEventRepositoryTest extends Specification {
     given:
     def id = UUID.randomUUID()
     def kimId = UUID.randomUUID()
-    mongoLink.collection("event") << [_id: id, name: "event", participants: [[id: kimId, name: "kim", share: 1, email: "kim@m.com"]]]
+    mongoLink.collection("event") << [
+        _id: id, name: "event",
+        participants: [[id: kimId, name: "kim", share: 1, email: "kim@m.com"]],
+        expenses: [[label: "errands", purchaserId: kimId, amount: 10, participantsIds: [kimId], description: "hello"]]
+    ]
 
     when:
     def event = repository.get(id)
@@ -34,6 +38,12 @@ class MongoLinkEventRepositoryTest extends Specification {
     kim.name() == "kim"
     kim.share() == 1
     kim.email() == "kim@m.com"
+    def expense = event.expenses().first()
+    expense.label() == "errands"
+    expense.purchaserId() == kimId
+    expense.amount() == 10
+    expense.participantsIds() == [kimId]
+    expense.description() == "hello"
   }
 
   def "can add an event"() {
@@ -44,7 +54,11 @@ class MongoLinkEventRepositoryTest extends Specification {
 
     then:
     def foundEvent = mongoLink.collection("event").findOne(_id: event.id)
-    foundEvent != null
+    foundEvent["_id"] == event.id
+    foundEvent["name"] == "event"
+    def kim = foundEvent["participants"][0]
+    kim["name"] == "kim"
+    kim["share"] == 1
   }
 
   def "can delete an event"() {
