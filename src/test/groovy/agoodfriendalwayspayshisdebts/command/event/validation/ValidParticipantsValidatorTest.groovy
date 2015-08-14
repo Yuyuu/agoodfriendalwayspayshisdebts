@@ -20,7 +20,7 @@ class ValidParticipantsValidatorTest extends Specification {
     def violations = validator.validate(command)
 
     then:
-    violations.size() == 0
+    violations.empty
 
     where:
     participants << [null, []]
@@ -34,7 +34,7 @@ class ValidParticipantsValidatorTest extends Specification {
     def violations = validator.validate(command)
 
     then:
-    violations.size() == 0
+    violations.empty
   }
 
   def "a participant without a name is a violation"() {
@@ -101,7 +101,7 @@ class ValidParticipantsValidatorTest extends Specification {
     violations.count { it -> it.message == "INVALID_SHARE" } == 1
   }
 
-  private class FakeCommand {
+  private static class FakeCommand {
     @ValidParticipants
     List<Map<String, Object>> participants
   }

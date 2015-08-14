@@ -21,8 +21,8 @@ public class GetEventDetails {
 
   @Get("/events/:stringifiedUuid")
   public Optional<EventDetails> retrieve(String stringifiedUuid) {
-    final UUID uuid = UUID.fromString(stringifiedUuid);
-    final ExecutionResult<EventDetails> result = searchBus.sendAndWaitResponse(new EventDetailsSearch(uuid));
+    final UUID eventId = UUID.fromString(stringifiedUuid);
+    final ExecutionResult<EventDetails> result = searchBus.sendAndWaitResponse(new EventDetailsSearch(eventId));
     return Optional.ofNullable(result.data());
   }
 
