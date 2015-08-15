@@ -19,7 +19,6 @@ class EventDetailsTest extends Specification {
     eventDetails.id == event.id
     eventDetails.name == "event"
     eventDetails.participants[0].name == "lea"
-    eventDetails.expenses[0].label == "label"
-    eventDetails.expenses[0].amount == 10
+    eventDetails.expenses.empty
   }
 }
