@@ -1,10 +1,12 @@
 package agoodfriendalwayspayshisdebts.model.event;
 
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
+import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
 import com.vter.model.EntityWithUuid;
+import com.vter.model.internal_event.InternalEvent;
 import com.vter.model.internal_event.InternalEventBus;
 
 import java.util.List;
@@ -29,7 +31,7 @@ public class Event implements EntityWithUuid {
 
   public static Event createAndPublishEvent(String name, List<Participant> participants) {
     final Event event = new Event(name, participants);
-    InternalEventBus.INSTANCE().publish(new EventCreatedInternalEvent(event.id));
+    publishInternalEvent(new EventCreatedInternalEvent(event.id));
     return event;
   }
 
@@ -52,6 +54,11 @@ public class Event implements EntityWithUuid {
 
   public void addExpense(Expense expense) {
     expenses.add(expense);
+    publishInternalEvent(new ExpenseAddedInternalEvent(id, expense));
+  }
+
+  private static <TInternalEvent extends InternalEvent> void publishInternalEvent(TInternalEvent internalEvent) {
+    InternalEventBus.INSTANCE().publish(internalEvent);
   }
 
   @Override

@@ -1,6 +1,7 @@
 package agoodfriendalwayspayshisdebts.model.event
 
 import agoodfriendalwayspayshisdebts.model.expense.Expense
+import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import com.vter.model.internal_event.WithEventBus
 import org.junit.Rule
@@ -21,7 +22,7 @@ class EventTest extends Specification {
     event.participants().first().name() == "kim"
   }
 
-  def "can emit an internal event when creating a new event"() {
+  def "emits an internal event when creating a new event"() {
     when:
     def event = Event.createAndPublishEvent("cool event", [new Participant("kim", 1, null)])
 
@@ -43,5 +44,20 @@ class EventTest extends Specification {
     then:
     event.expenses().size() == 1
     event.expenses()[0] == expense
+  }
+
+  def "emits an event when an expense is added"() {
+    given:
+    def event = new Event("event", [new Participant("kim", 1, null)])
+
+    when:
+    def expense = new Expense("label", null, 2, [])
+    event.addExpense(expense)
+
+    then:
+    def internalEvent = eventBus.bus.lastEvent(ExpenseAddedInternalEvent)
+    internalEvent != null
+    internalEvent.eventId == event.id
+    internalEvent.expense == expense
   }
 }

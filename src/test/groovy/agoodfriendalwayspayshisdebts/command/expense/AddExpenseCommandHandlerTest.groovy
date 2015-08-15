@@ -4,6 +4,7 @@ import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemor
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator
 import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.participant.Participant
+import com.vter.model.internal_event.WithEventBus
 import org.junit.Rule
 import spock.lang.Specification
 
@@ -11,6 +12,9 @@ class AddExpenseCommandHandlerTest extends Specification {
 
   @Rule
   WithMemoryRepository memoryRepository = new WithMemoryRepository()
+
+  @Rule
+  WithEventBus eventBus = new WithEventBus()
 
   def "can add the expense to an event"() {
     given:
