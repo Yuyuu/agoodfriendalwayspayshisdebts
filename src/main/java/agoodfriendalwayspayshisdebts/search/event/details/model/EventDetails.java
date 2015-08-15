@@ -1,10 +1,10 @@
 package agoodfriendalwayspayshisdebts.search.event.details.model;
 
 import agoodfriendalwayspayshisdebts.model.event.Event;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jongo.marshall.jackson.oid.MongoId;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -12,8 +12,8 @@ public class EventDetails {
   @MongoId
   public UUID id;
   public String name;
-  public List<ParticipantDetails> participants = Lists.newArrayList();
-  public List<ExpenseDetails> expenses = Lists.newArrayList();
+  public Set<ParticipantDetails> participants = Sets.newHashSet();
+  public Set<ExpenseDetails> expenses = Sets.newHashSet();
 
   public EventDetails() {}
 

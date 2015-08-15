@@ -19,7 +19,7 @@ class ExpenseDetailsTest extends Specification {
     expenseDetails.label == "label"
     expenseDetails.purchaserId == purchaserId
     expenseDetails.amount == 10
-    expenseDetails.participantsIds == participantsIds
+    expenseDetails.participantsIds == participantsIds as Set
     expenseDetails.description == "description"
   }
 }

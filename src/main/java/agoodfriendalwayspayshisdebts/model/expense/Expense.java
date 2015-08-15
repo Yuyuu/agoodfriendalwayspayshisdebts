@@ -1,8 +1,9 @@
 package agoodfriendalwayspayshisdebts.model.expense;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class Expense {
@@ -10,7 +11,7 @@ public class Expense {
   private String label;
   private UUID purchaserId;
   private double amount;
-  private List<UUID> participantsIds = Lists.newArrayList();
+  private Set<UUID> participantsIds = Sets.newHashSet();
   private String description;
 
   /* Used by mongolink */
@@ -36,7 +37,7 @@ public class Expense {
     return label;
   }
 
-  public List<UUID> participantsIds() {
+  public Set<UUID> participantsIds() {
     return participantsIds;
   }
 

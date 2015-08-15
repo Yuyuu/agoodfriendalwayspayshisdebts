@@ -40,7 +40,7 @@ class AddExpenseCommandHandlerTest extends Specification {
     expense.label() == "label"
     expense.purchaserId() == kim.id()
     expense.amount() == 1
-    expense.participantsIds() == [kim.id()]
+    expense.participantsIds() == [kim.id()] as Set
     expense.description() == "description"
   }
 
@@ -59,6 +59,6 @@ class AddExpenseCommandHandlerTest extends Specification {
 
     then:
     def expense = RepositoryLocator.events().get(event.id).expenses()[0]
-    expense.participantsIds() == event.participants()*.id()
+    expense.participantsIds() == event.participants()*.id() as Set
   }
 }

@@ -42,7 +42,7 @@ class MongoLinkEventRepositoryTest extends Specification {
     expense.label() == "errands"
     expense.purchaserId() == kimId
     expense.amount() == 10
-    expense.participantsIds() == [kimId]
+    expense.participantsIds() == [kimId] as Set
     expense.description() == "hello"
   }
 
