@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.web.action.expense
+package agoodfriendalwayspayshisdebts.web.actions.expense
 
 import agoodfriendalwayspayshisdebts.command.expense.AddExpenseCommand
 import com.vter.command.CommandBus

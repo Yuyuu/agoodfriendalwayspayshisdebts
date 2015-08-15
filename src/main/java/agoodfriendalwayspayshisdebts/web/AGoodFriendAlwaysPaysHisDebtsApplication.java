@@ -39,7 +39,7 @@ public class AGoodFriendAlwaysPaysHisDebtsApplication extends BaseApplication {
         .setExtensions(ApplicationExtensions.withStatusService(new ApplicationStatusService()))
         .setIocAdapter(new GuiceAdapter(injector))
         .get("/", Payload.ok())
-        .autoDiscover("agoodfriendalwayspayshisdebts.web.action");
+        .autoDiscover("agoodfriendalwayspayshisdebts.web.actions");
   }
 
   private final Injector injector;

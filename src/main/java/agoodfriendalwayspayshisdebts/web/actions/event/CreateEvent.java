@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.web.action.event;
+package agoodfriendalwayspayshisdebts.web.actions.event;
 
 import agoodfriendalwayspayshisdebts.command.event.CreateEventCommand;
 import com.google.common.base.Throwables;
