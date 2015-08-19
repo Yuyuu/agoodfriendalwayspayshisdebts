@@ -4,6 +4,7 @@ import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import com.google.common.collect.Maps;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class DebtsDetailsCalculator {
 
-  public DebtsDetailsCalculator(List<Expense> expenses, List<Participant> participants) {
+  public DebtsDetailsCalculator(List<Expense> expenses, Collection<Participant> participants) {
     this.expenses = expenses;
     this.participantsIds = participants.stream().map(Participant::id).collect(Collectors.toList());
     participants.forEach(participant -> {
