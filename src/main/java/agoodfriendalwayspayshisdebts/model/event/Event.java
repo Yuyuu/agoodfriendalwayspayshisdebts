@@ -4,6 +4,7 @@ import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.vter.model.EntityWithUuid;
 import com.vter.model.internal_event.InternalEvent;
@@ -18,7 +19,7 @@ public class Event implements EntityWithUuid {
   private UUID id;
   private String name;
   private Set<Participant> participants = Sets.newHashSet();
-  private Set<Expense> expenses = Sets.newHashSet();
+  private List<Expense> expenses = Lists.newArrayList();
 
   /* This is used by mongolink */
   @SuppressWarnings("unused")
@@ -45,7 +46,7 @@ public class Event implements EntityWithUuid {
     return participants;
   }
 
-  public Set<Expense> expenses() {
+  public List<Expense> expenses() {
     return expenses;
   }
 
