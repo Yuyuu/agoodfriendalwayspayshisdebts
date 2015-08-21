@@ -6,6 +6,7 @@ import agoodfriendalwayspayshisdebts.search.event.result.model.CalculationResult
 import agoodfriendalwayspayshisdebts.search.event.result.model.ParticipantResult;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class ResultCalculator {
         .collect(Collectors.toMap(
             id -> id,
             id -> {
-              double amountSpent = amountSpentResult.get(id);
+              double amountSpent = Optional.ofNullable(amountSpentResult.get(id)).orElse(AMOUNT_SPENT_ZERO);
               ParticipantDebtsDetails debts = debtsResult.get(id);
               return new ParticipantResult(amountSpent, debts);
             }
@@ -47,4 +48,6 @@ public class ResultCalculator {
 
   private AmountSpentCalculator amountSpentCalculator;
   private DebtsDetailsCalculator debtsDetailsCalculator;
+
+  private static final double AMOUNT_SPENT_ZERO = 0D;
 }

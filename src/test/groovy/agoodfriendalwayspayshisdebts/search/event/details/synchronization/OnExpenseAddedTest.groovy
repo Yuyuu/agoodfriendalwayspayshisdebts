@@ -29,8 +29,6 @@ class OnExpenseAddedTest extends Specification {
     given:
     def kim = new Participant("kim", 1, null)
     def event = new Event("event", [kim])
-    def expense = new Expense("label", kim.id(), 4, [kim.id()])
-    event.expenses().add(expense)
     RepositoryLocator.events().save(event)
 
     and:
@@ -41,6 +39,7 @@ class OnExpenseAddedTest extends Specification {
     ]
 
     when:
+    def expense = new Expense("label", kim.id(), 4, [kim.id()])
     handler.executeEvent(new ExpenseAddedInternalEvent(event.id, expense))
 
     then:
