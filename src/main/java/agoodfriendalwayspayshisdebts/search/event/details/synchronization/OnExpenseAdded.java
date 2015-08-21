@@ -25,10 +25,9 @@ public class OnExpenseAdded implements InternalEventHandler<ExpenseAddedInternal
 
     eventDetails.expenses.add(createExpenseDetails(internalEvent.expense));
 
-    final int documentsAffected = jongo.getCollection("eventdetails_view")
+    jongo.getCollection("eventdetails_view")
         .update("{_id:#}", eventDetails.id)
-        .with("{$set:{expenses:#}}", eventDetails.expenses).getN();
-    assert documentsAffected == 1;
+        .with("{$set:{expenses:#}}", eventDetails.expenses);
   }
 
   private static ExpenseDetails createExpenseDetails(Expense expense) {

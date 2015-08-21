@@ -20,8 +20,7 @@ public class OnEventCreated implements InternalEventHandler<EventCreatedInternal
   public void executeEvent(EventCreatedInternalEvent internalEvent) {
     final Event event = RepositoryLocator.events().get(internalEvent.eventId);
     final EventDetails eventDetails = EventDetails.fromEvent(event);
-    final int documentsAffected = jongo.getCollection("eventdetails_view").insert(eventDetails).getN();
-    assert documentsAffected == 1;
+    jongo.getCollection("eventdetails_view").insert(eventDetails);
   }
 
   private final Jongo jongo;
