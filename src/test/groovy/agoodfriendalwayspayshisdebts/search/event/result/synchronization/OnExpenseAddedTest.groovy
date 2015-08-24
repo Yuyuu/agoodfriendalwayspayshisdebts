@@ -19,7 +19,7 @@ class OnExpenseAddedTest extends Specification {
 
   def kim = new Participant("kim", 1, null)
   def ben = new Participant("ben", 1, null)
-  def event = new Event("event", [kim, ben])
+  def event = new Event("", [kim, ben])
 
   OnExpenseAdded handler
 
@@ -29,37 +29,56 @@ class OnExpenseAddedTest extends Specification {
 
   def "can update the result of the event"() {
     given:
-    event.expenses().add(new Expense("label", kim.id(), 3.56D, [kim.id(), ben.id()]))
+    def expense = new Expense("label", ben.id(), 2D, [kim.id(), ben.id()])
+    event.expenses().add(expense)
     RepositoryLocator.events().save(event)
 
     and:
     jongo.collection("eventresult_view") << [
         _id: event.id,
         participantsResults: [
-            (kim.id().toString()): [totalSpent: 5D, participantDebtsDetails:[totalDebt: 3D, details: [(ben.id().toString()): 3D]]]
+            (kim.id().toString()): [totalSpent: 5D, totalDebt: 0D, debtsDetail: [(ben.id().toString()): 0D]],
+            (ben.id().toString()): [totalSpent: 0D, totalDebt: 2.5D, debtsDetail: [(kim.id().toString()): 2.5D]]
         ]
     ]
 
     when:
-    handler.executeEvent(new ExpenseAddedInternalEvent(event.id, null))
+    handler.executeEvent(new ExpenseAddedInternalEvent(event.id, expense))
 
     then:
-    def resultDocument = jongo.collection("eventresult_view").findOne()
-    resultDocument["participantsResults"][kim.id().toString()]["totalSpent"] == 3.56D
-    resultDocument["participantsResults"][ben.id().toString()]["participantDebtsDetails"]["details"][kim.id().toString()] == 1.78D
+    def participantsResultsDocument = jongo.collection("eventresult_view").findOne()["participantsResults"]
+    participantsResultsDocument[kim.id().toString()]["totalSpent"] == 5D
+    participantsResultsDocument[ben.id().toString()]["totalSpent"] == 2D
+    participantsResultsDocument[kim.id().toString()]["totalDebt"] == 0D
+    participantsResultsDocument[ben.id().toString()]["totalDebt"] == 1.5D
+    participantsResultsDocument[kim.id().toString()]["debtsDetail"][kim.id().toString()] == null
+    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()] == 0D
+    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()] == 1.5D
+    participantsResultsDocument[ben.id().toString()]["debtsDetail"][ben.id().toString()] == null
   }
 
   def "can create the result if it does not exist yet"() {
     given:
-    event.expenses().add(new Expense("label", kim.id(), 3.56D, [kim.id(), ben.id()]))
+    def expense = new Expense("label", kim.id(), 4D, [kim.id(), ben.id()])
+    event.expenses().add(expense)
     RepositoryLocator.events().save(event)
 
     when:
-    handler.executeEvent(new ExpenseAddedInternalEvent(event.id, null))
+    handler.executeEvent(new ExpenseAddedInternalEvent(event.id, expense))
 
     then:
     def resultDocument = jongo.collection("eventresult_view").findOne()
-    resultDocument["participantsResults"][kim.id().toString()]["totalSpent"] == 3.56D
-    resultDocument["participantsResults"][ben.id().toString()]["participantDebtsDetails"]["details"][kim.id().toString()] == 1.78D
+    resultDocument["_id"] == event.id
+
+    and:
+    def participantsResultsDocument = resultDocument["participantsResults"]
+    participantsResultsDocument[kim.id().toString()]["totalSpent"] == 4D
+    participantsResultsDocument[ben.id().toString()]["totalSpent"] == 0D
+    participantsResultsDocument[kim.id().toString()]["totalDebt"] == 0D
+    participantsResultsDocument[ben.id().toString()]["totalDebt"] == 2D
+    participantsResultsDocument[kim.id().toString()]["debtsDetail"][kim.id().toString()] == null
+    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()] == 0D
+    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()] == 2D
+    participantsResultsDocument[ben.id().toString()]["debtsDetail"][ben.id().toString()] == null
   }
 }
