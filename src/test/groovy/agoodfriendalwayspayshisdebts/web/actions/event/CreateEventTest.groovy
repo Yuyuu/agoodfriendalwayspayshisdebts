@@ -20,7 +20,7 @@ class CreateEventTest extends Specification {
     def payload = action.create(command)
 
     then:
-    payload.rawContent() == id
+    payload.rawContent().id == id
     payload.code() == 201
   }
 

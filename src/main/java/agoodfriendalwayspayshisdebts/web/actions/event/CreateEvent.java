@@ -26,8 +26,16 @@ public class CreateEvent {
     if (!result.isSuccess()) {
       Throwables.propagate(result.error());
     }
-    return new Payload(result.data()).withCode(HttpStatus.CREATED);
+    return new Payload(new EventIdJsonObject(result.data())).withCode(HttpStatus.CREATED);
   }
 
   private final CommandBus commandBus;
+
+  private static class EventIdJsonObject {
+    public UUID id;
+
+    public EventIdJsonObject(UUID id) {
+      this.id = id;
+    }
+  }
 }
