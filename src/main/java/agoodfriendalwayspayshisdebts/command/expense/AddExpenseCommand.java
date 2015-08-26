@@ -1,6 +1,7 @@
 package agoodfriendalwayspayshisdebts.command.expense;
 
 import agoodfriendalwayspayshisdebts.command.expense.validation.PositiveNonzeroAmount;
+import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseDetails;
 import com.vter.command.Command;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -8,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class AddExpenseCommand implements Command<Void> {
+public class AddExpenseCommand implements Command<ExpenseDetails> {
   public UUID eventId;
 
   @NotBlank(message = "EXPENSE_LABEL_REQUIRED")

@@ -4,18 +4,20 @@ import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
 import agoodfriendalwayspayshisdebts.model.event.Event;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
+import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseDetails;
 import com.vter.command.CommandHandler;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class AddExpenseCommandHandler implements CommandHandler<AddExpenseCommand, Void> {
+public class AddExpenseCommandHandler implements CommandHandler<AddExpenseCommand, ExpenseDetails> {
 
   @Override
-  public Void execute(AddExpenseCommand command) {
+  public ExpenseDetails execute(AddExpenseCommand command) {
     final Event event = RepositoryLocator.events().get(command.eventId);
     final Expense expense = new Expense(
         command.label,
@@ -25,7 +27,10 @@ public class AddExpenseCommandHandler implements CommandHandler<AddExpenseComman
     );
     expense.setDescription(command.description);
     event.addExpense(expense);
-    return null;
+
+    final Map<UUID, String> eventParticipantsNames = event.participants().stream()
+        .collect(Collectors.toMap(Participant::id, Participant::name));
+    return ExpenseDetails.fromExpense(expense, eventParticipantsNames);
   }
 
   private static Optional<List<UUID>> toUuidsIfPresent(List<String> stringifiedUuids) {

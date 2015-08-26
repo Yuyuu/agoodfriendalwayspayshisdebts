@@ -1,11 +1,13 @@
 package agoodfriendalwayspayshisdebts.web.actions.expense;
 
 import agoodfriendalwayspayshisdebts.command.expense.AddExpenseCommand;
+import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseDetails;
 import com.google.common.base.Throwables;
 import com.vter.command.CommandBus;
 import com.vter.infrastructure.bus.ExecutionResult;
 import net.codestory.http.annotations.Post;
 import net.codestory.http.annotations.Resource;
+import net.codestory.http.constants.HttpStatus;
 import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
@@ -23,12 +25,12 @@ public class AddExpenseToEvent {
   public Payload add(String stringifiedUuid, AddExpenseCommand command) {
     command.eventId = UUID.fromString(stringifiedUuid);
 
-    final ExecutionResult<Void> result = commandBus.sendAndWaitResponse(command);
+    final ExecutionResult<ExpenseDetails> result = commandBus.sendAndWaitResponse(command);
     if (!result.isSuccess()) {
       Throwables.propagate(result.error());
     }
 
-    return Payload.created();
+    return new Payload(result.data()).withCode(HttpStatus.CREATED);
   }
 
   private final CommandBus commandBus;

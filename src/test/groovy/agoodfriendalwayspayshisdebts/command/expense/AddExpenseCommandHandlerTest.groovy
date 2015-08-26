@@ -9,7 +9,6 @@ import org.junit.Rule
 import spock.lang.Specification
 
 class AddExpenseCommandHandlerTest extends Specification {
-
   @Rule
   WithMemoryRepository memoryRepository = new WithMemoryRepository()
 
@@ -42,6 +41,33 @@ class AddExpenseCommandHandlerTest extends Specification {
     expense.amount() == 1
     expense.participantsIds() == [kim.id()] as Set
     expense.description() == "description"
+  }
+
+  def "returns the details of the added expense"() {
+    given:
+    def kim = new Participant("kim", 1, null)
+    def event = new Event("event", [kim])
+    RepositoryLocator.events().save(event)
+
+    and:
+    def command = new AddExpenseCommand(
+        eventId: event.id,
+        label: "label",
+        purchaserUuid: kim.id().toString(),
+        amount: 1,
+        participantsUuids: [kim.id().toString()],
+        description: "description"
+    )
+
+    when:
+    def details = new AddExpenseCommandHandler().execute(command)
+
+    then:
+    details.label == "label"
+    details.purchaserName == "kim"
+    details.amount == 1
+    details.participantsNames == ["kim"]
+    details.description == "description"
   }
 
   def "shares the expense between all the participants of the event if none is specified"() {
