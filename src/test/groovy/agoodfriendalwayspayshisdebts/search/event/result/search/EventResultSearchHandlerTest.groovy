@@ -5,7 +5,8 @@ import org.junit.Rule
 import spock.lang.Specification
 
 class EventResultSearchHandlerTest extends Specification {
-  @Rule WithJongo jongo = new WithJongo()
+  @Rule
+  WithJongo jongo = new WithJongo()
 
   UUID kimId = UUID.randomUUID()
   UUID benId = UUID.randomUUID()

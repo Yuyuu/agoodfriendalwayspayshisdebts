@@ -5,7 +5,6 @@ import org.junit.Rule
 import spock.lang.Specification
 
 class EventDetailsSearchHandlerTest extends Specification {
-
   @Rule
   WithJongo jongo = new WithJongo()
 
@@ -15,8 +14,7 @@ class EventDetailsSearchHandlerTest extends Specification {
     def kimId = UUID.randomUUID()
     jongo.collection("eventdetails_view") << [
         _id: eventId, name: "cool event",
-        participants: [[id: kimId, name: "kim", share: 1, email: null]],
-        expenses: [[label: "errands", purchaserId: kimId, amount: 10, participantsIds: [kimId], description: "hello"]]
+        participants: [[id: kimId, name: "kim", share: 1, email: null]]
     ]
     def handler = new EventDetailsSearchHandler()
 
@@ -28,8 +26,5 @@ class EventDetailsSearchHandlerTest extends Specification {
     eventDetails.id == eventId
     eventDetails.name == "cool event"
     eventDetails.participants[0].name == "kim"
-    eventDetails.expenses[0].label == "errands"
-    eventDetails.expenses[0].purchaserId == kimId
-    eventDetails.expenses[0].amount == 10
   }
 }

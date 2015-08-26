@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.search.event.details.model;
+package agoodfriendalwayspayshisdebts.search.expense.model;
 
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import com.google.common.collect.Sets;
@@ -13,7 +13,7 @@ public class ExpenseDetails {
   public Set<UUID> participantsIds = Sets.newHashSet();
   public String description;
 
-  public ExpenseDetails() {}
+  private ExpenseDetails() {}
 
   public static ExpenseDetails fromExpense(Expense expense) {
     final ExpenseDetails expenseDetails = new ExpenseDetails();
