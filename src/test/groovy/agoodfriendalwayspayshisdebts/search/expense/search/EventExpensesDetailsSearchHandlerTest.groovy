@@ -8,7 +8,6 @@ class EventExpensesDetailsSearchHandlerTest extends Specification {
   @Rule
   WithJongo jongo = new WithJongo()
 
-  UUID kimId = UUID.randomUUID()
   UUID eventId = UUID.randomUUID()
 
   EventExpensesDetailsSearchHandler handler = new EventExpensesDetailsSearchHandler()
@@ -17,7 +16,7 @@ class EventExpensesDetailsSearchHandlerTest extends Specification {
     given:
     jongo.collection("eventexpensesdetails_view") << [
         _id: eventId,
-        expenses: [[label: "label", purchaserId: kimId, amount: 2, participantsIds: [kimId], description: "hello"]]
+        expenses: [[label: "label", purchaserName: "kim", amount: 2, participantsNames: ["kim"], description: "hello"]]
     ]
 
     when:
@@ -27,9 +26,9 @@ class EventExpensesDetailsSearchHandlerTest extends Specification {
     eventResult.eventId == eventId
     eventResult.expenses.size() == 1
     eventResult.expenses[0].label == "label"
-    eventResult.expenses[0].purchaserId == kimId
+    eventResult.expenses[0].purchaserName == "kim"
     eventResult.expenses[0].amount == 2
-    eventResult.expenses[0].participantsIds == [kimId] as Set
+    eventResult.expenses[0].participantsNames == ["kim"]
     eventResult.expenses[0].description == "hello"
   }
 }

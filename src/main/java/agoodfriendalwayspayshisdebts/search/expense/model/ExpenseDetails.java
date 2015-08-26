@@ -1,26 +1,30 @@
 package agoodfriendalwayspayshisdebts.search.expense.model;
 
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ExpenseDetails {
   public String label;
-  public UUID purchaserId;
+  public String purchaserName;
   public double amount;
-  public Set<UUID> participantsIds = Sets.newHashSet();
+  public List<String> participantsNames = Lists.newArrayList();
   public String description;
 
   private ExpenseDetails() {}
 
-  public static ExpenseDetails fromExpense(Expense expense) {
+  public static ExpenseDetails fromExpense(Expense expense, Map<UUID, String> eventParticipantsNames) {
     final ExpenseDetails expenseDetails = new ExpenseDetails();
     expenseDetails.label = expense.label();
-    expenseDetails.purchaserId = expense.purchaserId();
+    expenseDetails.purchaserName = eventParticipantsNames.get(expense.purchaserId());
     expenseDetails.amount = expense.amount();
-    expenseDetails.participantsIds.addAll(expense.participantsIds());
+    expenseDetails.participantsNames.addAll(
+        expense.participantsIds().stream().map(eventParticipantsNames::get).collect(Collectors.toList())
+    );
     expenseDetails.description = expense.description();
     return expenseDetails;
   }

@@ -1,7 +1,11 @@
 package agoodfriendalwayspayshisdebts.search.expense.synchronization
 
+import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
+import agoodfriendalwayspayshisdebts.model.RepositoryLocator
+import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
+import agoodfriendalwayspayshisdebts.model.participant.Participant
 import agoodfriendalwayspayshisdebts.search.expense.model.EventExpensesDetails
 import com.vter.search.WithJongo
 import org.junit.Rule
@@ -11,52 +15,51 @@ class OnExpenseAddedTest extends Specification {
   @Rule
   WithJongo jongo = new WithJongo()
 
+  @Rule
+  WithMemoryRepository repository = new WithMemoryRepository()
+
+  Participant kim = new Participant("kim", 1, null)
+  Event event = new Event("event", [kim])
+
   OnExpenseAdded handler
 
   def setup() {
     handler = new OnExpenseAdded(jongo.jongo())
+    RepositoryLocator.events().save(event)
   }
 
   def "can update the expenses details of the event"() {
     given:
-    def kimId = UUID.randomUUID()
-    def eventId = UUID.randomUUID()
-
-    and:
     jongo.collection("eventexpensesdetails_view") << [
-        _id: eventId,
-        expenses: [[label: "label", purchaserId: kimId, amount: 2, participantsIds: [kimId], description: "hello"]]
+        _id: event.id,
+        expenses: [[label: "label", purchaserName: kim.name(), amount: 2, participantsNames: [kim.name()], description: "hello"]]
     ]
 
     when:
-    def expense = new Expense("hey", kimId, 4, [kimId])
-    handler.executeEvent(new ExpenseAddedInternalEvent(eventId, expense))
+    def expense = new Expense("hey", kim.id(), 4, [kim.id()])
+    handler.executeEvent(new ExpenseAddedInternalEvent(event.id, expense))
 
     then:
     // TODO: For some reason (and since jongo 1.2) when checking with GMongo the list is transformed into a map
     // TODO: (i.e. [0:[...], 1:[...]]) after jongo update in test environment. Therefore the deserialized object is used instead.
     def details = jongo.jongo().getCollection("eventexpensesdetails_view").findOne().as(EventExpensesDetails.class)
-    details.eventId == eventId
+    details.eventId == event.id
     details.expenses.size() == 2
     details.expenses[1].label == "hey"
-    details.expenses[1].purchaserId == kimId
+    details.expenses[1].purchaserName == "kim"
     details.expenses[1].amount == 4
-    details.expenses[1].participantsIds == [kimId] as Set
+    details.expenses[1].participantsNames == ["kim"]
     details.expenses[1].description == null
   }
 
   def "creates the expenses details if it does not exist yet"() {
-    given:
-    def kimId = UUID.randomUUID()
-    def eventId = UUID.randomUUID()
-
     when:
-    def expense = new Expense("hey", kimId, 4, [kimId])
-    handler.executeEvent(new ExpenseAddedInternalEvent(eventId, expense))
+    def expense = new Expense("hey", kim.id(), 4, [kim.id()])
+    handler.executeEvent(new ExpenseAddedInternalEvent(event.id, expense))
 
     then:
     def document = jongo.collection("eventexpensesdetails_view").findOne()
-    document["_id"] == eventId
+    document["_id"] == event.id
     document["expenses"].size() == 1
   }
 }

@@ -1,16 +1,19 @@
 package agoodfriendalwayspayshisdebts.search.expense.synchronization;
 
+import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
+import agoodfriendalwayspayshisdebts.model.event.Event;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
-import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseDetails;
+import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import agoodfriendalwayspayshisdebts.search.expense.model.EventExpensesDetails;
+import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseDetails;
 import com.vter.model.internal_event.InternalEventHandler;
 import org.jongo.Jongo;
 
 import javax.inject.Inject;
-import java.util.Optional;
+import java.util.Map;
 import java.util.UUID;
-import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class OnExpenseAdded implements InternalEventHandler<ExpenseAddedInternalEvent> {
 
@@ -21,28 +24,32 @@ public class OnExpenseAdded implements InternalEventHandler<ExpenseAddedInternal
 
   @Override
   public void executeEvent(ExpenseAddedInternalEvent internalEvent) {
-    final Optional<EventExpensesDetails> optionalExpensesDetails = Optional.ofNullable(
-        jongo.getCollection("eventexpensesdetails_view")
-            .findOne("{_id:#}", internalEvent.eventId)
-            .as(EventExpensesDetails.class)
-    );
-    final EventExpensesDetails expensesDetails = optionalExpensesDetails
-        .orElseGet(expensesDetailsOf(internalEvent.eventId));
+    final Event event = RepositoryLocator.events().get(internalEvent.eventId);
+    
+    createExpensesDetailsIfNotPresentFor(event);
 
-    expensesDetails.expenses.add(createExpenseDetails(internalEvent.expense));
+    final Map<UUID, String> eventParticipantsNames = event.participants().stream()
+        .collect(Collectors.toMap(Participant::id, Participant::name));
+    final ExpenseDetails expenseDetails = createExpenseDetails(internalEvent.expense, eventParticipantsNames);
 
     jongo.getCollection("eventexpensesdetails_view")
-        .update("{_id:#}", expensesDetails.eventId)
-        .upsert()
-        .with(expensesDetails);
+        .update("{_id:#}", internalEvent.eventId)
+        .with("{$push:{expenses:#}}", expenseDetails);
   }
 
-  private Supplier<EventExpensesDetails> expensesDetailsOf(UUID eventId) {
-    return () -> new EventExpensesDetails(eventId);
+  private void createExpensesDetailsIfNotPresentFor(Event event) {
+    final long count = jongo.getCollection("eventexpensesdetails_view").count("{_id:#}", event.getId());
+    if (count == 0) {
+      jongo.getCollection("eventexpensesdetails_view").save(expensesDetailsOf(event.getId()));
+    }
   }
 
-  private static ExpenseDetails createExpenseDetails(Expense expense) {
-    return ExpenseDetails.fromExpense(expense);
+  private static EventExpensesDetails expensesDetailsOf(UUID eventId) {
+    return new EventExpensesDetails(eventId);
+  }
+
+  private static ExpenseDetails createExpenseDetails(Expense expense, Map<UUID, String> eventParticipantsNames) {
+    return ExpenseDetails.fromExpense(expense, eventParticipantsNames);
   }
 
   private final Jongo jongo;

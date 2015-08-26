@@ -14,13 +14,13 @@ class ExpenseDetailsTest extends Specification {
     expense.description = "description"
 
     when:
-    def expenseDetails = ExpenseDetails.fromExpense(expense)
+    def expenseDetails = ExpenseDetails.fromExpense(expense, [(purchaserId): "ben"])
 
     then:
     expenseDetails.label == "label"
-    expenseDetails.purchaserId == purchaserId
+    expenseDetails.purchaserName == "ben"
     expenseDetails.amount == 10
-    expenseDetails.participantsIds == participantsIds as Set
+    expenseDetails.participantsNames == ["ben"]
     expenseDetails.description == "description"
   }
 }
