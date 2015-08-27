@@ -5,7 +5,7 @@ import com.vter.search.Search;
 
 import java.util.UUID;
 
-public class EventExpensesDetailsSearch extends Search<EventExpensesDetails> {
+public class EventExpensesDetailsSearch implements Search<EventExpensesDetails> {
 
   public EventExpensesDetailsSearch(UUID eventId) {
     this.eventId = eventId;
