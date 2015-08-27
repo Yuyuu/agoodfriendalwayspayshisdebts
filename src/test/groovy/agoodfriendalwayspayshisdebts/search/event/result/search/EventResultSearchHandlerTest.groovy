@@ -19,8 +19,8 @@ class EventResultSearchHandlerTest extends Specification {
     jongo.collection("eventresult_view") << [
         _id: eventId,
         participantsResults: [
-            (kimId.toString()): [totalSpent: 5D, totalDebt: 0D, debtsDetail: [(benId.toString()): 0D]],
-            (benId.toString()): [totalSpent: 0D, totalDebt: 2.5D, debtsDetail: [(kimId.toString()): 2.5D]]
+            (kimId.toString()): [participantName: "kim", totalSpent: 5D, totalDebt: 0D, debtsDetail: [(benId.toString()): [creditorName: "ben", amount: 0D]]],
+            (benId.toString()): [participantName: "ben", totalSpent: 0D, totalDebt: 2.5D, debtsDetail: [(kimId.toString()): [creditorName: "ben", amount: 2.5D]]]
         ]
     ]
 
@@ -29,6 +29,8 @@ class EventResultSearchHandlerTest extends Specification {
 
     then:
     eventResult.eventId == eventId
+    eventResult.participantsResults.get(kimId).participantName() == "kim"
+    eventResult.participantsResults.get(benId).participantName() == "ben"
     eventResult.participantsResults.get(kimId).totalSpent() == 5D
     eventResult.participantsResults.get(benId).totalSpent() == 0D
     eventResult.participantsResults.get(kimId).totalDebt() == 0D

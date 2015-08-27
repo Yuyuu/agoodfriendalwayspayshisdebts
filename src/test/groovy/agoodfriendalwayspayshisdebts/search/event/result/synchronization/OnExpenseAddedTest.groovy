@@ -37,8 +37,8 @@ class OnExpenseAddedTest extends Specification {
     jongo.collection("eventresult_view") << [
         _id: event.id,
         participantsResults: [
-            (kim.id().toString()): [totalSpent: 5D, totalDebt: 0D, debtsDetail: [(ben.id().toString()): 0D]],
-            (ben.id().toString()): [totalSpent: 0D, totalDebt: 2.5D, debtsDetail: [(kim.id().toString()): 2.5D]]
+            (kim.id().toString()): [participantName: "kim", totalSpent: 5D, totalDebt: 0D, debtsDetail: [(ben.id().toString()): [creditorName: "ben", amount:0D]]],
+            (ben.id().toString()): [participantName: "ben", totalSpent: 0D, totalDebt: 2.5D, debtsDetail: [(kim.id().toString()): [creditorName: "kim", amount:2.5D]]]
         ]
     ]
 
@@ -52,8 +52,10 @@ class OnExpenseAddedTest extends Specification {
     participantsResultsDocument[kim.id().toString()]["totalDebt"] == 0D
     participantsResultsDocument[ben.id().toString()]["totalDebt"] == 1.5D
     participantsResultsDocument[kim.id().toString()]["debtsDetail"][kim.id().toString()] == null
-    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()] == 0D
-    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()] == 1.5D
+    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()]["amount"] == 0D
+    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()]["creditorName"] == "ben"
+    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()]["amount"] == 1.5D
+    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()]["creditorName"] == "kim"
     participantsResultsDocument[ben.id().toString()]["debtsDetail"][ben.id().toString()] == null
   }
 
@@ -77,8 +79,10 @@ class OnExpenseAddedTest extends Specification {
     participantsResultsDocument[kim.id().toString()]["totalDebt"] == 0D
     participantsResultsDocument[ben.id().toString()]["totalDebt"] == 2D
     participantsResultsDocument[kim.id().toString()]["debtsDetail"][kim.id().toString()] == null
-    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()] == 0D
-    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()] == 2D
+    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()]["amount"] == 0D
+    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()]["creditorName"] == "ben"
+    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()]["amount"] == 2D
+    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()]["creditorName"] == "kim"
     participantsResultsDocument[ben.id().toString()]["debtsDetail"][ben.id().toString()] == null
   }
 }

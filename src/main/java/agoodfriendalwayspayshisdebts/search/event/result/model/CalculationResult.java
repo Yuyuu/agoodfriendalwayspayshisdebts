@@ -6,7 +6,6 @@ import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import com.google.common.collect.Maps;
 import org.jongo.marshall.jackson.oid.MongoId;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -29,12 +28,11 @@ public class CalculationResult {
 
   public static CalculationResult forEvent(Event event) {
     final CalculationResult result = new CalculationResult(event.getId());
-    final List<UUID> participantsIds = event.participants().stream()
-        .map(Participant::id)
-        .collect(Collectors.toList());
+    final Map<UUID, String> participantsNames = event.participants().stream()
+        .collect(Collectors.toMap(Participant::id, Participant::name));
 
     event.participants().forEach(participant -> {
-      final ParticipantResult participantResult = ParticipantResult.forParticipantId(participant.id(), participantsIds);
+      final ParticipantResult participantResult = ParticipantResult.forParticipant(participant, participantsNames);
       result.participantsResults.put(participant.id(), participantResult);
     });
 

@@ -1,26 +1,37 @@
 package agoodfriendalwayspayshisdebts.search.event.result.model;
 
+import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import com.google.common.collect.Maps;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class ParticipantResult {
   private static double INITIAL_DEBT = 0D;
 
+  private String participantName;
   private double totalSpent;
   private double totalDebt;
-  private Map<UUID, Double> debtsDetail = Maps.newHashMap();
+  private Map<UUID, DebtTowardsParticipant> debtsDetail = Maps.newHashMap();
 
+  @SuppressWarnings("unused")
   private ParticipantResult() {}
 
-  public static ParticipantResult forParticipantId(UUID participantId, List<UUID> participantsIds) {
-    final ParticipantResult participantResult = new ParticipantResult();
-    participantsIds.stream()
-        .filter(id -> !id.equals(participantId))
-        .forEach(id -> participantResult.debtsDetail.put(id, INITIAL_DEBT));
+  private ParticipantResult(String participantName) {
+    this.participantName = participantName;
+  }
+
+  public static ParticipantResult forParticipant(Participant participant, Map<UUID, String> participantsNames) {
+    final ParticipantResult participantResult = new ParticipantResult(participant.name());
+    participantsNames.entrySet().stream()
+        .filter(participantEntry -> !participantEntry.getKey().equals(participant.id()))
+        .forEach(participantEntry -> participantResult.debtsDetail
+            .put(participantEntry.getKey(), new DebtTowardsParticipant(participantEntry.getValue(), INITIAL_DEBT)));
     return participantResult;
+  }
+
+  public String participantName() {
+    return participantName;
   }
 
   public double totalSpent() {
@@ -36,11 +47,12 @@ public class ParticipantResult {
   }
 
   public void updateDebtTowards(UUID creditorId, double amount) {
-    totalDebt = totalDebt - debtsDetail.get(creditorId) + amount;
-    debtsDetail.put(creditorId, amount);
+    double currentDebtTowardsCreditor = debtsDetail.get(creditorId).amount;
+    totalDebt = totalDebt - currentDebtTowardsCreditor + amount;
+    debtsDetail.get(creditorId).amount = amount;
   }
 
   public double debtTowards(UUID participantId) {
-    return debtsDetail.get(participantId);
+    return debtsDetail.get(participantId).amount;
   }
 }

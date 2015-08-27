@@ -9,7 +9,7 @@ class ParticipantResultTest extends Specification {
 
   def "keeps the total debt up to date"() {
     given:
-    def kimResult = ParticipantResult.forParticipantId(kim.id(), [ben.id()])
+    def kimResult = ParticipantResult.forParticipant(kim, [(ben.id()): ben.name()])
 
     when:
     kimResult.updateDebtTowards(ben.id(), 3D)
@@ -20,7 +20,7 @@ class ParticipantResultTest extends Specification {
 
   def "increases the total amount spent"() {
     given:
-    def kimResult = ParticipantResult.forParticipantId(kim.id(), [ben.id()])
+    def kimResult = ParticipantResult.forParticipant(kim, [(ben.id()): ben.name()])
 
     when:
     kimResult.increaseTotalAmountSpentBy(3D)
