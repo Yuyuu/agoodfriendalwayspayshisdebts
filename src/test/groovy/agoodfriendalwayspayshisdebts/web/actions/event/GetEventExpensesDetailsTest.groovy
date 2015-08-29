@@ -17,7 +17,7 @@ class GetEventExpensesDetailsTest extends Specification {
     searchBus.sendAndWaitResponse(_ as EventExpensesDetailsSearch) >> ExecutionResult.success(expensesDetails)
 
     when:
-    def optionalEventResult = action.getExpenses(UUID.randomUUID().toString())
+    def optionalEventResult = action.getExpenses(UUID.randomUUID().toString(), 3, 2)
 
     then:
     optionalEventResult == expensesDetails
@@ -28,7 +28,7 @@ class GetEventExpensesDetailsTest extends Specification {
     searchBus.sendAndWaitResponse(_ as EventExpensesDetailsSearch) >> ExecutionResult.success(null)
 
     when:
-    def optionalEventResult = action.getExpenses(UUID.randomUUID().toString())
+    def optionalEventResult = action.getExpenses(UUID.randomUUID().toString(), 2, 5)
 
     then:
     optionalEventResult.expenses.empty

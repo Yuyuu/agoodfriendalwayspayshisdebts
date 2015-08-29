@@ -34,7 +34,7 @@ public class OnExpenseAdded implements InternalEventHandler<ExpenseAddedInternal
 
     jongo.getCollection("eventexpensesdetails_view")
         .update("{_id:#}", internalEvent.eventId)
-        .with("{$push:{expenses:#}}", expenseDetails);
+        .with("{$inc:{expenseCount:1},$push:{expenses:#}}", expenseDetails);
   }
 
   private void createExpensesDetailsIfNotPresentFor(Event event) {

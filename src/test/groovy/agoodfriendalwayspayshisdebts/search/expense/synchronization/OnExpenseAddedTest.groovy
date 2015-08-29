@@ -32,6 +32,7 @@ class OnExpenseAddedTest extends Specification {
     given:
     jongo.collection("eventexpensesdetails_view") << [
         _id: event.id,
+        expenseCount: 1,
         expenses: [[label: "label", purchaserName: kim.name(), amount: 2, participantsNames: [kim.name()], description: "hello"]]
     ]
 
@@ -44,6 +45,7 @@ class OnExpenseAddedTest extends Specification {
     // TODO: (i.e. [0:[...], 1:[...]]) after jongo update in test environment. Therefore the deserialized object is used instead.
     def details = jongo.jongo().getCollection("eventexpensesdetails_view").findOne().as(EventExpensesDetails.class)
     details.eventId == event.id
+    details.expenseCount == 2
     details.expenses.size() == 2
     details.expenses[1].label == "hey"
     details.expenses[1].purchaserName == "kim"

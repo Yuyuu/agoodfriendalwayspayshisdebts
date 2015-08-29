@@ -9,6 +9,7 @@ import java.util.UUID;
 public class EventExpensesDetails {
   @MongoId
   public UUID eventId;
+  public int expenseCount;
   public List<ExpenseDetails> expenses = Lists.newArrayList();
 
   @SuppressWarnings("unused")

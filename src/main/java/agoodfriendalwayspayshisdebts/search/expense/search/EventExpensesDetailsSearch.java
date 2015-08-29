@@ -1,11 +1,11 @@
 package agoodfriendalwayspayshisdebts.search.expense.search;
 
 import agoodfriendalwayspayshisdebts.search.expense.model.EventExpensesDetails;
-import com.vter.search.Search;
+import com.vter.search.PaginatedSearch;
 
 import java.util.UUID;
 
-public class EventExpensesDetailsSearch implements Search<EventExpensesDetails> {
+public class EventExpensesDetailsSearch extends PaginatedSearch<EventExpensesDetails> {
 
   public EventExpensesDetailsSearch(UUID eventId) {
     this.eventId = eventId;
