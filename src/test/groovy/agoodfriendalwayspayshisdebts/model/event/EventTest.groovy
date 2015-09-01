@@ -2,6 +2,7 @@ package agoodfriendalwayspayshisdebts.model.event
 
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
+import agoodfriendalwayspayshisdebts.model.expense.UnknownExpense
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import com.vter.model.internal_event.WithEventBus
 import org.junit.Rule
@@ -59,5 +60,29 @@ class EventTest extends Specification {
     internalEvent != null
     internalEvent.eventId == event.id
     internalEvent.expense == expense
+  }
+
+  def "throws an error when attempting to delete an expense that does not exist"() {
+    given:
+    def event = new Event("", [])
+
+    when:
+    event.deleteExpense(UUID.randomUUID())
+
+    then:
+    thrown(UnknownExpense)
+  }
+
+  def "can delete an expense"() {
+    given:
+    def event = new Event("", [])
+    def expense = new Expense("", null, 1, [])
+    event.expenses().add(expense)
+
+    when:
+    event.deleteExpense(expense.id())
+
+    then:
+    event.expenses().empty
   }
 }
