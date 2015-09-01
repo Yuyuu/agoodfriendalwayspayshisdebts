@@ -10,6 +10,7 @@ class ExpenseTest extends Specification {
     def expense = new Expense("food", purchaserId, 10, [purchaserId])
 
     expect:
+    expense.id() != null
     expense.label() == "food"
     expense.purchaserId() == purchaserId
     expense.amount() == 10

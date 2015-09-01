@@ -9,6 +9,7 @@ public class ExpenseMapping extends AggregateMap<Expense> {
 
   @Override
   public void map() {
+    property().onField("id");
     property().onField("label");
     property().onField("purchaserId");
     property().onField("amount");

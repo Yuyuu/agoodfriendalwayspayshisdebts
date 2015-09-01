@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public class Expense {
 
+  private UUID id;
   private String label;
   private UUID purchaserId;
   private double amount;
@@ -19,6 +20,7 @@ public class Expense {
   protected Expense() {}
 
   public Expense(String label, UUID purchaserId, double amount, List<UUID> participantsIds) {
+    id = UUID.randomUUID();
     this.label = label;
     this.purchaserId = purchaserId;
     this.amount = amount;
@@ -31,6 +33,10 @@ public class Expense {
 
   public String description() {
     return description;
+  }
+
+  public UUID id() {
+    return id;
   }
 
   public String label() {

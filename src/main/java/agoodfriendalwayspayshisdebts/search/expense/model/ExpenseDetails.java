@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ExpenseDetails {
+  public UUID id;
   public String label;
   public String purchaserName;
   public double amount;
@@ -19,6 +20,7 @@ public class ExpenseDetails {
 
   public static ExpenseDetails fromExpense(Expense expense, Map<UUID, String> eventParticipantsNames) {
     final ExpenseDetails expenseDetails = new ExpenseDetails();
+    expenseDetails.id = expense.id();
     expenseDetails.label = expense.label();
     expenseDetails.purchaserName = eventParticipantsNames.get(expense.purchaserId());
     expenseDetails.amount = expense.amount();
