@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.model.expense;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 import java.util.List;
@@ -53,5 +54,18 @@ public class Expense {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Expense expense = (Expense) o;
+    return Objects.equal(id, expense.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id);
   }
 }

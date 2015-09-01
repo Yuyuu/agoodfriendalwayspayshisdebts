@@ -40,6 +40,15 @@ class ExpenseTest extends Specification {
     expense.description() == "a description"
   }
 
+  def "two expenses with the same id are equal"() {
+    given:
+    def expense1 = new Expense()
+    def expense2 = new Expense(id: expense1.id())
+
+    expect:
+    expense1 == expense2
+  }
+
   def uuid() {
     return UUID.randomUUID()
   }
