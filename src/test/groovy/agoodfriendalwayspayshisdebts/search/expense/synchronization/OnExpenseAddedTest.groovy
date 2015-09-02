@@ -47,6 +47,7 @@ class OnExpenseAddedTest extends Specification {
     details.eventId == event.id
     details.expenseCount == 2
     details.expenses.size() == 2
+    details.expenses[1].id == expense.id()
     details.expenses[1].label == "hey"
     details.expenses[1].purchaserName == "kim"
     details.expenses[1].amount == 4

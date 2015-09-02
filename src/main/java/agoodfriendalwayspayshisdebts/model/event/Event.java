@@ -2,6 +2,7 @@ package agoodfriendalwayspayshisdebts.model.event;
 
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
+import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.expense.UnknownExpense;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import com.google.common.base.MoreObjects;
@@ -61,11 +62,16 @@ public class Event implements EntityWithUuid {
   }
 
   public void deleteExpense(UUID expenseId) {
-    expenses.remove(find(expenseId));
+    final Expense expense = find(expenseId);
+    expenses.remove(expense);
+    publishInternalEvent(new ExpenseDeletedInternalEvent(id, expense));
   }
 
   private Expense find(UUID expenseId) {
-    return expenses.stream().filter(e -> e.id().equals(expenseId)).findFirst().orElseThrow(UnknownExpense::new);
+    return expenses.stream()
+        .filter(expense -> expense.id().equals(expenseId))
+        .findFirst()
+        .orElseThrow(UnknownExpense::new);
   }
 
   private static <TInternalEvent extends InternalEvent> void publishInternalEvent(TInternalEvent internalEvent) {

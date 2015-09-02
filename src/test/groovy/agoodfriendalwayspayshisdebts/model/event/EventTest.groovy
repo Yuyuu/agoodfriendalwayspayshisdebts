@@ -2,6 +2,7 @@ package agoodfriendalwayspayshisdebts.model.event
 
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
+import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent
 import agoodfriendalwayspayshisdebts.model.expense.UnknownExpense
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import com.vter.model.internal_event.WithEventBus
@@ -9,7 +10,6 @@ import org.junit.Rule
 import spock.lang.Specification
 
 class EventTest extends Specification {
-
   @Rule
   WithEventBus eventBus = new WithEventBus()
 
@@ -84,5 +84,21 @@ class EventTest extends Specification {
 
     then:
     event.expenses().empty
+  }
+
+  def "emits an event when an expense is deleted"() {
+    given:
+    def event = new Event("", [])
+    def expense = new Expense("label", null, 2, [])
+    event.expenses().add(expense)
+
+    when:
+    event.deleteExpense(expense.id())
+
+    then:
+    def internalEvent = eventBus.bus.lastEvent(ExpenseDeletedInternalEvent)
+    internalEvent != null
+    internalEvent.eventId == event.id
+    internalEvent.expense == expense
   }
 }

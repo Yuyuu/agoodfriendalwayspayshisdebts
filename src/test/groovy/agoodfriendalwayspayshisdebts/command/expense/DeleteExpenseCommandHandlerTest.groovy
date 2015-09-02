@@ -4,12 +4,16 @@ import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemor
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator
 import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.expense.Expense
+import com.vter.model.internal_event.WithEventBus
 import org.junit.Rule
 import spock.lang.Specification
 
 class DeleteExpenseCommandHandlerTest extends Specification {
   @Rule
   WithMemoryRepository memoryRepository = new WithMemoryRepository()
+
+  @Rule
+  WithEventBus eventBus = new WithEventBus()
 
   def "deletes the expense from the event"() {
     given:
@@ -25,7 +29,7 @@ class DeleteExpenseCommandHandlerTest extends Specification {
     new DeleteExpenseCommandHandler().execute(command)
 
     then:
-    def e = RepositoryLocator.events().get(event.id)
-    !e.expenses().contains(expense)
+    def updatedEvent = RepositoryLocator.events().get(event.id)
+    !updatedEvent.expenses().contains(expense)
   }
 }
