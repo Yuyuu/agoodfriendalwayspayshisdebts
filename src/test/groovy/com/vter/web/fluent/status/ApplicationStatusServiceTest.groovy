@@ -1,11 +1,12 @@
 package com.vter.web.fluent.status
 
 import com.vter.command.ValidationException
+import com.vter.command.ValidationExceptionResolver
 import spock.lang.Specification
 
 class ApplicationStatusServiceTest extends Specification {
 
-  ApplicationStatusService statusService = new ApplicationStatusService()
+  ApplicationStatusService statusService = new ApplicationStatusService([new ValidationExceptionResolver()] as Set)
 
   def "can ask the resolver for a status"() {
     expect:

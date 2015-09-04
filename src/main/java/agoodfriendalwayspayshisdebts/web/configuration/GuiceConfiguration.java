@@ -21,6 +21,7 @@ import com.vter.model.internal_event.InternalEventHandler;
 import com.vter.model.internal_event.InternalEventSynchronization;
 import com.vter.search.SearchBus;
 import com.vter.search.SearchHandler;
+import com.vter.web.fluent.status.resolver.ExceptionResolver;
 import org.jongo.Jongo;
 import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
@@ -41,6 +42,7 @@ public class GuiceConfiguration extends AbstractModule {
     configureCommands();
     configureEvents();
     configureSearches();
+    configureExceptionResolvers();
   }
 
   private void configurePersistence() {
@@ -68,6 +70,10 @@ public class GuiceConfiguration extends AbstractModule {
   private void configureSearches() {
     HandlerScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.search", SearchHandler.class, binder());
     bind(SearchBus.class).asEagerSingleton();
+  }
+
+  private void configureExceptionResolvers() {
+    HandlerScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.model", ExceptionResolver.class, binder());
   }
 
   @Provides

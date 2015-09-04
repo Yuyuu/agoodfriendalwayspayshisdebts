@@ -1,17 +1,10 @@
-package com.vter.web.fluent.status.resolver
+package com.vter.command
 
-import com.vter.command.ValidationException
 import spock.lang.Specification
 
 @SuppressWarnings("GroovyAccessibility")
 class ValidationExceptionResolverTest extends Specification {
-
   ValidationExceptionResolver resolver = new ValidationExceptionResolver()
-
-  def "can resolve validation exceptions"() {
-    expect:
-    resolver.isAbleToResolve(new ValidationException([]))
-  }
 
   def "a validation exception is a bad request"() {
     expect:

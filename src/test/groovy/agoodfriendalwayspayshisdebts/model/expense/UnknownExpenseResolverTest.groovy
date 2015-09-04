@@ -1,15 +1,9 @@
-package com.vter.web.fluent.status.resolver
+package agoodfriendalwayspayshisdebts.model.expense
 
-import agoodfriendalwayspayshisdebts.model.expense.UnknownExpense
 import spock.lang.Specification
 
 class UnknownExpenseResolverTest extends Specification {
   UnknownExpenseResolver resolver = new UnknownExpenseResolver()
-
-  def "can resolve unknown expense exceptions"() {
-    expect:
-    resolver.isAbleToResolve(new UnknownExpense())
-  }
 
   def "an unknown expense exception is a 404 error"() {
     expect:

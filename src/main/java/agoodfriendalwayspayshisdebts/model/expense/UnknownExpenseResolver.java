@@ -1,6 +1,6 @@
-package com.vter.web.fluent.status.resolver;
+package agoodfriendalwayspayshisdebts.model.expense;
 
-import agoodfriendalwayspayshisdebts.model.expense.UnknownExpense;
+import com.vter.web.fluent.status.resolver.ExceptionResolver;
 import net.codestory.http.constants.HttpStatus;
 
 public class UnknownExpenseResolver implements ExceptionResolver<UnknownExpense> {

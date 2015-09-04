@@ -5,8 +5,8 @@ import com.vter.web.fluent.status.ErrorRepresentation;
 
 public interface ExceptionResolver<TException extends RuntimeException> {
 
-  default boolean isAbleToResolve(Throwable throwable) {
-    return new TypeToken<TException>(getClass()) {}.getRawType().isAssignableFrom(throwable.getClass());
+  default Class<TException> exceptionType() {
+    return (Class<TException>) new TypeToken<TException>(getClass()) {}.getRawType();
   }
 
   int status();

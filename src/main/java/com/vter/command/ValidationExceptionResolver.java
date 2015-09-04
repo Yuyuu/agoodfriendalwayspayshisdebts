@@ -1,7 +1,7 @@
-package com.vter.web.fluent.status.resolver;
+package com.vter.command;
 
-import com.vter.command.ValidationException;
 import com.vter.web.fluent.status.ErrorRepresentation;
+import com.vter.web.fluent.status.resolver.ExceptionResolver;
 import net.codestory.http.constants.HttpStatus;
 
 public class ValidationExceptionResolver implements ExceptionResolver<ValidationException> {
@@ -13,7 +13,6 @@ public class ValidationExceptionResolver implements ExceptionResolver<Validation
 
   @Override
   public ErrorRepresentation representation(Throwable throwable) {
-    assert isAbleToResolve(throwable);
     final ValidationException exception = (ValidationException) throwable;
     return ErrorRepresentation.fromErrorMessages(exception.messages());
   }

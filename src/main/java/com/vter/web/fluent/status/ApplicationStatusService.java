@@ -1,15 +1,20 @@
 package com.vter.web.fluent.status;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.vter.web.fluent.status.resolver.ExceptionResolver;
-import com.vter.web.fluent.status.resolver.UnknownExpenseResolver;
-import com.vter.web.fluent.status.resolver.ValidationExceptionResolver;
 import net.codestory.http.constants.HttpStatus;
 
-import java.util.List;
+import javax.inject.Inject;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class ApplicationStatusService implements StatusService {
+
+  @Inject
+  public ApplicationStatusService(Set<ExceptionResolver> resolvers) {
+    resolvers.forEach(resolver -> this.resolvers.put(resolver.exceptionType(), resolver));
+  }
 
   @Override
   public int getStatus(Throwable throwable) {
@@ -30,11 +35,8 @@ public class ApplicationStatusService implements StatusService {
   }
 
   private Optional<ExceptionResolver> resolver(Throwable throwable) {
-    return resolvers.stream().filter(resolver -> resolver.isAbleToResolve(throwable)).findFirst();
+    return Optional.ofNullable(resolvers.get(throwable.getClass()));
   }
 
-  private List<ExceptionResolver> resolvers = Lists.newArrayList(
-      new ValidationExceptionResolver(),
-      new UnknownExpenseResolver()
-  );
+  private Map<Class<?>, ExceptionResolver> resolvers = Maps.newHashMap();
 }

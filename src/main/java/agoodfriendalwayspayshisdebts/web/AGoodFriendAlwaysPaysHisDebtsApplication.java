@@ -36,7 +36,7 @@ public class AGoodFriendAlwaysPaysHisDebtsApplication extends BaseApplication {
   @Override
   protected Configuration routes() {
     return routes -> routes
-        .setExtensions(ApplicationExtensions.withStatusService(new ApplicationStatusService()))
+        .setExtensions(ApplicationExtensions.withStatusService(injector.getInstance(ApplicationStatusService.class)))
         .setIocAdapter(new GuiceAdapter(injector))
         .get("/", Payload.ok())
         .autoDiscover("agoodfriendalwayspayshisdebts.web.actions");
