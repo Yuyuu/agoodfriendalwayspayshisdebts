@@ -2,7 +2,6 @@ package com.vter.web.fluent.status;
 
 import com.google.common.collect.Lists;
 import com.vter.web.fluent.status.resolver.ExceptionResolver;
-import com.vter.web.fluent.status.resolver.NotFoundExceptionResolver;
 import com.vter.web.fluent.status.resolver.UnknownExpenseResolver;
 import com.vter.web.fluent.status.resolver.ValidationExceptionResolver;
 import net.codestory.http.constants.HttpStatus;
@@ -35,7 +34,6 @@ public class ApplicationStatusService implements StatusService {
   }
 
   private List<ExceptionResolver> resolvers = Lists.newArrayList(
-      new NotFoundExceptionResolver(),
       new ValidationExceptionResolver(),
       new UnknownExpenseResolver()
   );
