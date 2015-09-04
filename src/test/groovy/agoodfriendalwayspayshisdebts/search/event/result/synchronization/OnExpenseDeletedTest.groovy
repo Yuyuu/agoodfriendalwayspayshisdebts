@@ -1,7 +1,5 @@
 package agoodfriendalwayspayshisdebts.search.event.result.synchronization
 
-import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
-import agoodfriendalwayspayshisdebts.model.RepositoryLocator
 import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent
@@ -14,9 +12,6 @@ class OnExpenseDeletedTest extends Specification {
   @Rule
   WithJongo jongo = new WithJongo()
 
-  @Rule
-  WithMemoryRepository repository = new WithMemoryRepository()
-
   Participant kim = new Participant("kim", 1, null)
   Participant ben = new Participant("ben", 1, null)
   Event event = new Event("", [kim, ben])
@@ -25,7 +20,6 @@ class OnExpenseDeletedTest extends Specification {
 
   def setup() {
     handler = new OnExpenseDeleted(jongo.jongo())
-    RepositoryLocator.events().save(event)
   }
 
   def "can recalculate the result when an expense is deleted"() {
@@ -35,8 +29,8 @@ class OnExpenseDeletedTest extends Specification {
     jongo.collection("eventresult_view") << [
         _id: event.id,
         participantsResults: [
-            (strKimId): [participantName: "kim", totalSpent: 6D, totalDebt: 0D, debtsDetail: [(strBenId): [creditorName: "ben", rawAmount: 1D, mitigatedAmount:0D]]],
-            (strBenId): [participantName: "ben", totalSpent: 2D, totalDebt: 2D, debtsDetail: [(strKimId): [creditorName: "kim", rawAmount: 3D, mitigatedAmount:2D]]]
+            (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 6D, totalDebt: 0D, debtsDetail: [(strBenId): [creditorName: "ben", rawAmount: 1D, mitigatedAmount:0D]]],
+            (strBenId): [participantName: "ben", participantShare: 1, totalSpent: 2D, totalDebt: 2D, debtsDetail: [(strKimId): [creditorName: "kim", rawAmount: 3D, mitigatedAmount:2D]]]
         ]
     ]
 

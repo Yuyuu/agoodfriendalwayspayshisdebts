@@ -9,6 +9,7 @@ import java.util.UUID;
 public class ParticipantResult {
 
   private String participantName;
+  private int participantShare;
   private double totalSpent;
   private double totalDebt;
   private Map<UUID, DebtTowardsParticipant> debtsDetail = Maps.newHashMap();
@@ -16,12 +17,13 @@ public class ParticipantResult {
   @SuppressWarnings("unused")
   private ParticipantResult() {}
 
-  private ParticipantResult(String participantName) {
+  private ParticipantResult(String participantName, int participantShare) {
     this.participantName = participantName;
+    this.participantShare = participantShare;
   }
 
   public static ParticipantResult forParticipant(Participant participant, Map<UUID, String> participantsNames) {
-    final ParticipantResult participantResult = new ParticipantResult(participant.name());
+    final ParticipantResult participantResult = new ParticipantResult(participant.name(), participant.share());
     participantsNames.entrySet().stream()
         .filter(participantEntry -> !participantEntry.getKey().equals(participant.id()))
         .forEach(participantEntry -> participantResult.debtsDetail
@@ -31,6 +33,10 @@ public class ParticipantResult {
 
   public String participantName() {
     return participantName;
+  }
+
+  public int participantShare() {
+    return participantShare;
   }
 
   public double totalSpent() {

@@ -39,8 +39,8 @@ class OnExpenseAddedTest extends Specification {
     jongo.collection("eventresult_view") << [
         _id: event.id,
         participantsResults: [
-            (strKimId): [participantName: "kim", totalSpent: 5D, totalDebt: 0D, debtsDetail: [(strBenId): [creditorName: "ben", rawAmount: 0D, mitigatedAmount: 0D]]],
-            (strBenId): [participantName: "ben", totalSpent: 0D, totalDebt: 2.5D, debtsDetail: [(strKimId): [creditorName: "kim", rawAmount: 2.5D, mitigatedAmount: 2.5D]]]
+            (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 5D, totalDebt: 0D, debtsDetail: [(strBenId): [creditorName: "ben", rawAmount: 0D, mitigatedAmount: 0D]]],
+            (strBenId): [participantName: "ben", participantShare: 1, totalSpent: 0D, totalDebt: 2.5D, debtsDetail: [(strKimId): [creditorName: "kim", rawAmount: 2.5D, mitigatedAmount: 2.5D]]]
         ]
     ]
 
@@ -83,6 +83,8 @@ class OnExpenseAddedTest extends Specification {
 
     and:
     def kimResultDocument = participantsResultsDocument[strKimId]
+    kimResultDocument["participantName"] == "kim"
+    kimResultDocument["participantShare"] == 1
     kimResultDocument["totalSpent"] == 4D
     kimResultDocument["totalDebt"] == 0D
     kimResultDocument["debtsDetail"][strKimId] == null
@@ -93,6 +95,8 @@ class OnExpenseAddedTest extends Specification {
 
     and:
     def benResultDocument = participantsResultsDocument[strBenId]
+    benResultDocument["participantName"] == "ben"
+    benResultDocument["participantShare"] == 1
     benResultDocument["totalSpent"] == 0D
     benResultDocument["totalDebt"] == 2D
     benResultDocument["debtsDetail"][strBenId] == null
