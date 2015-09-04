@@ -4,12 +4,7 @@ import com.vter.command.ValidationException;
 import com.vter.web.fluent.status.ErrorRepresentation;
 import net.codestory.http.constants.HttpStatus;
 
-public class ValidationExceptionResolver implements ExceptionResolver {
-
-  @Override
-  public boolean isAbleToResolve(Throwable throwable) {
-    return ValidationException.class.isAssignableFrom(throwable.getClass());
-  }
+public class ValidationExceptionResolver implements ExceptionResolver<ValidationException> {
 
   @Override
   public int status() {
