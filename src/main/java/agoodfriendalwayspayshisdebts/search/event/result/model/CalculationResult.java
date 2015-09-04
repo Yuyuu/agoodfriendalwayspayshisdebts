@@ -40,15 +40,54 @@ public class CalculationResult {
   }
 
   public void shareExpenseBetweenParticipants(Expense expense, Map<UUID, Integer> participantsShares) {
-    final UUID purchaserId = expense.purchaserId();
+    final double amountDuePerShare = expenseAmountPerShare(expense, participantsShares);
+    final Consumer<UUID> allocateParticipantShare = allocateParticipantShare(
+        participantsShares,
+        expense.purchaserId(),
+        amountDuePerShare
+    );
+
+    increaseAmountSpentByPurchaser(expense.purchaserId(), expense.amount());
+    forEachParticipantOf(expense, allocateParticipantShare);
+  }
+
+  public void deleteExpense(Expense expense, Map<UUID, Integer> participantsShares) {
+    final double amountRestoredPerShare = expenseAmountPerShare(expense, participantsShares);
+    final Consumer<UUID> restoreParticipantShare = restoreParticipantShare(
+        participantsShares,
+        expense.purchaserId(),
+        amountRestoredPerShare
+    );
+
+    decreaseAmountSpentByPurchaser(expense.purchaserId(), expense.amount());
+    forEachParticipantOf(expense, restoreParticipantShare);
+  }
+
+  private static double expenseAmountPerShare(Expense expense, Map<UUID, Integer> participantsShares) {
     final int expenseNumberOfShares = participantsShares.values().stream().reduce(0, Integer::sum);
-    final double amountDuePerShare = expense.amount() / expenseNumberOfShares;
+    return expense.amount() / expenseNumberOfShares;
+  }
 
-    increaseAmountSpentByPurchaser(purchaserId, expense.amount());
-
+  private static void forEachParticipantOf(Expense expense, Consumer<UUID> applyOperation) {
     expense.participantsIds().stream()
-        .filter(hasNotId(purchaserId))
-        .forEach(allocateParticipantShare(participantsShares, purchaserId, amountDuePerShare));
+        .filter(hasNotId(expense.purchaserId()))
+        .forEach(applyOperation);
+  }
+
+  private Consumer<UUID> restoreParticipantShare(Map<UUID, Integer> participantsShares,
+                                                 UUID purchaserId,
+                                                 double amountRestoredPerShare) {
+    return id -> {
+      final int participantShare = participantsShares.get(id);
+      final double amountRestoredAfterSplit = amountRestoredPerShare * participantShare;
+
+      participantsResults.get(id).decreaseRawDebtTowards(purchaserId, amountRestoredAfterSplit);
+
+      final double rawDebtTowardsPurchaser = participantsResults.get(id).rawDebtTowards(purchaserId);
+      final double rawDebtTowardsParticipant = participantsResults.get(purchaserId).rawDebtTowards(id);
+
+      mitigateDebtBetween(id, purchaserId, rawDebtTowardsPurchaser, rawDebtTowardsParticipant);
+    };
   }
 
   private Consumer<UUID> allocateParticipantShare(Map<UUID, Integer> participantsShares,
@@ -57,27 +96,37 @@ public class CalculationResult {
     return id -> {
       final int participantShare = participantsShares.get(id);
       final double amountDueAfterSplit = amountDuePerShare * participantShare;
-      final double currentDebtTowardsPurchaser = participantsResults.get(id).debtTowards(purchaserId);
+      final double currentDebtTowardsPurchaser = participantsResults.get(id).mitigatedDebtTowards(purchaserId);
       final double updatedDebtTowardsPurchaser = currentDebtTowardsPurchaser + amountDueAfterSplit;
-      final double debtTowardsParticipant = participantsResults.get(purchaserId).debtTowards(id);
+      final double debtTowardsParticipant = participantsResults.get(purchaserId).mitigatedDebtTowards(id);
 
-      final double mitigatedDebt = Math.abs(updatedDebtTowardsPurchaser - debtTowardsParticipant);
+      participantsResults.get(id).increaseRawDebtTowards(purchaserId, amountDueAfterSplit);
 
-      if (updatedDebtTowardsPurchaser > debtTowardsParticipant) {
-        participantsResults.get(id).updateDebtTowards(purchaserId, mitigatedDebt);
-        participantsResults.get(purchaserId).updateDebtTowards(id, NO_DEBT);
-      } else if (updatedDebtTowardsPurchaser < debtTowardsParticipant) {
-        participantsResults.get(id).updateDebtTowards(purchaserId, NO_DEBT);
-        participantsResults.get(purchaserId).updateDebtTowards(id, mitigatedDebt);
-      } else {
-        participantsResults.get(id).updateDebtTowards(purchaserId, NO_DEBT);
-        participantsResults.get(purchaserId).updateDebtTowards(id, NO_DEBT);
-      }
+      mitigateDebtBetween(id, purchaserId, updatedDebtTowardsPurchaser, debtTowardsParticipant);
     };
+  }
+
+  private void mitigateDebtBetween(UUID aId, UUID bId, double aDebtTowardsB, double bDebtTowardsA) {
+    final double mitigatedDebt = Math.abs(aDebtTowardsB - bDebtTowardsA);
+
+    if (aDebtTowardsB > bDebtTowardsA) {
+      participantsResults.get(aId).updateDebtTowards(bId, mitigatedDebt);
+      participantsResults.get(bId).updateDebtTowards(aId, NO_DEBT);
+    } else if (aDebtTowardsB < bDebtTowardsA) {
+      participantsResults.get(aId).updateDebtTowards(bId, NO_DEBT);
+      participantsResults.get(bId).updateDebtTowards(aId, mitigatedDebt);
+    } else {
+      participantsResults.get(aId).updateDebtTowards(bId, NO_DEBT);
+      participantsResults.get(bId).updateDebtTowards(aId, NO_DEBT);
+    }
   }
 
   private void increaseAmountSpentByPurchaser(UUID purchaserId, double amount) {
     participantsResults.get(purchaserId).increaseTotalAmountSpentBy(amount);
+  }
+
+  private void decreaseAmountSpentByPurchaser(UUID purchaserId, double amount) {
+    participantsResults.get(purchaserId).decreaseTotalAmountSpentBy(amount);
   }
 
   private static Predicate<UUID> hasNotId(UUID purchaserId) {

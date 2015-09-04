@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ParticipantResult {
-  private static double INITIAL_DEBT = 0D;
 
   private String participantName;
   private double totalSpent;
@@ -26,7 +25,7 @@ public class ParticipantResult {
     participantsNames.entrySet().stream()
         .filter(participantEntry -> !participantEntry.getKey().equals(participant.id()))
         .forEach(participantEntry -> participantResult.debtsDetail
-            .put(participantEntry.getKey(), new DebtTowardsParticipant(participantEntry.getValue(), INITIAL_DEBT)));
+            .put(participantEntry.getKey(), new DebtTowardsParticipant(participantEntry.getValue())));
     return participantResult;
   }
 
@@ -46,13 +45,29 @@ public class ParticipantResult {
     totalSpent += amount;
   }
 
-  public void updateDebtTowards(UUID creditorId, double amount) {
-    double currentDebtTowardsCreditor = debtsDetail.get(creditorId).amount;
-    totalDebt = totalDebt - currentDebtTowardsCreditor + amount;
-    debtsDetail.get(creditorId).amount = amount;
+  public void decreaseTotalAmountSpentBy(double amount) {
+    totalSpent -= amount;
   }
 
-  public double debtTowards(UUID participantId) {
-    return debtsDetail.get(participantId).amount;
+  public void increaseRawDebtTowards(UUID creditorId, double amount) {
+    debtsDetail.get(creditorId).rawAmount += amount;
+  }
+
+  public void decreaseRawDebtTowards(UUID creditorId, double amount) {
+    debtsDetail.get(creditorId).rawAmount -= amount;
+  }
+
+  public void updateDebtTowards(UUID creditorId, double amount) {
+    double currentDebtTowardsCreditor = debtsDetail.get(creditorId).mitigatedAmount;
+    totalDebt = totalDebt - currentDebtTowardsCreditor + amount;
+    debtsDetail.get(creditorId).mitigatedAmount = amount;
+  }
+
+  public double rawDebtTowards(UUID participantId) {
+    return debtsDetail.get(participantId).rawAmount;
+  }
+
+  public double mitigatedDebtTowards(UUID participantId) {
+    return debtsDetail.get(participantId).mitigatedAmount;
   }
 }

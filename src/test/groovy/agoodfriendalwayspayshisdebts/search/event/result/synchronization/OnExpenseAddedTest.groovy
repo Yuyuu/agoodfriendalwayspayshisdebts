@@ -17,9 +17,11 @@ class OnExpenseAddedTest extends Specification {
   @Rule
   WithMemoryRepository repository = new WithMemoryRepository()
 
-  def kim = new Participant("kim", 1, null)
-  def ben = new Participant("ben", 1, null)
-  def event = new Event("", [kim, ben])
+  Participant kim = new Participant("kim", 1, null)
+  String strKimId = kim.id().toString()
+  Participant ben = new Participant("ben", 1, null)
+  String strBenId = ben.id().toString()
+  Event event = new Event("", [kim, ben])
 
   OnExpenseAdded handler
 
@@ -37,8 +39,8 @@ class OnExpenseAddedTest extends Specification {
     jongo.collection("eventresult_view") << [
         _id: event.id,
         participantsResults: [
-            (kim.id().toString()): [participantName: "kim", totalSpent: 5D, totalDebt: 0D, debtsDetail: [(ben.id().toString()): [creditorName: "ben", amount:0D]]],
-            (ben.id().toString()): [participantName: "ben", totalSpent: 0D, totalDebt: 2.5D, debtsDetail: [(kim.id().toString()): [creditorName: "kim", amount:2.5D]]]
+            (strKimId): [participantName: "kim", totalSpent: 5D, totalDebt: 0D, debtsDetail: [(strBenId): [creditorName: "ben", rawAmount: 0D, mitigatedAmount: 0D]]],
+            (strBenId): [participantName: "ben", totalSpent: 0D, totalDebt: 2.5D, debtsDetail: [(strKimId): [creditorName: "kim", rawAmount: 2.5D, mitigatedAmount: 2.5D]]]
         ]
     ]
 
@@ -47,16 +49,22 @@ class OnExpenseAddedTest extends Specification {
 
     then:
     def participantsResultsDocument = jongo.collection("eventresult_view").findOne()["participantsResults"]
-    participantsResultsDocument[kim.id().toString()]["totalSpent"] == 5D
-    participantsResultsDocument[ben.id().toString()]["totalSpent"] == 2D
-    participantsResultsDocument[kim.id().toString()]["totalDebt"] == 0D
-    participantsResultsDocument[ben.id().toString()]["totalDebt"] == 1.5D
-    participantsResultsDocument[kim.id().toString()]["debtsDetail"][kim.id().toString()] == null
-    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()]["amount"] == 0D
-    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()]["creditorName"] == "ben"
-    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()]["amount"] == 1.5D
-    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()]["creditorName"] == "kim"
-    participantsResultsDocument[ben.id().toString()]["debtsDetail"][ben.id().toString()] == null
+    def kimResultDocument = participantsResultsDocument[strKimId]
+    kimResultDocument["totalSpent"] == 5D
+    kimResultDocument["totalDebt"] == 0D
+    kimResultDocument["debtsDetail"][strKimId] == null
+    kimResultDocument["debtsDetail"][strBenId]["rawAmount"] == 1D
+    kimResultDocument["debtsDetail"][strBenId]["mitigatedAmount"] == 0D
+    kimResultDocument["debtsDetail"][strBenId]["creditorName"] == "ben"
+
+    and:
+    def benResultDocument = participantsResultsDocument[strBenId]
+    benResultDocument["totalSpent"] == 2D
+    benResultDocument["totalDebt"] == 1.5D
+    benResultDocument["debtsDetail"][strBenId] == null
+    benResultDocument["debtsDetail"][strKimId]["rawAmount"] == 2.5D
+    benResultDocument["debtsDetail"][strKimId]["mitigatedAmount"] == 1.5D
+    benResultDocument["debtsDetail"][strKimId]["creditorName"] == "kim"
   }
 
   def "can create the result if it does not exist yet"() {
@@ -70,19 +78,26 @@ class OnExpenseAddedTest extends Specification {
 
     then:
     def resultDocument = jongo.collection("eventresult_view").findOne()
+    def participantsResultsDocument = resultDocument["participantsResults"]
     resultDocument["_id"] == event.id
 
     and:
-    def participantsResultsDocument = resultDocument["participantsResults"]
-    participantsResultsDocument[kim.id().toString()]["totalSpent"] == 4D
-    participantsResultsDocument[ben.id().toString()]["totalSpent"] == 0D
-    participantsResultsDocument[kim.id().toString()]["totalDebt"] == 0D
-    participantsResultsDocument[ben.id().toString()]["totalDebt"] == 2D
-    participantsResultsDocument[kim.id().toString()]["debtsDetail"][kim.id().toString()] == null
-    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()]["amount"] == 0D
-    participantsResultsDocument[kim.id().toString()]["debtsDetail"][ben.id().toString()]["creditorName"] == "ben"
-    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()]["amount"] == 2D
-    participantsResultsDocument[ben.id().toString()]["debtsDetail"][kim.id().toString()]["creditorName"] == "kim"
-    participantsResultsDocument[ben.id().toString()]["debtsDetail"][ben.id().toString()] == null
+    def kimResultDocument = participantsResultsDocument[strKimId]
+    kimResultDocument["totalSpent"] == 4D
+    kimResultDocument["totalDebt"] == 0D
+    kimResultDocument["debtsDetail"][strKimId] == null
+    kimResultDocument["debtsDetail"][strBenId]["rawAmount"] == 0D
+    kimResultDocument["debtsDetail"][strBenId]["mitigatedAmount"] == 0D
+    kimResultDocument["debtsDetail"][strBenId]["creditorName"] == "ben"
+
+
+    and:
+    def benResultDocument = participantsResultsDocument[strBenId]
+    benResultDocument["totalSpent"] == 0D
+    benResultDocument["totalDebt"] == 2D
+    benResultDocument["debtsDetail"][strBenId] == null
+    benResultDocument["debtsDetail"][strKimId]["rawAmount"] == 2D
+    benResultDocument["debtsDetail"][strKimId]["mitigatedAmount"] == 2D
+    benResultDocument["debtsDetail"][strKimId]["creditorName"] == "kim"
   }
 }
