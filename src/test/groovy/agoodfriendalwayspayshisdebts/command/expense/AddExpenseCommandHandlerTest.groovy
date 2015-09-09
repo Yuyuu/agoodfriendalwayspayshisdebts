@@ -87,4 +87,41 @@ class AddExpenseCommandHandlerTest extends Specification {
     def expense = RepositoryLocator.events().get(event.id).expenses()[0]
     expense.participantsIds() == event.participants()*.id() as Set
   }
+
+  def "adds an empty description if none is provided"() {
+    given:
+    def kim = new Participant("kim", 1, null)
+    def event = new Event("event", [kim])
+    RepositoryLocator.events().save(event)
+
+    and:
+    def command = new AddExpenseCommand(eventId: event.id, label: "test", purchaserUuid: kim.id().toString(), amount: 1)
+
+    when:
+    new AddExpenseCommandHandler().execute(command)
+
+    then:
+    def expense = RepositoryLocator.events().get(event.id).expenses()[0]
+    expense.description() == ""
+  }
+
+  def "trims the description of the event"() {
+    given:
+    def kim = new Participant("kim", 1, null)
+    def event = new Event("event", [kim])
+    RepositoryLocator.events().save(event)
+
+    and:
+    def command = new AddExpenseCommand(
+        eventId: event.id, label: "test", purchaserUuid: kim.id().toString(),
+        amount: 1, description: "     hello  hi       "
+    )
+
+    when:
+    new AddExpenseCommandHandler().execute(command)
+
+    then:
+    def expense = RepositoryLocator.events().get(event.id).expenses()[0]
+    expense.description() == "hello  hi"
+  }
 }

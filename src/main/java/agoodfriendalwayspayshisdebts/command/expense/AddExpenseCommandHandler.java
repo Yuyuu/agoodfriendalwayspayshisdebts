@@ -25,7 +25,7 @@ public class AddExpenseCommandHandler implements CommandHandler<AddExpenseComman
         command.amount,
         toUuidsIfPresent(command.participantsUuids).orElseGet(participantsIds(event))
     );
-    expense.setDescription(command.description);
+    expense.setDescription(sanitize(command.description));
     event.addExpense(expense);
 
     final Map<UUID, String> eventParticipantsNames = event.participants().stream()
@@ -46,5 +46,9 @@ public class AddExpenseCommandHandler implements CommandHandler<AddExpenseComman
 
   private static Supplier<List<UUID>> participantsIds(Event event) {
     return () -> event.participants().stream().map(Participant::id).collect(Collectors.toList());
+  }
+
+  private static String sanitize(String originalDescription) {
+    return (originalDescription != null) ? originalDescription.trim() : "";
   }
 }
