@@ -66,42 +66,4 @@ class OnExpenseAddedTest extends Specification {
     benResultDocument["debtsDetail"][strKimId]["mitigatedAmount"] == 1.5D
     benResultDocument["debtsDetail"][strKimId]["creditorName"] == "kim"
   }
-
-  def "can create the result if it does not exist yet"() {
-    given:
-    def expense = new Expense("label", kim.id(), 4D, [kim.id(), ben.id()])
-    event.expenses().add(expense)
-    RepositoryLocator.events().save(event)
-
-    when:
-    handler.executeEvent(new ExpenseAddedInternalEvent(event.id, expense))
-
-    then:
-    def resultDocument = jongo.collection("eventresult_view").findOne()
-    def participantsResultsDocument = resultDocument["participantsResults"]
-    resultDocument["_id"] == event.id
-
-    and:
-    def kimResultDocument = participantsResultsDocument[strKimId]
-    kimResultDocument["participantName"] == "kim"
-    kimResultDocument["participantShare"] == 1
-    kimResultDocument["totalSpent"] == 4D
-    kimResultDocument["totalDebt"] == 0D
-    kimResultDocument["debtsDetail"][strKimId] == null
-    kimResultDocument["debtsDetail"][strBenId]["rawAmount"] == 0D
-    kimResultDocument["debtsDetail"][strBenId]["mitigatedAmount"] == 0D
-    kimResultDocument["debtsDetail"][strBenId]["creditorName"] == "ben"
-
-
-    and:
-    def benResultDocument = participantsResultsDocument[strBenId]
-    benResultDocument["participantName"] == "ben"
-    benResultDocument["participantShare"] == 1
-    benResultDocument["totalSpent"] == 0D
-    benResultDocument["totalDebt"] == 2D
-    benResultDocument["debtsDetail"][strBenId] == null
-    benResultDocument["debtsDetail"][strKimId]["rawAmount"] == 2D
-    benResultDocument["debtsDetail"][strKimId]["mitigatedAmount"] == 2D
-    benResultDocument["debtsDetail"][strKimId]["creditorName"] == "kim"
-  }
 }
