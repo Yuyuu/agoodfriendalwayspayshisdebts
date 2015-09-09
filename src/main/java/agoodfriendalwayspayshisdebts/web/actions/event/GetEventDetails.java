@@ -19,7 +19,7 @@ public class GetEventDetails {
     this.searchBus = searchBus;
   }
 
-  @Get("/events/:stringifiedUuid")
+  @Get("/events/:stringifiedUuid/meta")
   public Optional<EventDetails> retrieve(String stringifiedUuid) {
     final UUID eventId = UUID.fromString(stringifiedUuid);
     final ExecutionResult<EventDetails> result = searchBus.sendAndWaitResponse(new EventDetailsSearch(eventId));
