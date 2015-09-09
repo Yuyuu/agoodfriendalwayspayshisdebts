@@ -48,6 +48,6 @@ class AsynchronousInternalEventBusTest extends Specification {
 
   private static class FakeEventHandler implements InternalEventHandler<FakeEvent> {
     @Override
-    void executeEvent(FakeEvent event) {}
+    void executeInternalEvent(FakeEvent event) {}
   }
 }

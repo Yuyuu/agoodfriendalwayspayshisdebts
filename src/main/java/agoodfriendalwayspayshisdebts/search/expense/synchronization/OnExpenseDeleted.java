@@ -14,7 +14,7 @@ public class OnExpenseDeleted implements InternalEventHandler<ExpenseDeletedInte
   }
 
   @Override
-  public void executeEvent(ExpenseDeletedInternalEvent internalEvent) {
+  public void executeInternalEvent(ExpenseDeletedInternalEvent internalEvent) {
     jongo.getCollection("eventexpensesdetails_view")
         .update("{_id:#}", internalEvent.eventId)
         .with("{$inc:{expenseCount:-1},$pull:{expenses:{id:#}}}", internalEvent.expense.id());

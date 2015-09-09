@@ -30,7 +30,7 @@ class OnEventCreatedTest extends Specification {
     def internalEvent = new EventCreatedInternalEvent(event.id)
 
     when:
-    handler.executeEvent(internalEvent)
+    handler.executeInternalEvent(internalEvent)
 
     then:
     def document = jongo.collection("eventdetails_view").findOne()

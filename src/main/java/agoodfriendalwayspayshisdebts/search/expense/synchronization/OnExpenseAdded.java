@@ -23,7 +23,7 @@ public class OnExpenseAdded implements InternalEventHandler<ExpenseAddedInternal
   }
 
   @Override
-  public void executeEvent(ExpenseAddedInternalEvent internalEvent) {
+  public void executeInternalEvent(ExpenseAddedInternalEvent internalEvent) {
     final Event event = RepositoryLocator.events().get(internalEvent.eventId);
     
     createExpensesDetailsIfNotPresentFor(event);

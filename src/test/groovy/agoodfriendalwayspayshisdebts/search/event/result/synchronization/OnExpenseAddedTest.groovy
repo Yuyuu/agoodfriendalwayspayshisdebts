@@ -45,7 +45,7 @@ class OnExpenseAddedTest extends Specification {
     ]
 
     when:
-    handler.executeEvent(new ExpenseAddedInternalEvent(event.id, expense))
+    handler.executeInternalEvent(new ExpenseAddedInternalEvent(event.id, expense))
 
     then:
     def participantsResultsDocument = jongo.collection("eventresult_view").findOne()["participantsResults"]

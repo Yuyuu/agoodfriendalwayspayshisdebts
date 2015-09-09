@@ -29,7 +29,7 @@ class OnEventCreatedTest extends Specification {
 
   def "initializes the calculation result of the event"() {
     when:
-    handler.executeEvent(new EventCreatedInternalEvent(event.id))
+    handler.executeInternalEvent(new EventCreatedInternalEvent(event.id))
 
     then:
     def resultDocument = jongo.collection("eventresult_view").findOne()

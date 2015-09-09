@@ -38,7 +38,7 @@ class OnExpenseAddedTest extends Specification {
 
     when:
     def expense = new Expense("hey", kim.id(), 4, [kim.id()])
-    handler.executeEvent(new ExpenseAddedInternalEvent(event.id, expense))
+    handler.executeInternalEvent(new ExpenseAddedInternalEvent(event.id, expense))
 
     then:
     // TODO: For some reason (and since jongo 1.2) when checking with GMongo the list is transformed into a map
@@ -58,7 +58,7 @@ class OnExpenseAddedTest extends Specification {
   def "creates the expenses details if it does not exist yet"() {
     when:
     def expense = new Expense("hey", kim.id(), 4, [kim.id()])
-    handler.executeEvent(new ExpenseAddedInternalEvent(event.id, expense))
+    handler.executeInternalEvent(new ExpenseAddedInternalEvent(event.id, expense))
 
     then:
     def document = jongo.collection("eventexpensesdetails_view").findOne()

@@ -2,12 +2,12 @@ package com.vter.model.internal_event;
 
 import com.vter.infrastructure.bus.MessageHandler;
 
-public interface InternalEventHandler<TEvent extends InternalEvent> extends MessageHandler<TEvent, Void> {
+public interface InternalEventHandler<TInternalEvent extends InternalEvent> extends MessageHandler<TInternalEvent, Void> {
 
-  void executeEvent(TEvent event);
+  void executeInternalEvent(TInternalEvent internalEvent);
 
-  default Void execute(TEvent event) {
-    executeEvent(event);
+  default Void execute(TInternalEvent internalEvent) {
+    executeInternalEvent(internalEvent);
     return null;
   }
 }

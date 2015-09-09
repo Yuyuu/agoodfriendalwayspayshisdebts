@@ -15,7 +15,7 @@ public class OnExpenseAdded implements InternalEventHandler<ExpenseAddedInternal
   }
 
   @Override
-  public void executeEvent(ExpenseAddedInternalEvent internalEvent) {
+  public void executeInternalEvent(ExpenseAddedInternalEvent internalEvent) {
     final CalculationResult result = jongo.getCollection("eventresult_view")
         .findOne("{_id:#}", internalEvent.eventId)
         .as(CalculationResult.class);
