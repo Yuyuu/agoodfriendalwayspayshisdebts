@@ -1,5 +1,8 @@
 package com.vter.infrastructure.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Inject;
 import javax.mail.*;
 import javax.mail.internet.AddressException;
@@ -19,6 +22,8 @@ public class SMTPEmailSender implements EmailSender {
     message.setRecipient(Message.RecipientType.TO, address(email.to()));
     message.setSubject(email.subject());
     message.setContent(email.content(), "text/html;charset=utf-8");
+
+    LOGGER.debug("Sending an email to {}", email.to());
     Transport.send(message);
   }
 
@@ -27,4 +32,5 @@ public class SMTPEmailSender implements EmailSender {
   }
 
   private final Session session;
+  protected final static Logger LOGGER = LoggerFactory.getLogger(SMTPEmailSender.class);
 }
