@@ -34,6 +34,7 @@ dependencies {
   compile("net.code-story:http:2.98") {
     exclude module: "slf4j-simple"
   }
+  compile "com.sun.mail:javax.mail:1.5.4"
 
   compile "org.hibernate:hibernate-validator:5.2.1.Final"
   compile "javax.el:javax.el-api:2.2.5"
@@ -53,6 +54,7 @@ dependencies {
   testCompile "org.mongolink:mongolink-testtools:$mongoLinkVersion"
   testCompile "com.github.fakemongo:fongo:1.6.3"
   testCompile "com.gmongo:gmongo:1.5"
+  testCompile "org.jvnet.mock-javamail:mock-javamail:1.9"
 }
 
 task deps(type: Sync) {
