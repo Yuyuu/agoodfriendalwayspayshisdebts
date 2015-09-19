@@ -25,19 +25,19 @@ class EventResultSearchHandlerTest extends Specification {
     ]
 
     when:
-    def eventResult = handler.execute(new EventResultSearch(eventId), jongo.jongo())
+    def results = handler.execute(new EventResultSearch(eventId), jongo.jongo())
 
     then:
-    eventResult.eventId == eventId
-    eventResult.participantsResults.get(kimId).participantName() == "kim"
-    eventResult.participantsResults.get(benId).participantName() == "ben"
-    eventResult.participantsResults.get(kimId).totalSpent() == 5D
-    eventResult.participantsResults.get(benId).totalSpent() == 0D
-    eventResult.participantsResults.get(kimId).totalDebt() == 0D
-    eventResult.participantsResults.get(benId).totalDebt() == 2.5D
-    eventResult.participantsResults.get(kimId).mitigatedDebtTowards(benId) == 0D
-    eventResult.participantsResults.get(benId).mitigatedDebtTowards(kimId) == 2.5D
-    eventResult.participantsResults.get(kimId).rawDebtTowards(benId) == 0D
-    eventResult.participantsResults.get(benId).rawDebtTowards(kimId) == 2.5D
+    results.size() == 2
+    results[0].participantName() == "kim"
+    results[1].participantName() == "ben"
+    results[0].totalSpent() == 5D
+    results[1].totalSpent() == 0D
+    results[0].totalDebt() == 0D
+    results[1].totalDebt() == 2.5D
+    results[0].mitigatedDebtTowards(benId) == 0D
+    results[1].mitigatedDebtTowards(kimId) == 2.5D
+    results[0].rawDebtTowards(benId) == 0D
+    results[1].rawDebtTowards(kimId) == 2.5D
   }
 }

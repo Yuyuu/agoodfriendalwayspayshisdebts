@@ -1,6 +1,6 @@
 package agoodfriendalwayspayshisdebts.web.actions.event;
 
-import agoodfriendalwayspayshisdebts.search.event.result.model.CalculationResult;
+import agoodfriendalwayspayshisdebts.search.event.result.model.ParticipantResult;
 import agoodfriendalwayspayshisdebts.search.event.result.search.EventResultSearch;
 import com.vter.infrastructure.bus.ExecutionResult;
 import com.vter.search.SearchBus;
@@ -20,9 +20,9 @@ public class GetEventResult {
   }
 
   @Get("/events/:stringifiedUuid/result")
-  public Optional<CalculationResult> retrieve(String stringifiedUuid) {
+  public Optional<Iterable<ParticipantResult>> retrieve(String stringifiedUuid) {
     final UUID eventId = UUID.fromString(stringifiedUuid);
-    final ExecutionResult<CalculationResult> result = searchBus.sendAndWaitResponse(new EventResultSearch(eventId));
+    final ExecutionResult<Iterable<ParticipantResult>> result = searchBus.sendAndWaitResponse(new EventResultSearch(eventId));
     return Optional.ofNullable(result.data());
   }
 
