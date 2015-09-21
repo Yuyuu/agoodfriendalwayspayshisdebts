@@ -23,7 +23,7 @@ public class SendReminder {
   }
 
   @Post("/events/:stringifiedUuid/reminder")
-  public Payload send(Cookies cookies, String stringifiedUuid, SendReminderCommand command) {
+  public Payload send(String stringifiedUuid, Cookies cookies, SendReminderCommand command) {
     command.eventId = UUID.fromString(stringifiedUuid);
     command.locale = cookies.value("i18next");
 

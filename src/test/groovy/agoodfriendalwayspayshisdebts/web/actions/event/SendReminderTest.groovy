@@ -27,7 +27,7 @@ class SendReminderTest extends Specification {
     commandBus.send(command) >> Mock(CompletableFuture)
 
     when:
-    def payload = action.send(cookies, eventId.toString(), command)
+    def payload = action.send(eventId.toString(), cookies, command)
 
     then:
     command.eventId == eventId
