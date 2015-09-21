@@ -31,6 +31,10 @@ public class ParticipantResult {
     return participantResult;
   }
 
+  public Map<UUID, DebtTowardsParticipant> debtsDetail() {
+    return debtsDetail;
+  }
+
   public String participantName() {
     return participantName;
   }
