@@ -14,6 +14,7 @@ import java.util.Locale;
 public class Reminder implements Email {
 
   private Reminder(ParticipantResult participantResult, Locale locale) {
+    this.locale = locale;
     try {
       template = handlebars.compile(TEMPLATE_NAME + "_" + locale.getLanguage()).as(ReminderTemplate.class);
       templateModel = new ReminderTemplateModel(participantResult, locale);
@@ -49,6 +50,10 @@ public class Reminder implements Email {
     }
   }
 
+  public Locale locale() {
+    return locale;
+  }
+
   public Reminder to(String email) {
     to = email;
     return this;
@@ -64,6 +69,7 @@ public class Reminder implements Email {
   private String subject;
   private ReminderTemplateModel templateModel;
   private ReminderTemplate template;
+  private final Locale locale;
 
   private final static String TEMPLATE_NAME = "debt_reminder";
   private final static Handlebars handlebars = new Handlebars(new ClassPathTemplateLoader("/templates", ".html"))

@@ -12,7 +12,7 @@ class SendReminderCommandTest extends Specification {
 
   def "a null or empty list of participants uuids is a violation"() {
     given:
-    def command = new SendReminderCommand(recipientsUuids: recipientsUuids)
+    def command = new SendReminderCommand(recipientsUuids: recipientsUuids, eventLink: "link")
 
     when:
     def violations = validator.validate(command)
@@ -22,5 +22,18 @@ class SendReminderCommandTest extends Specification {
 
     where:
     recipientsUuids << [[], null]
+  }
+  def "a null or blank event link is a violation"() {
+    given:
+    def command = new SendReminderCommand(eventLink: eventLink, recipientsUuids: [null])
+
+    when:
+    def violations = validator.validate(command)
+
+    then:
+    violations.size() == 1
+
+    where:
+    eventLink << [null, "    "]
   }
 }
