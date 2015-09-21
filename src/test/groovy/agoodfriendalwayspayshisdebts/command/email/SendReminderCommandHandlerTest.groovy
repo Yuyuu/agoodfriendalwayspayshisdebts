@@ -28,9 +28,6 @@ class SendReminderCommandHandlerTest extends Specification {
 
     then:
     reports.size() == 2
-    def report = reports.first()
-    report.recipientName == "lea"
-    report.success
   }
 
   def "only send reminders to the given recipients"() {
