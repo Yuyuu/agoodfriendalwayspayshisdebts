@@ -28,7 +28,7 @@
                   Hello <strong>{{participantName}}</strong>,<br/>
                   Below you will find a personalized summary for the event.
                 </td>
-              </tr>
+              </tr>{{#if hasDebts}}
               <tr>
                 <td>
                   The list of amounts you owe:
@@ -41,7 +41,12 @@
               </tr>{{/each}}
               <tr>
                 <td>For a total debt of {{totalDebt}}.</td>
-              </tr>
+              </tr>{{else}}
+              <tr>
+                <td>
+                  You have no debt!
+                </td>
+              </tr>{{/if}}
               <tr>
                 <td align="center" style="padding-top: 40px;">
                   You can check the expenses <a href="{{eventLink}}" target="_blank" style="color: #ff895d; font-weight: normal; text-decoration: underline;">by following this link</a>.

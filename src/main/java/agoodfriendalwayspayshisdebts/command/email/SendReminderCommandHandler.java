@@ -38,9 +38,11 @@ public class SendReminderCommandHandler implements CommandHandler<SendReminderCo
     return event.participants().stream()
         .filter(participant -> recipientsIds.contains(participant.id()))
         .map(participant -> {
-          Reminder reminder = reminder(calculationResult.participantsResults.get(participant.id()), reminderLocale)
+          final ParticipantResult participantResult = calculationResult.participantsResults.get(participant.id());
+          final Reminder reminder = reminder(participantResult, reminderLocale)
               .withEventModel(event.name(), command.eventLink)
               .to(participant.email());
+
           try {
             emailSender.send(reminder);
             return RecipientReport.success(participant.name());

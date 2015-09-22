@@ -33,6 +33,23 @@ class ReminderTest extends Specification {
     ]
   }
 
+  @Unroll
+  def "adapts the content when the recipient has no debt"() {
+    given:
+    result.totalDebt = 0
+    def reminder = Reminder.forLocale(locale, result).withEventModel("cool event", "http://link.to.event.fr")
+
+    expect:
+    expectedContent == reminder.content()
+
+    where:
+    locale << [Locale.FRANCE, Locale.UK]
+    expectedContent << [
+        contentFrom("templates/expected_debt_reminder_no_debt_fr.html"),
+        contentFrom("templates/expected_debt_reminder_no_debt_en.html")
+    ]
+  }
+
   def "sets the name of the event as the subject of the reminder"() {
     given:
     def reminder = Reminder.withDefaultLocale(result).withEventModel("cool event", "http://link")

@@ -20,36 +20,23 @@
             <table cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td style="color: #153643; font-size: 18px;">
-                  Rappel pour l'événement "{{eventName}}"
+                  Rappel pour l'événement "cool event"
                 </td>
               </tr>
               <tr>
                 <td style="padding: 20px 0 20px 0;">
-                  Bonjour <strong>{{participantName}}</strong>,<br/>
+                  Bonjour <strong>kim</strong>,<br/>
                   Trouvez ci-dessous un récapitulatif personnalisé pour l'événement.
                 </td>
-              </tr>{{#if hasDebts}}
-              <tr>
-                <td>
-                  La liste des sommes que vous devez :
-                </td>
-              </tr>{{#each debts}}
-              <tr>
-                <td style="padding: 10px 0 15px 70px;">
-                  {{mitigatedAmount}}&nbsp;➙&nbsp;<strong>{{creditorName}}</strong>
-                </td>
-              </tr>{{/each}}
-              <tr>
-                <td>Pour une dette totale de {{totalDebt}}.</td>
-              </tr>{{else}}
+              </tr>
               <tr>
                 <td>
                   Vous n'avez aucune dette !
                 </td>
-              </tr>{{/if}}
+              </tr>
               <tr>
                 <td align="center" style="padding-top: 40px;">
-                  Vous pouvez retrouver le détail des dépenses <a href="{{eventLink}}" target="_blank" style="color: #ff895d; font-weight: normal; text-decoration: underline;">en suivant ce lien</a>.
+                  Vous pouvez retrouver le détail des dépenses <a href="http://link.to.event.fr" target="_blank" style="color: #ff895d; font-weight: normal; text-decoration: underline;">en suivant ce lien</a>.
                 </td>
               </tr>
             </table>

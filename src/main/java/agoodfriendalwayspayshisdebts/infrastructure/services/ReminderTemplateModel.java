@@ -14,10 +14,12 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class ReminderTemplateModel {
+  private static final double MINIMUM_DEBT_AMOUNT = .005;
   private static final Currency euro = Currency.getInstance("EUR");
 
   private String participantName;
   private String totalSpent;
+  private boolean hasDebts;
   private String totalDebt;
   private List<Map<String, Object>> debts = Lists.newArrayList();
 
@@ -26,6 +28,7 @@ public class ReminderTemplateModel {
     format.setCurrency(euro);
     participantName = participantResult.participantName();
     totalSpent = format.format(participantResult.totalSpent());
+    hasDebts = participantResult.totalDebt() >= MINIMUM_DEBT_AMOUNT;
     totalDebt = format.format(participantResult.totalDebt());
     participantResult.debtsDetail().values().stream().filter(isNotZero()).forEach(populateModelWithFormat(format));
   }
@@ -40,7 +43,7 @@ public class ReminderTemplateModel {
   }
 
   private static Predicate<DebtTowardsParticipant> isNotZero() {
-    return debt -> debt.mitigatedAmount > 0.005;
+    return debt -> debt.mitigatedAmount >= MINIMUM_DEBT_AMOUNT;
   }
 
   @SuppressWarnings("unused")
@@ -61,5 +64,10 @@ public class ReminderTemplateModel {
   @SuppressWarnings("unused")
   public String getTotalSpent() {
     return totalSpent;
+  }
+
+  @SuppressWarnings("unused")
+  public boolean isHasDebts() {
+    return hasDebts;
   }
 }
