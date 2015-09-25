@@ -31,8 +31,6 @@ import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
 import org.mongolink.UpdateStrategies;
 import org.mongolink.domain.mapper.ContextBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
@@ -181,10 +179,7 @@ public class GuiceConfiguration extends AbstractModule {
     try {
       properties.load(inputSupplier.openStream());
     } catch (IOException e) {
-      LOGGER.error("Impossible to load SMTP configuration", e);
     }
     return properties;
   }
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(GuiceConfiguration.class);
 }
