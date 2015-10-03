@@ -1,6 +1,5 @@
 package agoodfriendalwayspayshisdebts.search.event.result.synchronization
 
-import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent
 import agoodfriendalwayspayshisdebts.model.participant.Participant
@@ -14,7 +13,7 @@ class OnExpenseDeletedTest extends Specification {
 
   Participant kim = new Participant("kim", 1, null)
   Participant ben = new Participant("ben", 1, null)
-  Event event = new Event("", [kim, ben])
+  UUID eventId = UUID.randomUUID()
 
   OnExpenseDeleted handler
 
@@ -27,7 +26,7 @@ class OnExpenseDeletedTest extends Specification {
     def strKimId = kim.id().toString()
     def strBenId = ben.id().toString()
     jongo.collection("eventresult_view") << [
-        _id: event.id,
+        _id: eventId,
         participantsResults: [
             (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 6D, totalDebt: 0D, debtsDetail: [(strBenId): [creditorName: "ben", rawAmount: 1D, mitigatedAmount:0D]]],
             (strBenId): [participantName: "ben", participantShare: 1, totalSpent: 2D, totalDebt: 2D, debtsDetail: [(strKimId): [creditorName: "kim", rawAmount: 3D, mitigatedAmount:2D]]]
@@ -36,7 +35,7 @@ class OnExpenseDeletedTest extends Specification {
 
     when:
     def expense = new Expense("", kim.id(), 2D, [kim.id(), ben.id()])
-    handler.executeInternalEvent(new ExpenseDeletedInternalEvent(event.id, expense))
+    handler.executeInternalEvent(new ExpenseDeletedInternalEvent(eventId, expense))
 
     then:
     def participantsResultsDocument = jongo.collection("eventresult_view").findOne()["participantsResults"]
