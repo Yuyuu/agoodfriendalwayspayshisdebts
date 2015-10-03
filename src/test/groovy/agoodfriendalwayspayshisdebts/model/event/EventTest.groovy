@@ -5,6 +5,7 @@ import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent
 import agoodfriendalwayspayshisdebts.model.expense.UnknownExpense
 import agoodfriendalwayspayshisdebts.model.participant.Participant
+import agoodfriendalwayspayshisdebts.model.participant.ParticipantAddedInternalEvent
 import com.vter.model.internal_event.WithEventBus
 import org.junit.Rule
 import spock.lang.Specification
@@ -100,5 +101,36 @@ class EventTest extends Specification {
     internalEvent != null
     internalEvent.eventId == event.id
     internalEvent.expense == expense
+  }
+
+  def "contains participant"() {
+    given:
+    def kim = new Participant("kim", 1, null)
+    def event = new Event("", [kim])
+
+    when:
+    def ben = new Participant("ben", 1, null)
+    event.includeParticipant(ben, [])
+
+    then:
+    event.participants().size() == 2
+    event.participants()[1] == ben
+  }
+
+  def "emits an event when a participant is added"() {
+    given:
+    def event = new Event("", [new Participant("kim", 1, null)])
+
+    when:
+    def ben = new Participant("ben", 1, null)
+    def expenseId = UUID.randomUUID()
+    event.includeParticipant(ben, [expenseId])
+
+    then:
+    def internalEvent = eventBus.bus.lastEvent(ParticipantAddedInternalEvent)
+    internalEvent != null
+    internalEvent.eventId == event.id
+    internalEvent.participant == ben
+    internalEvent.expensesIds == [expenseId]
   }
 }
