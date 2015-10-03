@@ -1,7 +1,7 @@
 package agoodfriendalwayspayshisdebts.web.actions.event;
 
-import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseMetadata;
-import agoodfriendalwayspayshisdebts.search.expense.search.EventExpensesMetadataSearch;
+import agoodfriendalwayspayshisdebts.search.expense.metadata.model.ExpenseMetadata;
+import agoodfriendalwayspayshisdebts.search.expense.metadata.search.EventExpensesMetadataSearch;
 import com.vter.infrastructure.bus.ExecutionResult;
 import com.vter.search.SearchBus;
 import net.codestory.http.annotations.Get;

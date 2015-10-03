@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.search.expense.synchronization
+package agoodfriendalwayspayshisdebts.search.expense.details.synchronization
 
 import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator

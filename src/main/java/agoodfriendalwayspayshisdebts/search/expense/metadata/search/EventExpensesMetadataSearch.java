@@ -1,6 +1,6 @@
-package agoodfriendalwayspayshisdebts.search.expense.search;
+package agoodfriendalwayspayshisdebts.search.expense.metadata.search;
 
-import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseMetadata;
+import agoodfriendalwayspayshisdebts.search.expense.metadata.model.ExpenseMetadata;
 import com.vter.search.Search;
 
 import java.util.UUID;

@@ -1,7 +1,7 @@
 package agoodfriendalwayspayshisdebts.web.actions.event
 
-import agoodfriendalwayspayshisdebts.search.expense.model.EventExpensesDetails
-import agoodfriendalwayspayshisdebts.search.expense.search.EventExpensesDetailsSearch
+import agoodfriendalwayspayshisdebts.search.expense.details.model.EventExpensesDetails
+import agoodfriendalwayspayshisdebts.search.expense.details.search.EventExpensesDetailsSearch
 import com.vter.infrastructure.bus.ExecutionResult
 import com.vter.search.SearchBus
 import spock.lang.Specification

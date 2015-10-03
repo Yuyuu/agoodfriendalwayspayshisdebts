@@ -1,11 +1,11 @@
-package agoodfriendalwayspayshisdebts.search.expense.synchronization;
+package agoodfriendalwayspayshisdebts.search.expense.details.synchronization;
 
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
 import agoodfriendalwayspayshisdebts.model.event.Event;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
-import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseDetails;
+import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpenseDetails;
 import com.vter.model.internal_event.InternalEventHandler;
 import org.jongo.Jongo;
 

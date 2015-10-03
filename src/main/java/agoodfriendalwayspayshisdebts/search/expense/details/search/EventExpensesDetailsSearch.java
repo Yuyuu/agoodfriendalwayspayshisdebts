@@ -1,6 +1,6 @@
-package agoodfriendalwayspayshisdebts.search.expense.search;
+package agoodfriendalwayspayshisdebts.search.expense.details.search;
 
-import agoodfriendalwayspayshisdebts.search.expense.model.EventExpensesDetails;
+import agoodfriendalwayspayshisdebts.search.expense.details.model.EventExpensesDetails;
 import com.vter.search.PaginatedSearch;
 
 import java.util.UUID;

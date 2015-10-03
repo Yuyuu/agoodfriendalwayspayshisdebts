@@ -4,7 +4,7 @@ import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
 import agoodfriendalwayspayshisdebts.model.event.Event;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
-import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseDetails;
+import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpenseDetails;
 import com.vter.command.CommandHandler;
 
 import java.util.List;

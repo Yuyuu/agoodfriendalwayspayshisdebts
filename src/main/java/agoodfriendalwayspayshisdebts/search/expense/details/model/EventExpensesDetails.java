@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.search.expense.model;
+package agoodfriendalwayspayshisdebts.search.expense.details.model;
 
 import com.google.common.collect.Lists;
 import org.jongo.marshall.jackson.oid.MongoId;

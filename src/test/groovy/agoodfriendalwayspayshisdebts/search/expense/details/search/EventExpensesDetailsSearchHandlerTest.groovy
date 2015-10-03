@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.search.expense.search
+package agoodfriendalwayspayshisdebts.search.expense.details.search
 
 import com.vter.search.WithJongo
 import org.junit.Rule

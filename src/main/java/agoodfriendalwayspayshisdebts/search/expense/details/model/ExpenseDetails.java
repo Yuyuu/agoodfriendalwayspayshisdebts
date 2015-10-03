@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.search.expense.model;
+package agoodfriendalwayspayshisdebts.search.expense.details.model;
 
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import com.google.common.collect.Lists;

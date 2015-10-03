@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.search.expense.synchronization
+package agoodfriendalwayspayshisdebts.search.expense.details.synchronization
 
 import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator
@@ -6,7 +6,7 @@ import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
 import agoodfriendalwayspayshisdebts.model.participant.Participant
-import agoodfriendalwayspayshisdebts.search.expense.model.EventExpensesDetails
+import agoodfriendalwayspayshisdebts.search.expense.details.model.EventExpensesDetails
 import com.vter.search.WithJongo
 import org.junit.Rule
 import spock.lang.Specification

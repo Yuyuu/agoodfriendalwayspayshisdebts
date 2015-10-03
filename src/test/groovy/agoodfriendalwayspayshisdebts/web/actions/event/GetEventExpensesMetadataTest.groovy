@@ -1,6 +1,6 @@
 package agoodfriendalwayspayshisdebts.web.actions.event
 
-import agoodfriendalwayspayshisdebts.search.expense.search.EventExpensesMetadataSearch
+import agoodfriendalwayspayshisdebts.search.expense.metadata.search.EventExpensesMetadataSearch
 import com.vter.infrastructure.bus.ExecutionResult
 import com.vter.search.SearchBus
 import spock.lang.Specification

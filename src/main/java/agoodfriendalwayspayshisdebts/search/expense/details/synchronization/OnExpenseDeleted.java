@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.search.expense.synchronization;
+package agoodfriendalwayspayshisdebts.search.expense.details.synchronization;
 
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent;
 import com.vter.model.internal_event.InternalEventHandler;

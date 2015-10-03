@@ -1,7 +1,7 @@
 package agoodfriendalwayspayshisdebts.web.actions.expense
 
 import agoodfriendalwayspayshisdebts.command.expense.AddExpenseCommand
-import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseDetails
+import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpenseDetails
 import com.vter.command.CommandBus
 import com.vter.infrastructure.bus.ExecutionResult
 import spock.lang.Specification
