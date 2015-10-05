@@ -23,14 +23,14 @@ public class OnExpenseAdded implements InternalEventHandler<ExpenseAddedInternal
 
   @Override
   public void executeInternalEvent(ExpenseAddedInternalEvent internalEvent) {
-    final Event event = RepositoryLocator.events().get(internalEvent.eventId);
+    final Event event = RepositoryLocator.events().get(internalEvent.expense.eventId());
 
     final Map<UUID, String> eventParticipantsNames = event.participants().stream()
         .collect(Collectors.toMap(Participant::id, Participant::name));
     final ExpenseDetails expenseDetails = createExpenseDetails(internalEvent.expense, eventParticipantsNames);
 
     jongo.getCollection("eventexpensesdetails_view")
-        .update("{_id:#}", internalEvent.eventId)
+        .update("{_id:#}", internalEvent.expense.eventId())
         .upsert()
         .with("{$inc:{expenseCount:1},$push:{expenses:#}}", expenseDetails);
   }

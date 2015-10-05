@@ -25,7 +25,7 @@ class OnExpenseAddedTest extends Specification {
 
   def "can update the result of the event"() {
     given:
-    def expense = new Expense("label", ben.id(), 2D, [kim.id(), ben.id()])
+    def expense = new Expense("label", ben.id(), 2D, [kim.id(), ben.id()], eventId)
 
     and:
     jongo.collection("eventresult_view") << [
@@ -37,7 +37,7 @@ class OnExpenseAddedTest extends Specification {
     ]
 
     when:
-    handler.executeInternalEvent(new ExpenseAddedInternalEvent(eventId, expense))
+    handler.executeInternalEvent(new ExpenseAddedInternalEvent(expense))
 
     then:
     def participantsResultsDocument = jongo.collection("eventresult_view").findOne()["participantsResults"]

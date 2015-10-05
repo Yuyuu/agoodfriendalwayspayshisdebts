@@ -23,7 +23,8 @@ public class AddExpenseCommandHandler implements CommandHandler<AddExpenseComman
         command.label,
         toUuid(command.purchaserUuid),
         command.amount,
-        toUuidsIfPresent(command.participantsUuids).orElseGet(participantsIds(event))
+        toUuidsIfPresent(command.participantsUuids).orElseGet(participantsIds(event)),
+        event.getId()
     );
     expense.setDescription(sanitize(command.description));
     event.addExpense(expense);

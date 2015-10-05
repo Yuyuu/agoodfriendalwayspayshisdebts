@@ -4,10 +4,11 @@ import spock.lang.Specification
 
 class ExpenseTest extends Specification {
 
-  def "can create an expense with a label, a purchaser id, an amount and ids of the participants"() {
+  def "can create an expense"() {
     given:
-    def purchaserId = uuid()
-    def expense = new Expense("food", purchaserId, 10, [purchaserId])
+    def purchaserId = UUID.randomUUID()
+    def eventId = UUID.randomUUID()
+    def expense = new Expense("food", purchaserId, 10, [purchaserId], eventId)
 
     expect:
     expense.id() != null
@@ -15,12 +16,13 @@ class ExpenseTest extends Specification {
     expense.purchaserId() == purchaserId
     expense.amount() == 10
     expense.participantsIds().first() == purchaserId
+    expense.eventId() == eventId
   }
 
   def "is shared between at most each participant once"() {
     given:
-    def purchaserId = uuid()
-    def expense = new Expense("food", purchaserId, 10, [purchaserId])
+    def purchaserId = UUID.randomUUID()
+    def expense = new Expense(participantsIds: [purchaserId])
 
     when:
     expense.participantsIds().add(purchaserId)
@@ -31,7 +33,7 @@ class ExpenseTest extends Specification {
 
   def "has an optional description"() {
     given:
-    def expense = new Expense("food", uuid(), 10, [])
+    def expense = new Expense()
 
     when:
     expense.description = "a description"
@@ -47,9 +49,5 @@ class ExpenseTest extends Specification {
 
     expect:
     expense1 == expense2
-  }
-
-  def uuid() {
-    return UUID.randomUUID()
   }
 }

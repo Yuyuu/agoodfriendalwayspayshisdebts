@@ -18,7 +18,7 @@ public class OnExpenseAdded implements InternalEventHandler<ExpenseAddedInternal
   public void executeInternalEvent(ExpenseAddedInternalEvent internalEvent) {
     final ExpenseMetadata expenseMetadata = ExpenseMetadata.forExpense(internalEvent.expense);
     jongo.getCollection("expensesmetadata_view")
-        .update("{_id:#}", internalEvent.eventId)
+        .update("{_id:#}", internalEvent.expense.eventId())
         .upsert()
         .with("{$push:{metadata:#}}", expenseMetadata);
   }

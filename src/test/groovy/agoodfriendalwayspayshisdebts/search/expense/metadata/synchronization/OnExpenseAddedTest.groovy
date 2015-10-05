@@ -23,8 +23,8 @@ class OnExpenseAddedTest extends Specification {
     jongo.collection("expensesmetadata_view") << [_id: eventId, metadata: [[id: null, label: "e1"]]]
 
     when:
-    def expense = new Expense("e2", null, 1, [])
-    handler.executeInternalEvent(new ExpenseAddedInternalEvent(eventId, expense))
+    def expense = new Expense("e2", null, 1, [], eventId)
+    handler.executeInternalEvent(new ExpenseAddedInternalEvent(expense))
 
     then:
     def document = jongo.collection("expensesmetadata_view").findOne()
@@ -36,8 +36,8 @@ class OnExpenseAddedTest extends Specification {
 
   def "creates the expenses metadata if it does not exist yet"() {
     when:
-    def expense = new Expense("e1", null, 1, [])
-    handler.executeInternalEvent(new ExpenseAddedInternalEvent(eventId, expense))
+    def expense = new Expense("e1", null, 1, [], eventId)
+    handler.executeInternalEvent(new ExpenseAddedInternalEvent(expense))
 
     then:
     def document = jongo.collection("expensesmetadata_view").findOne()

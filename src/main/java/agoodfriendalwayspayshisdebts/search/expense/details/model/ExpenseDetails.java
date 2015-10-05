@@ -15,6 +15,7 @@ public class ExpenseDetails {
   public double amount;
   public List<String> participantsNames = Lists.newArrayList();
   public String description;
+  public UUID eventId;
 
   private ExpenseDetails() {}
 
@@ -28,6 +29,7 @@ public class ExpenseDetails {
         expense.participantsIds().stream().map(eventParticipantsNames::get).collect(Collectors.toList())
     );
     expenseDetails.description = expense.description();
+    expenseDetails.eventId = expense.eventId();
     return expenseDetails;
   }
 }

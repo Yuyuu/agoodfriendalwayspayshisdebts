@@ -17,7 +17,7 @@ public class OnExpenseDeleted implements InternalEventHandler<ExpenseDeletedInte
   @Override
   public void executeInternalEvent(ExpenseDeletedInternalEvent internalEvent) {
     final CalculationResult result = jongo.getCollection("eventresult_view")
-        .findOne("{_id:#}", internalEvent.eventId)
+        .findOne("{_id:#}", internalEvent.expense.eventId())
         .as(CalculationResult.class);
     assert result != null;
 

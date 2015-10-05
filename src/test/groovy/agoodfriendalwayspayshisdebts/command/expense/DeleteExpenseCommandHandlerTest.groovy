@@ -18,7 +18,7 @@ class DeleteExpenseCommandHandlerTest extends Specification {
   def "deletes the expense from the event"() {
     given:
     def event = new Event("", [])
-    def expense = new Expense("", null, 1, [])
+    def expense = new Expense("", null, 1, [], event.id)
     event.expenses().add(expense)
     RepositoryLocator.events().save(event);
 

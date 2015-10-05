@@ -10,7 +10,8 @@ class ExpenseDetailsTest extends Specification {
     given:
     def purchaserId = UUID.randomUUID()
     def participantsIds = [purchaserId]
-    def expense = new Expense("label", purchaserId, 10, participantsIds)
+    def eventId = UUID.randomUUID()
+    def expense = new Expense("label", purchaserId, 10, participantsIds, eventId)
     expense.description = "description"
 
     when:
@@ -23,5 +24,6 @@ class ExpenseDetailsTest extends Specification {
     expenseDetails.amount == 10
     expenseDetails.participantsNames == ["ben"]
     expenseDetails.description == "description"
+    expenseDetails.eventId == eventId
   }
 }

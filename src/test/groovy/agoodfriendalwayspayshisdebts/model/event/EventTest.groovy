@@ -40,7 +40,7 @@ class EventTest extends Specification {
     def event = new Event("cool event", [kim])
 
     when:
-    def expense = new Expense("label", kim.id(), 5, [kim.id()])
+    def expense = new Expense("label", kim.id(), 5, [kim.id()], event.id)
     event.addExpense(expense)
 
     then:
@@ -53,13 +53,12 @@ class EventTest extends Specification {
     def event = new Event("event", [new Participant("kim", 1, null)])
 
     when:
-    def expense = new Expense("label", null, 2, [])
+    def expense = new Expense("label", null, 2, [], event.id)
     event.addExpense(expense)
 
     then:
     def internalEvent = eventBus.bus.lastEvent(ExpenseAddedInternalEvent)
     internalEvent != null
-    internalEvent.eventId == event.id
     internalEvent.expense == expense
   }
 
@@ -77,7 +76,7 @@ class EventTest extends Specification {
   def "can delete an expense"() {
     given:
     def event = new Event("", [])
-    def expense = new Expense("", null, 1, [])
+    def expense = new Expense("", null, 1, [], event.id)
     event.expenses().add(expense)
 
     when:
@@ -90,7 +89,7 @@ class EventTest extends Specification {
   def "emits an event when an expense is deleted"() {
     given:
     def event = new Event("", [])
-    def expense = new Expense("label", null, 2, [])
+    def expense = new Expense("label", null, 2, [], event.id)
     event.expenses().add(expense)
 
     when:
@@ -99,7 +98,6 @@ class EventTest extends Specification {
     then:
     def internalEvent = eventBus.bus.lastEvent(ExpenseDeletedInternalEvent)
     internalEvent != null
-    internalEvent.eventId == event.id
     internalEvent.expense == expense
   }
 
@@ -114,7 +112,7 @@ class EventTest extends Specification {
 
     then:
     event.participants().size() == 2
-    event.participants()[1] == ben
+    event.participants().find { it.name() == "ben" } != null
   }
 
   def "emits an event when a participant is added"() {

@@ -15,17 +15,19 @@ public class Expense {
   private double amount;
   private Set<UUID> participantsIds = Sets.newHashSet();
   private String description;
+  private UUID eventId;
 
   /* Used by mongolink */
   @SuppressWarnings("unused")
   protected Expense() {}
 
-  public Expense(String label, UUID purchaserId, double amount, List<UUID> participantsIds) {
+  public Expense(String label, UUID purchaserId, double amount, List<UUID> participantsIds, UUID eventId) {
     id = UUID.randomUUID();
     this.label = label;
     this.purchaserId = purchaserId;
     this.amount = amount;
     this.participantsIds.addAll(participantsIds);
+    this.eventId = eventId;
   }
 
   public double amount() {
@@ -34,6 +36,10 @@ public class Expense {
 
   public String description() {
     return description;
+  }
+
+  public UUID eventId() {
+    return eventId;
   }
 
   public UUID id() {

@@ -59,13 +59,13 @@ public class Event implements EntityWithUuid {
 
   public void addExpense(Expense expense) {
     expenses.add(expense);
-    publishInternalEvent(new ExpenseAddedInternalEvent(id, expense));
+    publishInternalEvent(new ExpenseAddedInternalEvent(expense));
   }
 
   public void deleteExpense(UUID expenseId) {
     final Expense expense = find(expenseId);
     expenses.remove(expense);
-    publishInternalEvent(new ExpenseDeletedInternalEvent(id, expense));
+    publishInternalEvent(new ExpenseDeletedInternalEvent(expense));
   }
 
   public void includeParticipant(Participant participant, List<UUID> expensesIds) {

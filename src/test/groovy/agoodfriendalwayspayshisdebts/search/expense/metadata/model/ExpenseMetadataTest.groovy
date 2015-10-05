@@ -7,7 +7,7 @@ class ExpenseMetadataTest extends Specification {
 
   def "creates from an expense"() {
     given:
-    def expense = new Expense("hello", null, 3, [])
+    def expense = new Expense("hello", null, 3, [], null)
 
     when:
     def expenseMetadata = ExpenseMetadata.forExpense(expense)

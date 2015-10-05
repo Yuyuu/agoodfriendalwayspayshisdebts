@@ -34,8 +34,8 @@ class OnExpenseDeletedTest extends Specification {
     ]
 
     when:
-    def expense = new Expense("", kim.id(), 2D, [kim.id(), ben.id()])
-    handler.executeInternalEvent(new ExpenseDeletedInternalEvent(eventId, expense))
+    def expense = new Expense("", kim.id(), 2D, [kim.id(), ben.id()], eventId)
+    handler.executeInternalEvent(new ExpenseDeletedInternalEvent(expense))
 
     then:
     def participantsResultsDocument = jongo.collection("eventresult_view").findOne()["participantsResults"]
