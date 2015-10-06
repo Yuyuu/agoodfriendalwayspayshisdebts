@@ -108,7 +108,7 @@ class EventTest extends Specification {
 
     when:
     def ben = new Participant("ben", 1, null)
-    event.includeParticipant(ben, [])
+    event.addParticipant(ben)
 
     then:
     event.participants().size() == 2
@@ -121,14 +121,12 @@ class EventTest extends Specification {
 
     when:
     def ben = new Participant("ben", 1, null)
-    def expenseId = UUID.randomUUID()
-    event.includeParticipant(ben, [expenseId])
+    event.addParticipant(ben)
 
     then:
     def internalEvent = eventBus.bus.lastEvent(ParticipantAddedInternalEvent)
     internalEvent != null
     internalEvent.eventId == event.id
     internalEvent.participant == ben
-    internalEvent.expensesIds == [expenseId]
   }
 }

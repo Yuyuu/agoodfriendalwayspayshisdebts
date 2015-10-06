@@ -1,8 +1,14 @@
 package agoodfriendalwayspayshisdebts.model.expense
 
+import agoodfriendalwayspayshisdebts.model.participant.Participant
+import agoodfriendalwayspayshisdebts.model.participant.ParticipantIncludedInternalEvent
+import com.vter.model.internal_event.WithEventBus
+import org.junit.Rule
 import spock.lang.Specification
 
 class ExpenseTest extends Specification {
+  @Rule
+  WithEventBus eventBus = new WithEventBus()
 
   def "can create an expense"() {
     given:
@@ -17,6 +23,18 @@ class ExpenseTest extends Specification {
     expense.amount() == 10
     expense.participantsIds().first() == purchaserId
     expense.eventId() == eventId
+  }
+
+  def "is shared between participant"() {
+    given:
+    def expense = new Expense()
+
+    when:
+    def participant = new Participant("lea", 1, "")
+    expense.includeParticipant(participant)
+
+    then:
+    expense.participantsIds().contains(participant.id())
   }
 
   def "is shared between at most each participant once"() {
@@ -49,5 +67,19 @@ class ExpenseTest extends Specification {
 
     expect:
     expense1 == expense2
+  }
+
+  def "emits an event when a participant is included"() {
+    given:
+    def expense = new Expense()
+
+    when:
+    def participant = new Participant("lea", 1, "")
+    expense.includeParticipant(participant)
+
+    then:
+    def internalEvent = eventBus.bus.lastEvent(ParticipantIncludedInternalEvent)
+    internalEvent.expense == expense
+    internalEvent.participant == participant
   }
 }

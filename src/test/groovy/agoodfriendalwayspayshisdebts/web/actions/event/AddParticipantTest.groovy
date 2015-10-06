@@ -17,13 +17,15 @@ class AddParticipantTest extends Specification {
   def "adds a participant"() {
     given:
     def command = Mock(AddParticipantCommand)
-    bus.sendAndWaitResponse(command) >> ExecutionResult.success(null)
+    def content = UUID.randomUUID()
+    bus.sendAndWaitResponse(command) >> ExecutionResult.success(content)
 
     when:
     def payload = action.add(UUID.randomUUID().toString(), command)
 
     then:
     payload.code() == 201
+    payload.rawContent() == content
   }
 
   def "propagates the error if any occurred"() {

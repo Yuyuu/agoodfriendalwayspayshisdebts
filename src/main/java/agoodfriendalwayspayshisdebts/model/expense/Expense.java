@@ -1,7 +1,10 @@
 package agoodfriendalwayspayshisdebts.model.expense;
 
+import agoodfriendalwayspayshisdebts.model.participant.Participant;
+import agoodfriendalwayspayshisdebts.model.participant.ParticipantIncludedInternalEvent;
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
+import com.vter.model.internal_event.InternalEventBus;
 
 import java.util.List;
 import java.util.Set;
@@ -60,6 +63,11 @@ public class Expense {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public void includeParticipant(Participant participant) {
+    participantsIds.add(participant.id());
+    InternalEventBus.INSTANCE().publish(new ParticipantIncludedInternalEvent(this, participant));
   }
 
   @Override

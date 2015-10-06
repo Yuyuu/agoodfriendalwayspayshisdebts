@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class AddParticipantCommand implements Command<Void> {
+public class AddParticipantCommand implements Command<UUID> {
   public UUID eventId;
 
   @NotBlank(message = "PARTICIPANT_NAME_REQUIRED")
