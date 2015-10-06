@@ -14,7 +14,7 @@ public class EventDetails {
   public String name;
   public Set<ParticipantDetails> participants = Sets.newHashSet();
 
-  public EventDetails() {}
+  private EventDetails() {}
 
   public static EventDetails fromEvent(Event event) {
     final EventDetails eventDetails = new EventDetails();
