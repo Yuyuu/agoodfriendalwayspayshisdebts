@@ -15,5 +15,6 @@ public class ExpenseMapping extends AggregateMap<Expense> {
     property().onField("amount");
     collection().onField("participantsIds");
     property().onField("description");
+    property().onField("eventId");
   }
 }

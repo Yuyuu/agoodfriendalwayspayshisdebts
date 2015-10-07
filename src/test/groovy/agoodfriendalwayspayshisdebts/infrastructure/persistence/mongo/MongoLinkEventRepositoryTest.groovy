@@ -21,10 +21,11 @@ class MongoLinkEventRepositoryTest extends Specification {
     given:
     def id = UUID.randomUUID()
     def kimId = UUID.randomUUID()
+    def expenseId = UUID.randomUUID()
     mongoLink.collection("event") << [
         _id: id, name: "event",
         participants: [[id: kimId, name: "kim", share: 1, email: "kim@m.com"]],
-        expenses: [[label: "errands", purchaserId: kimId, amount: 10, participantsIds: [kimId], description: "hello"]]
+        expenses: [[id: expenseId, label: "errands", purchaserId: kimId, amount: 10, participantsIds: [kimId], description: "hello", eventId: id]]
     ]
 
     when:
@@ -39,11 +40,13 @@ class MongoLinkEventRepositoryTest extends Specification {
     kim.share() == 1
     kim.email() == "kim@m.com"
     def expense = event.expenses().first()
+    expense.id() == expenseId
     expense.label() == "errands"
     expense.purchaserId() == kimId
     expense.amount() == 10
     expense.participantsIds() == [kimId] as Set
     expense.description() == "hello"
+    expense.eventId() == id
   }
 
   def "can add an event"() {
