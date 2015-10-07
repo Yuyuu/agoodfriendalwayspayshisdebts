@@ -8,6 +8,7 @@ import com.vter.command.CommandHandler;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -18,12 +19,15 @@ public class AddParticipantCommandHandler implements CommandHandler<AddParticipa
   public UUID execute(AddParticipantCommand command) {
     final Event event = RepositoryLocator.events().get(command.eventId);
 
-    final Participant participant = new Participant(command.name, command.share, command.email);
+    final String email = Optional.ofNullable(command.email).orElse("");
+    final Participant participant = new Participant(command.name, command.share, email);
     event.addParticipant(participant);
 
-    final List<UUID> expensesIds = toUuids(command.expensesUuids);
-    final Map<UUID, Expense> expenses = expenses(event);
-    expensesIds.stream().map(expenses::get).forEach(includeParticipant(participant));
+    if (command.expensesUuids != null) {
+      final List<UUID> expensesIds = toUuids(command.expensesUuids);
+      final Map<UUID, Expense> expenses = expenses(event);
+      expensesIds.stream().map(expenses::get).forEach(includeParticipant(participant));
+    }
 
     return participant.id();
   }
