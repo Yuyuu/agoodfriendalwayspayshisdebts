@@ -28,4 +28,9 @@ class EventExpensesMetadataSearchHandlerTest extends Specification {
     expenseMetadata.id == expenseId
     expenseMetadata.label == "e1"
   }
+
+  def "returns null if the document does not exist for the event"() {
+    expect:
+    handler.execute(new EventExpensesMetadataSearch(eventId), jongo.jongo()) == null
+  }
 }

@@ -5,13 +5,15 @@ import agoodfriendalwayspayshisdebts.search.expense.metadata.model.ExpensesMetad
 import com.vter.search.JongoSearchHandler;
 import org.jongo.Jongo;
 
+import java.util.Optional;
+
 public class EventExpensesMetadataSearchHandler extends JongoSearchHandler<EventExpensesMetadataSearch, Iterable<ExpenseMetadata>> {
 
   @Override
   protected Iterable<ExpenseMetadata> execute(EventExpensesMetadataSearch search, Jongo jongo) {
-    final ExpensesMetadata expensesMetadata = jongo.getCollection("expensesmetadata_view")
-        .findOne("{_id:#}", search.eventId)
-        .as(ExpensesMetadata.class);
-    return expensesMetadata.metadata;
+    final Optional<ExpensesMetadata> optionalExpensesMetadata = Optional.ofNullable(
+        jongo.getCollection("expensesmetadata_view").findOne("{_id:#}", search.eventId).as(ExpensesMetadata.class)
+    );
+    return optionalExpensesMetadata.isPresent() ? optionalExpensesMetadata.get().metadata : null;
   }
 }
