@@ -31,7 +31,7 @@ dependencies {
   }
   compile "org.javassist:javassist:3.20.0-GA"
 
-  compile("net.code-story:http:2.98") {
+  compile("net.code-story:http:2.104") {
     exclude module: "slf4j-simple"
   }
   compile "com.github.jknack:handlebars:2.2.3"
