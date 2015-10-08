@@ -40,14 +40,6 @@ public class CalculationResult {
     return result;
   }
 
-  public void shareExpenseBetweenParticipants(Expense expense) {
-    final double amountDuePerShare = amountPerShareFor(expense);
-    final Consumer<UUID> allocateParticipantShare = allocateParticipantShare(expense.purchaserId(), amountDuePerShare);
-
-    increaseAmountSpentByPurchaser(expense.purchaserId(), expense.amount());
-    forEachParticipantOf(expense, allocateParticipantShare);
-  }
-
   public void deleteExpense(Expense expense) {
     final double amountRestoredPerShare = amountPerShareFor(expense);
     final Consumer<UUID> restoreParticipantShare = restoreParticipantShare(
@@ -84,20 +76,6 @@ public class CalculationResult {
     };
   }
 
-  private Consumer<UUID> allocateParticipantShare(UUID purchaserId, double amountDuePerShare) {
-    return id -> {
-      final int participantShare = participantsResults.get(id).participantShare();
-      final double amountDueAfterSplit = amountDuePerShare * participantShare;
-      final double currentDebtTowardsPurchaser = participantsResults.get(id).mitigatedDebtTowards(purchaserId);
-      final double updatedDebtTowardsPurchaser = currentDebtTowardsPurchaser + amountDueAfterSplit;
-      final double debtTowardsParticipant = participantsResults.get(purchaserId).mitigatedDebtTowards(id);
-
-      participantsResults.get(id).increaseRawDebtTowards(purchaserId, amountDueAfterSplit);
-
-      mitigateDebtBetween(id, purchaserId, updatedDebtTowardsPurchaser, debtTowardsParticipant);
-    };
-  }
-
   private void mitigateDebtBetween(UUID aId, UUID bId, double aDebtTowardsB, double bDebtTowardsA) {
     final double mitigatedDebt = Math.abs(aDebtTowardsB - bDebtTowardsA);
 
@@ -111,10 +89,6 @@ public class CalculationResult {
       participantsResults.get(aId).updateDebtTowards(bId, NO_DEBT);
       participantsResults.get(bId).updateDebtTowards(aId, NO_DEBT);
     }
-  }
-
-  private void increaseAmountSpentByPurchaser(UUID purchaserId, double amount) {
-    participantsResults.get(purchaserId).increaseTotalAmountSpentBy(amount);
   }
 
   private void decreaseAmountSpentByPurchaser(UUID purchaserId, double amount) {

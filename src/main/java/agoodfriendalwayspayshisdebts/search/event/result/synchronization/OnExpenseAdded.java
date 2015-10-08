@@ -2,6 +2,7 @@ package agoodfriendalwayspayshisdebts.search.event.result.synchronization;
 
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
 import agoodfriendalwayspayshisdebts.search.event.result.model.CalculationResult;
+import agoodfriendalwayspayshisdebts.search.event.result.operation.AddExpenseOperation;
 import com.vter.model.internal_event.InternalEventHandler;
 import org.jongo.Jongo;
 
@@ -21,8 +22,9 @@ public class OnExpenseAdded implements InternalEventHandler<ExpenseAddedInternal
         .as(CalculationResult.class);
     assert result != null;
 
-    result.shareExpenseBetweenParticipants(internalEvent.expense);
-    jongo.getCollection("eventresult_view").update("{_id:#}", result.eventId).upsert().with(result);
+    result.apply(new AddExpenseOperation(internalEvent.expense));
+
+    jongo.getCollection("eventresult_view").update("{_id:#}", result.eventId).with(result);
   }
 
   private final Jongo jongo;
