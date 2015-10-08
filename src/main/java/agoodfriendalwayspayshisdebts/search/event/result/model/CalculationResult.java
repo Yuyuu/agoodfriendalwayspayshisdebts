@@ -3,6 +3,7 @@ package agoodfriendalwayspayshisdebts.search.event.result.model;
 import agoodfriendalwayspayshisdebts.model.event.Event;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
+import agoodfriendalwayspayshisdebts.search.event.result.operation.ResultOperation;
 import com.google.common.collect.Maps;
 import org.jongo.marshall.jackson.oid.MongoId;
 
@@ -122,5 +123,9 @@ public class CalculationResult {
 
   private static Predicate<UUID> hasNotId(UUID purchaserId) {
     return participantId -> !participantId.equals(purchaserId);
+  }
+
+  public void apply(ResultOperation operation) {
+    operation.accept(this);
   }
 }

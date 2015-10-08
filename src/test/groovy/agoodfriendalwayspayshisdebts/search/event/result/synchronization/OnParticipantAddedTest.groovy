@@ -18,7 +18,7 @@ class OnParticipantAddedTest extends Specification {
 
   Participant kim = new Participant("kim", 1, null)
   String strKimId = kim.id().toString()
-  def lea = new Participant("lea", 2, null)
+  Participant lea = new Participant("lea", 2, null)
   String strLeaId = lea.id().toString()
   Event event = new Event("", [kim])
 
