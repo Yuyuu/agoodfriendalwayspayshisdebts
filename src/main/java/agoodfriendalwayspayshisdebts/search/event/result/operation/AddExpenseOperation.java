@@ -5,10 +5,10 @@ import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class AddExpenseOperation extends ResultOperation {
+public class AddExpenseOperation extends ExpenseBasedResultOperation {
 
   public AddExpenseOperation(Expense expense) {
-    this.expense = expense;
+    super(expense);
   }
 
   @Override
@@ -37,13 +37,4 @@ public class AddExpenseOperation extends ResultOperation {
       mitigateDebtBetween(participantId, expense.purchaserId());
     };
   }
-
-  private double amountPerShare() {
-    final int expenseNumberOfShares = expense.participantsIds().stream()
-        .map(id -> participantsResults.get(id).participantShare())
-        .reduce(0, Integer::sum);
-    return expense.amount() / expenseNumberOfShares;
-  }
-
-  private final Expense expense;
 }

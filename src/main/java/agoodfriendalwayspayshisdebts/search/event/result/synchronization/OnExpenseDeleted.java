@@ -2,6 +2,7 @@ package agoodfriendalwayspayshisdebts.search.event.result.synchronization;
 
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent;
 import agoodfriendalwayspayshisdebts.search.event.result.model.CalculationResult;
+import agoodfriendalwayspayshisdebts.search.event.result.operation.DeleteExpenseOperation;
 import com.vter.model.internal_event.InternalEventHandler;
 import org.jongo.Jongo;
 
@@ -21,7 +22,8 @@ public class OnExpenseDeleted implements InternalEventHandler<ExpenseDeletedInte
         .as(CalculationResult.class);
     assert result != null;
 
-    result.deleteExpense(internalEvent.expense);
+    result.apply(new DeleteExpenseOperation(internalEvent.expense));
+
     jongo.getCollection("eventresult_view").update("{_id:#}", result.eventId).with(result);
   }
 
