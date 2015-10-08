@@ -2,7 +2,9 @@ package agoodfriendalwayspayshisdebts.model.participant;
 
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import com.vter.model.internal_event.InternalEvent;
+import com.vter.model.internal_event.Synchronous;
 
+@Synchronous
 public class ParticipantIncludedInternalEvent implements InternalEvent {
 
   public ParticipantIncludedInternalEvent(Expense expense, Participant participant) {
