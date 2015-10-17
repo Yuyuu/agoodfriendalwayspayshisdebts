@@ -8,7 +8,7 @@ import net.codestory.http.payload.Payload;
 public class UpdateParticipant {
 
   @Put("/events/:stringifiedEventUuid/participants/:stringifiedParticipantUuid")
-  public Payload update() {
+  public Payload update(String stringifiedEventUuid, String stringifiedParticipantUuid) {
     return Payload.ok();
   }
 }

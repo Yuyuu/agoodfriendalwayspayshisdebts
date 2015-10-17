@@ -11,7 +11,7 @@ class UpdateParticipantTest extends Specification {
 
   def "pretends the participant has been updated"() {
     when:
-    def payload = action.update()
+    def payload = action.update(null, null)
 
     then:
     payload.code() == 200
