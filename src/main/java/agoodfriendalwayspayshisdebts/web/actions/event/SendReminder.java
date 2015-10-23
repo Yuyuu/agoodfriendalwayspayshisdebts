@@ -2,6 +2,7 @@ package agoodfriendalwayspayshisdebts.web.actions.event;
 
 import agoodfriendalwayspayshisdebts.command.email.SendReminderCommand;
 import agoodfriendalwayspayshisdebts.infrastructure.services.RecipientReport;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.vter.command.CommandBus;
 import com.vter.infrastructure.bus.ExecutionResult;
 import net.codestory.http.Cookies;
@@ -12,7 +13,6 @@ import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 @Resource
 public class SendReminder {
@@ -27,7 +27,7 @@ public class SendReminder {
     command.eventId = UUID.fromString(stringifiedUuid);
     command.locale = cookies.value("i18next");
 
-    final CompletableFuture<ExecutionResult<Iterable<RecipientReport>>> future = commandBus.send(command);
+    final ListenableFuture<ExecutionResult<Iterable<RecipientReport>>> future = commandBus.send(command);
 
     return new Payload(future).withCode(HttpStatus.CREATED);
   }

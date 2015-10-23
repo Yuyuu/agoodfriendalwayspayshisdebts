@@ -1,10 +1,10 @@
 package com.vter.infrastructure.bus;
 
-import java.util.concurrent.CompletableFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 
 public interface Bus {
 
-  <TResponse> CompletableFuture<ExecutionResult<TResponse>> send(Message<TResponse> message);
+  <TResponse> ListenableFuture<ExecutionResult<TResponse>> send(Message<TResponse> message);
 
   <TResponse> ExecutionResult<TResponse> sendAndWaitResponse(Message<TResponse> message);
 }

@@ -2,10 +2,10 @@ package com.vter.infrastructure.bus
 
 import com.google.common.collect.Sets
 import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import spock.lang.Specification
 
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 
 class AsynchronousBusTest extends Specification {
@@ -75,7 +75,7 @@ class AsynchronousBusTest extends Specification {
     def bus = busWith(handler)
 
     when:
-    final CompletableFuture<ExecutionResult<String>> promise = bus.send(new FakeMessage())
+    final ListenableFuture<ExecutionResult<String>> promise = bus.send(new FakeMessage())
 
     then:
     promise != null
@@ -103,7 +103,7 @@ class AsynchronousBusTest extends Specification {
     def bus = busWith(handler);
 
     when:
-    final CompletableFuture<ExecutionResult<String>> promise = bus.send(new FakeMessage())
+    final ListenableFuture<ExecutionResult<String>> promise = bus.send(new FakeMessage())
 
     then:
     promise != null

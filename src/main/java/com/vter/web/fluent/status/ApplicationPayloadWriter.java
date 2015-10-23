@@ -1,6 +1,9 @@
 package com.vter.web.fluent.status;
 
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.vter.infrastructure.bus.ExecutionResult;
 import net.codestory.http.Request;
 import net.codestory.http.Response;
@@ -35,19 +38,30 @@ public class ApplicationPayloadWriter extends PayloadWriter {
 
   @Override
   protected CompletableFuture<Void> writeAndCloseAsync(Payload payload) {
-    final CompletableFuture<?> future = (CompletableFuture<?>) payload.rawContent();
+    final ListenableFuture<?> future = (ListenableFuture<?>) payload.rawContent();
 
-    return future.thenAccept(result -> {
-      try {
-        Object content = (result instanceof ExecutionResult) ? contentOfExecutionResult(result) : result;
-        writeAndCloseSync(clonePayloadWithContent(payload, content));
-      } catch (Exception e) {
+    Futures.addCallback(future, new FutureCallback<Object>() {
+      @Override
+      public void onSuccess(Object result) {
+        try {
+          Object content = (result instanceof ExecutionResult) ? contentOfExecutionResult(result) : result;
+          writeAndCloseSync(clonePayloadWithContent(payload, content));
+        } catch (Exception e) {
+          writeErrorPage(e);
+        }
+      }
+
+      @Override
+      public void onFailure(Throwable e) {
         writeErrorPage(e);
       }
-    }).exceptionally(e -> {
-      writeErrorPage(e);
-      return null;
     });
+    return null;
+  }
+
+  @Override
+  protected boolean isAsync(Payload payload) {
+    return payload.rawContent() instanceof ListenableFuture<?>;
   }
 
   @Override

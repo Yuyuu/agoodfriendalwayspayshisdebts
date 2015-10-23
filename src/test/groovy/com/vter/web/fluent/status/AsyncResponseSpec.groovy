@@ -1,5 +1,8 @@
 package com.vter.web.fluent.status
 
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.ListeningExecutorService
+import com.google.common.util.concurrent.MoreExecutors
 import com.vter.infrastructure.bus.ExecutionResult
 import com.vter.web.fluent.AbstractProdWebServerSpecification
 import net.codestory.http.Configuration
@@ -13,13 +16,10 @@ import net.codestory.http.payload.Payload
 import net.codestory.http.payload.PayloadWriter
 import net.codestory.http.templating.Site
 
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.function.Supplier
+import java.util.concurrent.Callable
 
 class AsyncResponseSpec extends AbstractProdWebServerSpecification {
-  ExecutorService executorService = Executors.newSingleThreadExecutor()
+  ListeningExecutorService executorService = MoreExecutors.newDirectExecutorService()
 
   def "can handle any content"() {
     given:
@@ -74,7 +74,7 @@ class AsyncResponseSpec extends AbstractProdWebServerSpecification {
     configure(Configuration.override(configuration).with(additionalConfiguration))
   }
 
-  private <T> CompletableFuture<T> future(Supplier<T> supplier) {
-    return CompletableFuture.supplyAsync(supplier, executorService);
+  private <T> ListenableFuture<T> future(Callable<T> callable) {
+    return executorService.submit(callable as Callable<T>)
   }
 }
