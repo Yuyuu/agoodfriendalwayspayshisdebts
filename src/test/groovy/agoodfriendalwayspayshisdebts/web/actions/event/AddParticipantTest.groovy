@@ -25,7 +25,7 @@ class AddParticipantTest extends Specification {
 
     then:
     payload.code() == 201
-    payload.rawContent() == content
+    payload.rawContent().id == content
   }
 
   def "propagates the error if any occurred"() {

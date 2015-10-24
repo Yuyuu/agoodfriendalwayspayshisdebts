@@ -29,8 +29,16 @@ public class AddParticipant {
       Throwables.propagate(result.error());
     }
 
-    return new Payload(result.data()).withCode(HttpStatus.CREATED);
+    return new Payload(new ParticipantIdJsonObject(result.data())).withCode(HttpStatus.CREATED);
   }
 
   private final CommandBus commandBus;
+
+  private static class ParticipantIdJsonObject {
+    public UUID id;
+
+    public ParticipantIdJsonObject(UUID id) {
+      this.id = id;
+    }
+  }
 }
