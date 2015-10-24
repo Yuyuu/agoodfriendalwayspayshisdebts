@@ -27,13 +27,13 @@ class AsynchronousBusTest extends Specification {
     given:
     def executor = Mock(ExecutorService)
     def bus = bus()
-    bus.setExecutor(executor)
+    bus.executor = executor
 
     when:
     bus.send(new FakeMessage())
 
     then:
-    1 * executor.execute({ o -> o != null })
+    1 * executor.execute({ it != null })
   }
 
   def "encapsulates the commands into the synchronizations"() {
@@ -96,11 +96,24 @@ class AsynchronousBusTest extends Specification {
     result != null
   }
 
+  def "waits for all the handlers to have been executed when required"() {
+    given:
+    def handler1 = new FakeCommandHandler()
+    def handler2 = new FakeCommandHandler()
+    def bus = busWith(handler1, handler2)
+
+    when:
+    bus.sendAndWaitResponse(new FakeMessage())
+
+    then:
+    [handler1, handler2]*.commandReceived != null
+  }
+
   def "returns a result on error"() {
     setup:
     def handler = new FakeCommandHandler()
-    handler.returnException();
-    def bus = busWith(handler);
+    handler.returnException()
+    def bus = busWith(handler)
 
     when:
     final ListenableFuture<ExecutionResult<String>> promise = bus.send(new FakeMessage())
@@ -133,26 +146,26 @@ class AsynchronousBusTest extends Specification {
 
   private AsynchronousBus bus() {
     new AsynchronousBus(Sets.newHashSet(Mock(BusSynchronization)), Sets.newHashSet(new FakeCommandHandler())) {
-    };
+    }
   }
 
-  private AsynchronousBus busWith(BusSynchronization synchronisationBus, FakeCommandHandler handler) {
-    final AsynchronousBus bus = new AsynchronousBus(Sets.newHashSet(synchronisationBus), Sets.newHashSet(handler)) {
+  private AsynchronousBus busWith(BusSynchronization synchronisationBus, FakeCommandHandler... handlers) {
+    final AsynchronousBus bus = new AsynchronousBus(Sets.newHashSet(synchronisationBus), Sets.newHashSet(handlers)) {
     }
-    bus.setExecutor(executor())
-    return bus;
+    bus.executor = executor()
+    return bus
   }
 
   private static ExecutorService executor() {
-    return MoreExecutors.newDirectExecutorService();
+    return MoreExecutors.newDirectExecutorService()
   }
 
   private AsynchronousBus busWith(BusSynchronization synchronization) {
     return busWith(synchronization, new FakeCommandHandler())
   }
 
-  private AsynchronousBus busWith(FakeCommandHandler handler) {
-    busWith(Mock(BusSynchronization), handler)
+  private AsynchronousBus busWith(FakeCommandHandler... handlers) {
+    return busWith(Mock(BusSynchronization), handlers)
   }
 
   private class FakeMessage implements Message<String> {
@@ -160,22 +173,22 @@ class AsynchronousBusTest extends Specification {
     private FakeMessage() {}
   }
 
-  private class FakeCommandHandler implements MessageHandler<FakeMessage, String> {
+  private static class FakeCommandHandler implements MessageHandler<FakeMessage, String> {
 
     @Override
-    public String execute(FakeMessage command) {
-      commandReceived = command;
+    String execute(FakeMessage command) {
+      commandReceived = command
       if (exception) {
-        throw new RuntimeException("This is an error");
+        throw new RuntimeException("This is an error")
       }
-      return "Winter is coming";
+      return "Winter is coming"
     }
 
-    public void returnException() {
-      this.exception = true;
+    void returnException() {
+      this.exception = true
     }
 
-    private FakeMessage commandReceived;
-    private boolean exception;
+    FakeMessage commandReceived
+    boolean exception
   }
 }
