@@ -6,6 +6,7 @@ import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.expense.UnknownExpense;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import agoodfriendalwayspayshisdebts.model.participant.ParticipantAddedInternalEvent;
+import agoodfriendalwayspayshisdebts.model.participant.UnknownParticipant;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -74,6 +75,13 @@ public class Event implements EntityWithUuid {
     participant.eventId(id);
     participants.add(participant);
     publishInternalEvent(new ParticipantAddedInternalEvent(id, participant));
+  }
+
+  public Participant findParticipant(UUID participantId) {
+    return participants.stream()
+        .filter(participant -> participantId.equals(participant.id()))
+        .findFirst()
+        .orElseThrow(UnknownParticipant::new);
   }
 
   private Expense find(UUID expenseId) {

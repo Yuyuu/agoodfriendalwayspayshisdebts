@@ -6,6 +6,7 @@ import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent
 import agoodfriendalwayspayshisdebts.model.expense.UnknownExpense
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import agoodfriendalwayspayshisdebts.model.participant.ParticipantAddedInternalEvent
+import agoodfriendalwayspayshisdebts.model.participant.UnknownParticipant
 import com.vter.model.internal_event.WithEventBus
 import org.junit.Rule
 import spock.lang.Specification
@@ -130,5 +131,25 @@ class EventTest extends Specification {
     internalEvent != null
     internalEvent.eventId == event.id
     internalEvent.participant == ben
+  }
+
+  def "can find a participant"() {
+    given:
+    def kim = new Participant("kim", 1, null)
+    def event = new Event("", [kim])
+
+    expect:
+    event.findParticipant(kim.id()) == kim
+  }
+
+  def "throws an error if the searched participant does not exist"() {
+    given:
+    def event = new Event("", [])
+
+    when:
+    event.findParticipant(UUID.randomUUID())
+
+    then:
+    thrown(UnknownParticipant)
   }
 }

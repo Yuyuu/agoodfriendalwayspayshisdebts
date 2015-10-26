@@ -1,8 +1,12 @@
 package agoodfriendalwayspayshisdebts.model.participant
 
+import com.vter.model.internal_event.WithEventBus
+import org.junit.Rule
 import spock.lang.Specification
 
 class ParticipantTest extends Specification {
+  @Rule
+  WithEventBus eventBus = new WithEventBus()
 
   def "can create a participant with a name and a share"() {
     given:
@@ -32,5 +36,21 @@ class ParticipantTest extends Specification {
 
     expect:
     kim != kim2
+  }
+
+  def "emits an event when a participant is updated"() {
+    given:
+    def eventId = UUID.randomUUID()
+    def participant = new Participant("", 1, "")
+    participant.eventId(eventId)
+
+    when:
+    participant.update("a@email.com")
+
+    then:
+    def internalEvent = eventBus.bus.lastEvent(ParticipantUpdatedInternalEvent)
+    internalEvent != null
+    internalEvent.eventId == eventId
+    internalEvent.participantId == participant.id()
   }
 }

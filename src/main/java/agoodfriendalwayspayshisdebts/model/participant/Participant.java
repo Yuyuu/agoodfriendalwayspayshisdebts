@@ -1,6 +1,7 @@
 package agoodfriendalwayspayshisdebts.model.participant;
 
 import com.google.common.base.Objects;
+import com.vter.model.internal_event.InternalEventBus;
 
 import java.util.UUID;
 
@@ -45,6 +46,11 @@ public class Participant {
 
   public void eventId(UUID eventId) {
     this.eventId = eventId;
+  }
+
+  public void update(String email) {
+    this.email = email;
+    InternalEventBus.INSTANCE().publish(new ParticipantUpdatedInternalEvent(eventId, id));
   }
 
   @Override
