@@ -7,7 +7,6 @@ import org.junit.Rule
 import spock.lang.Specification
 
 class MongoLinkEventRepositoryTest extends Specification {
-
   @Rule
   WithMongoLink mongoLink = WithMongoLink.withPackage("agoodfriendalwayspayshisdebts.infrastructure.persistence.mongo.mapping")
 
@@ -24,7 +23,7 @@ class MongoLinkEventRepositoryTest extends Specification {
     def expenseId = UUID.randomUUID()
     mongoLink.collection("event") << [
         _id: id, name: "event",
-        participants: [[id: kimId, name: "kim", share: 1, email: "kim@m.com"]],
+        participants: [[id: kimId, name: "kim", share: 1, email: "kim@m.com", eventId: id]],
         expenses: [[id: expenseId, label: "errands", purchaserId: kimId, amount: 10, participantsIds: [kimId], description: "hello", eventId: id]]
     ]
 
@@ -39,6 +38,7 @@ class MongoLinkEventRepositoryTest extends Specification {
     kim.name() == "kim"
     kim.share() == 1
     kim.email() == "kim@m.com"
+    kim.eventId() == id
     def expense = event.expenses().first()
     expense.id() == expenseId
     expense.label() == "errands"
@@ -62,6 +62,7 @@ class MongoLinkEventRepositoryTest extends Specification {
     def kim = foundEvent["participants"][0]
     kim["name"] == "kim"
     kim["share"] == 1
+    kim["eventId"] == event.id
   }
 
   def "can delete an event"() {

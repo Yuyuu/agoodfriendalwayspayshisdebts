@@ -13,5 +13,6 @@ public class ParticipantMapping extends AggregateMap<Participant> {
     property().onField("name");
     property().onField("share");
     property().onField("email");
+    property().onField("eventId");
   }
 }
