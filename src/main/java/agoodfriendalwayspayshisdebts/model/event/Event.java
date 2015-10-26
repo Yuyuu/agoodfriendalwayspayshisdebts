@@ -13,6 +13,7 @@ import com.vter.model.EntityWithUuid;
 import com.vter.model.internal_event.InternalEvent;
 import com.vter.model.internal_event.InternalEventBus;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -28,13 +29,14 @@ public class Event implements EntityWithUuid {
   @SuppressWarnings("unused")
   protected Event() {}
 
-  public Event(String name, List<Participant> participants) {
-    id = UUID.randomUUID();
+  public Event(String name, Collection<Participant> participants) {
+    this.id = UUID.randomUUID();
     this.name = name;
+    participants.forEach(participant -> participant.eventId(this.id));
     this.participants.addAll(participants);
   }
 
-  public static Event createAndPublishEvent(String name, List<Participant> participants) {
+  public static Event createAndPublishInternalEvent(String name, Collection<Participant> participants) {
     final Event event = new Event(name, participants);
     publishInternalEvent(new EventCreatedInternalEvent(event.id));
     return event;
@@ -69,6 +71,7 @@ public class Event implements EntityWithUuid {
   }
 
   public void addParticipant(Participant participant) {
+    participant.eventId(id);
     participants.add(participant);
     publishInternalEvent(new ParticipantAddedInternalEvent(id, participant));
   }

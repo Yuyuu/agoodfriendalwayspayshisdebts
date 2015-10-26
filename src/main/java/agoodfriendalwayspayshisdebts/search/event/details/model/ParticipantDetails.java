@@ -9,6 +9,7 @@ public class ParticipantDetails {
   public String name;
   public int share;
   public String email;
+  public UUID eventId;
 
   public ParticipantDetails() {}
 
@@ -18,6 +19,7 @@ public class ParticipantDetails {
     participantDetails.name = participant.name();
     participantDetails.share = participant.share();
     participantDetails.email = participant.email();
+    participantDetails.eventId = participant.eventId();
     return participantDetails;
   }
 }

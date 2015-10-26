@@ -22,11 +22,12 @@ class EventTest extends Specification {
     event.id != null
     event.name() == "cool event"
     event.participants().first().name() == "kim"
+    event.participants().first().eventId() == event.id
   }
 
   def "emits an internal event when creating a new event"() {
     when:
-    def event = Event.createAndPublishEvent("cool event", [new Participant("kim", 1, null)])
+    def event = Event.createAndPublishInternalEvent("cool event", [new Participant("kim", 1, null)])
 
     then:
     def internalEvent = eventBus.bus.lastEvent(EventCreatedInternalEvent)
@@ -111,6 +112,7 @@ class EventTest extends Specification {
     event.addParticipant(ben)
 
     then:
+    ben.eventId() == event.id
     event.participants().size() == 2
     event.participants().find { it.name() == "ben" } != null
   }

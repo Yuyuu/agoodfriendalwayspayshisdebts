@@ -7,7 +7,9 @@ class ParticipantDetailsTest extends Specification {
 
   def "can create from a participant"() {
     given:
+    def eventId = UUID.randomUUID()
     def lea = new Participant("lea", 1, "lea@m.com")
+    lea.eventId(eventId)
 
     when:
     def leaDetails = ParticipantDetails.fromParticipant(lea)
@@ -17,5 +19,6 @@ class ParticipantDetailsTest extends Specification {
     leaDetails.name == "lea"
     leaDetails.share == 1
     leaDetails.email == "lea@m.com"
+    leaDetails.eventId == eventId
   }
 }

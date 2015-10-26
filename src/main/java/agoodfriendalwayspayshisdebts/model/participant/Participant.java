@@ -10,6 +10,7 @@ public class Participant {
   private String name;
   private int share;
   private String email;
+  private UUID eventId;
 
   /* Used by mongolink */
   @SuppressWarnings("unused")
@@ -36,6 +37,14 @@ public class Participant {
 
   public String email() {
     return email;
+  }
+
+  public UUID eventId() {
+    return eventId;
+  }
+
+  public void eventId(UUID eventId) {
+    this.eventId = eventId;
   }
 
   @Override

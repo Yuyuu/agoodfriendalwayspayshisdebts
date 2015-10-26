@@ -9,7 +9,7 @@ class ParticipantTest extends Specification {
     def participant = new Participant("kim", 1, "kim@email.com")
 
     expect:
-    participant.id != null
+    participant.id() != null
     participant.name() == "kim"
     participant.share() == 1
     participant.email() == "kim@email.com"
@@ -19,7 +19,7 @@ class ParticipantTest extends Specification {
     given:
     def kim = new Participant("kim", 1, null)
     def ben = new Participant("ben", 1, null)
-    ben.id = kim.id
+    ben.id = kim.id()
 
     expect:
     kim == ben
