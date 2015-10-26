@@ -12,7 +12,7 @@ class SendReminderCommandTest extends Specification {
 
   def "a null or empty list of participants uuids is a violation"() {
     given:
-    def command = new SendReminderCommand(recipientsUuids: recipientsUuids, eventLink: "link")
+    def command = new SendReminderCommand(recipientsUuids: recipientsUuids, eventLink: "http://link.com")
 
     when:
     def violations = validator.validate(command)
@@ -34,6 +34,22 @@ class SendReminderCommandTest extends Specification {
     violations.size() == 1
 
     where:
-    eventLink << [null, "    "]
+    eventLink << [null, ""]
+  }
+
+  def "the event link must be a valid URL"() {
+    given:
+    def command = new SendReminderCommand(eventLink: eventLink, recipientsUuids: [null])
+
+    when:
+    def violations = validator.validate(command)
+
+    then:
+    violations.size() == errors
+
+    where:
+    eventLink                                      || errors
+    "link"                                         || 1
+    "http://link.com/events/123-ez34-345/expenses" || 0
   }
 }
