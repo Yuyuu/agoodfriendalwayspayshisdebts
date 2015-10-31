@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.command.expense
 
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -8,7 +9,9 @@ import javax.validation.Validator
 import javax.validation.ValidatorFactory
 
 class AddExpenseCommandTest extends Specification {
+  @Shared
   ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()
+  @Shared
   Validator validator = validatorFactory.validator
 
   @Unroll

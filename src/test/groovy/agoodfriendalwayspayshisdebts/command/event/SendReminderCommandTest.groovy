@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.command.event
 
+import spock.lang.Shared
 import spock.lang.Specification
 
 import javax.validation.Validation
@@ -7,7 +8,9 @@ import javax.validation.Validator
 import javax.validation.ValidatorFactory
 
 class SendReminderCommandTest extends Specification {
+  @Shared
   ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()
+  @Shared
   Validator validator = validatorFactory.validator
 
   def "a null or empty list of participants uuids is a violation"() {

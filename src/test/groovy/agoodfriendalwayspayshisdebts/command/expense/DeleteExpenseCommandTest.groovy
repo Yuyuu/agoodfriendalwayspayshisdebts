@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.command.expense
 
+import spock.lang.Shared
 import spock.lang.Specification
 
 import javax.validation.Validation
@@ -7,7 +8,9 @@ import javax.validation.Validator
 import javax.validation.ValidatorFactory
 
 class DeleteExpenseCommandTest extends Specification {
+  @Shared
   ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()
+  @Shared
   Validator validator = validatorFactory.validator
 
   def "a null event id is a violation"() {

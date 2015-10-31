@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.command.participant
 
+import spock.lang.Shared
 import spock.lang.Specification
 
 import javax.validation.Validation
@@ -7,7 +8,9 @@ import javax.validation.Validator
 import javax.validation.ValidatorFactory
 
 class UpdateParticipantCommandTest extends Specification {
+  @Shared
   ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()
+  @Shared
   Validator validator = validatorFactory.validator
 
   def "an invalid email is a violation"() {
