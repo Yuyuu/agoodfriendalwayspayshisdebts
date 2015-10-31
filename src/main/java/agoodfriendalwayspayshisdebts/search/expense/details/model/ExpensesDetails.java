@@ -6,12 +6,12 @@ import org.jongo.marshall.jackson.oid.MongoId;
 import java.util.List;
 import java.util.UUID;
 
-public class EventExpensesDetails {
+public class ExpensesDetails {
   @MongoId
   public UUID eventId;
   public int expenseCount;
   public List<ExpenseDetails> expenses = Lists.newArrayList();
 
   @SuppressWarnings("unused")
-  private EventExpensesDetails() {}
+  private ExpensesDetails() {}
 }

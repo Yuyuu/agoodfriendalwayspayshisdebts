@@ -7,10 +7,10 @@ import org.jongo.Jongo;
 
 import java.util.Optional;
 
-public class EventExpensesMetadataSearchHandler extends JongoSearchHandler<EventExpensesMetadataSearch, Iterable<ExpenseMetadata>> {
+public class ExpensesMetadataSearchHandler extends JongoSearchHandler<ExpensesMetadataSearch, Iterable<ExpenseMetadata>> {
 
   @Override
-  protected Iterable<ExpenseMetadata> execute(EventExpensesMetadataSearch search, Jongo jongo) {
+  protected Iterable<ExpenseMetadata> execute(ExpensesMetadataSearch search, Jongo jongo) {
     final Optional<ExpensesMetadata> optionalExpensesMetadata = Optional.ofNullable(
         jongo.getCollection("expensesmetadata_view").findOne("{_id:#}", search.eventId).as(ExpensesMetadata.class)
     );

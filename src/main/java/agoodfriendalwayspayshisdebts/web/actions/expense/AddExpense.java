@@ -14,10 +14,10 @@ import javax.inject.Inject;
 import java.util.UUID;
 
 @Resource
-public class AddExpenseToEvent {
+public class AddExpense {
 
   @Inject
-  public AddExpenseToEvent(CommandBus commandBus) {
+  public AddExpense(CommandBus commandBus) {
     this.commandBus = commandBus;
   }
 

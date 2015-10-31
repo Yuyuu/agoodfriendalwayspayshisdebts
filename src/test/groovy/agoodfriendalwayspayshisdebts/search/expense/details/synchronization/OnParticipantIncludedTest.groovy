@@ -24,7 +24,7 @@ class OnParticipantIncludedTest extends Specification {
   def "updates the participants names of the expense"() {
     given:
     def expense = new Expense("", kim.id(), 2, [kim.id()], event.id)
-    jongo.collection("eventexpensesdetails_view") << [
+    jongo.collection("expensesdetails_view") << [
         _id: event.id,
         expenseCount: 1,
         expenses: [[id: expense.id(), label: "label", purchaserName: kim.name(), amount: 2, participantsNames: [kim.name()]]]
@@ -35,7 +35,7 @@ class OnParticipantIncludedTest extends Specification {
     handler.executeInternalEvent(new ParticipantIncludedInternalEvent(expense, bob))
 
     then:
-    def expenseDocument = jongo.collection("eventexpensesdetails_view").findOne()["expenses"][0]
+    def expenseDocument = jongo.collection("expensesdetails_view").findOne()["expenses"][0]
     expenseDocument["participantsNames"][0] == "kim"
     expenseDocument["participantsNames"][1] == "bob"
   }

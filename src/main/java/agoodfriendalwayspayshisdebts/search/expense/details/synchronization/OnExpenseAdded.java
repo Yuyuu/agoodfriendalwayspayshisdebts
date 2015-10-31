@@ -29,7 +29,7 @@ public class OnExpenseAdded implements InternalEventHandler<ExpenseAddedInternal
         .collect(Collectors.toMap(Participant::id, Participant::name));
     final ExpenseDetails expenseDetails = createExpenseDetails(internalEvent.expense, eventParticipantsNames);
 
-    jongo.getCollection("eventexpensesdetails_view")
+    jongo.getCollection("expensesdetails_view")
         .update("{_id:#}", internalEvent.expense.eventId())
         .upsert()
         .with("{$inc:{expenseCount:1},$push:{expenses:#}}", expenseDetails);

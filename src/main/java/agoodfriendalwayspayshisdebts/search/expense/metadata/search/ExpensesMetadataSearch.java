@@ -5,9 +5,9 @@ import com.vter.search.Search;
 
 import java.util.UUID;
 
-public class EventExpensesMetadataSearch implements Search<Iterable<ExpenseMetadata>> {
+public class ExpensesMetadataSearch implements Search<Iterable<ExpenseMetadata>> {
 
-  public EventExpensesMetadataSearch(UUID eventId) {
+  public ExpensesMetadataSearch(UUID eventId) {
     this.eventId = eventId;
   }
 

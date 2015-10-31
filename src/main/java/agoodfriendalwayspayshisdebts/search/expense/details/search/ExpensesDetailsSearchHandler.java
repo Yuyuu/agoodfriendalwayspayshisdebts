@@ -1,16 +1,16 @@
 package agoodfriendalwayspayshisdebts.search.expense.details.search;
 
-import agoodfriendalwayspayshisdebts.search.expense.details.model.EventExpensesDetails;
+import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpensesDetails;
 import com.vter.search.JongoSearchHandler;
 import org.jongo.Jongo;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class EventExpensesDetailsSearchHandler extends JongoSearchHandler<EventExpensesDetailsSearch, EventExpensesDetails> {
+public class ExpensesDetailsSearchHandler extends JongoSearchHandler<ExpensesDetailsSearch, ExpensesDetails> {
 
   @Override
-  protected EventExpensesDetails execute(EventExpensesDetailsSearch search, Jongo jongo) {
+  protected ExpensesDetails execute(ExpensesDetailsSearch search, Jongo jongo) {
     final Optional<Integer> optionalExpenseCount = expenseCount(search.eventId, jongo);
     if (!optionalExpenseCount.isPresent()) {
       return null;
@@ -22,15 +22,15 @@ public class EventExpensesDetailsSearchHandler extends JongoSearchHandler<EventE
     final int limit = (unskippedExpenseCount >= search.limit()) ? search.limit() : unskippedExpenseCount;
     final int reverseSkip = search.skip() + limit;
 
-    return jongo.getCollection("eventexpensesdetails_view")
+    return jongo.getCollection("expensesdetails_view")
         .findOne("{_id:#}", search.eventId)
         .projection("{expenseCount:1,expenses:{$slice:[#,#]}}", -reverseSkip, limit)
-        .as(EventExpensesDetails.class);
+        .as(ExpensesDetails.class);
   }
 
   private static Optional<Integer> expenseCount(UUID eventId, Jongo jongo) {
     final Optional<ExpenseCountQuery> optionalQueryResult = Optional.ofNullable(
-        jongo.getCollection("eventexpensesdetails_view")
+        jongo.getCollection("expensesdetails_view")
             .findOne("{_id:#}", eventId)
             .projection("{_id:0, expenses:0}")
             .as(ExpenseCountQuery.class)

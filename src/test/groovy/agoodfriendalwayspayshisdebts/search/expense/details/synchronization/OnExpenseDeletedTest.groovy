@@ -21,13 +21,13 @@ class OnExpenseDeletedTest extends Specification {
   def "removes the expense from the collection"() {
     given:
     def expense = new Expense("", null, 1, [], eventId)
-    jongo.collection("eventexpensesdetails_view") << [_id: eventId, expenseCount: 1, expenses: [[id:expense.id()]]]
+    jongo.collection("expensesdetails_view") << [_id: eventId, expenseCount: 1, expenses: [[id:expense.id()]]]
 
     when:
     handler.executeInternalEvent(new ExpenseDeletedInternalEvent(expense))
 
     then:
-    def document = jongo.collection("eventexpensesdetails_view").findOne()
+    def document = jongo.collection("expensesdetails_view").findOne()
     document["expenseCount"] == 0
     document["expenses"].size() == 0
   }

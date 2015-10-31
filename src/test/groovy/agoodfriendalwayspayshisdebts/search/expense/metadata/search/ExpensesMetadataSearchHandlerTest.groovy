@@ -4,13 +4,13 @@ import com.vter.search.WithJongo
 import org.junit.Rule
 import spock.lang.Specification
 
-class EventExpensesMetadataSearchHandlerTest extends Specification {
+class ExpensesMetadataSearchHandlerTest extends Specification {
   @Rule
   WithJongo jongo = new WithJongo()
 
   UUID eventId = UUID.randomUUID()
 
-  EventExpensesMetadataSearchHandler handler = new EventExpensesMetadataSearchHandler()
+  ExpensesMetadataSearchHandler handler = new ExpensesMetadataSearchHandler()
 
   def "returns the metadata of the expenses"() {
     given:
@@ -20,7 +20,7 @@ class EventExpensesMetadataSearchHandlerTest extends Specification {
     ]
 
     when:
-    def metadata = handler.execute(new EventExpensesMetadataSearch(eventId), jongo.jongo())
+    def metadata = handler.execute(new ExpensesMetadataSearch(eventId), jongo.jongo())
 
     then:
     metadata.size() == 2
@@ -31,6 +31,6 @@ class EventExpensesMetadataSearchHandlerTest extends Specification {
 
   def "returns null if the document does not exist for the event"() {
     expect:
-    handler.execute(new EventExpensesMetadataSearch(eventId), jongo.jongo()) == null
+    handler.execute(new ExpensesMetadataSearch(eventId), jongo.jongo()) == null
   }
 }

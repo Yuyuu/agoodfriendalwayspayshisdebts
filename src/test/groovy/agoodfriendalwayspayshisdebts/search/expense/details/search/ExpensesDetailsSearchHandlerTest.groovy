@@ -4,24 +4,24 @@ import com.vter.search.WithJongo
 import org.junit.Rule
 import spock.lang.Specification
 
-class EventExpensesDetailsSearchHandlerTest extends Specification {
+class ExpensesDetailsSearchHandlerTest extends Specification {
   @Rule
   WithJongo jongo = new WithJongo()
 
   UUID eventId = UUID.randomUUID()
 
-  EventExpensesDetailsSearchHandler handler = new EventExpensesDetailsSearchHandler()
+  ExpensesDetailsSearchHandler handler = new ExpensesDetailsSearchHandler()
 
   def "can return the expenses details of an event"() {
     given:
-    jongo.collection("eventexpensesdetails_view") << [
+    jongo.collection("expensesdetails_view") << [
         _id: eventId,
         expenseCount: 1,
         expenses: [[label: "label", purchaserName: "kim", amount: 2, participantsNames: ["kim"], description: "hello"]]
     ]
 
     when:
-    def search = new EventExpensesDetailsSearch(eventId)
+    def search = new ExpensesDetailsSearch(eventId)
     search.skip(0).limit(5)
     def details = handler.execute(search, jongo.jongo())
 
@@ -38,14 +38,14 @@ class EventExpensesDetailsSearchHandlerTest extends Specification {
 
   def "can return the expenses progressively"() {
     given:
-    jongo.collection("eventexpensesdetails_view") << [
+    jongo.collection("expensesdetails_view") << [
         _id: eventId,
         expenseCount: 6,
         expenses: [[label: "e1"], [label: "e2"], [label: "e3"], [label: "e4"], [label: "e5"], [label: "e6"]]
     ]
 
     when:
-    def search = new EventExpensesDetailsSearch(eventId)
+    def search = new ExpensesDetailsSearch(eventId)
     search.skip(skip).limit(limit)
     def details = handler.execute(search, jongo.jongo())
 
@@ -67,7 +67,7 @@ class EventExpensesDetailsSearchHandlerTest extends Specification {
 
   def "returns null if no document is found for the event"() {
     when:
-    def search = new EventExpensesDetailsSearch(eventId)
+    def search = new ExpensesDetailsSearch(eventId)
     def details = handler.execute(search, jongo.jongo())
 
     then:

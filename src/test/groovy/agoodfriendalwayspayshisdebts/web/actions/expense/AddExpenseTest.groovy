@@ -6,13 +6,13 @@ import com.vter.command.CommandBus
 import com.vter.infrastructure.bus.ExecutionResult
 import spock.lang.Specification
 
-class AddExpenseToEventTest extends Specification {
+class AddExpenseTest extends Specification {
   CommandBus commandBus = Mock(CommandBus)
 
   def "can ask to add an expense to an event"() {
     given:
     def expenseDetails = Mock(ExpenseDetails)
-    def action = new AddExpenseToEvent(commandBus)
+    def action = new AddExpense(commandBus)
     def command = Mock(AddExpenseCommand)
     commandBus.sendAndWaitResponse(command) >> ExecutionResult.success(expenseDetails)
 
@@ -27,7 +27,7 @@ class AddExpenseToEventTest extends Specification {
 
   def "propagates the error if any occurred"() {
     given:
-    def action = new AddExpenseToEvent(commandBus)
+    def action = new AddExpense(commandBus)
     def command = Mock(AddExpenseCommand)
     commandBus.sendAndWaitResponse(command) >> ExecutionResult.error(new RuntimeException("error"))
 

@@ -6,7 +6,7 @@ import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
 import agoodfriendalwayspayshisdebts.model.participant.Participant
-import agoodfriendalwayspayshisdebts.search.expense.details.model.EventExpensesDetails
+import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpensesDetails
 import com.vter.search.WithJongo
 import org.junit.Rule
 import spock.lang.Specification
@@ -30,7 +30,7 @@ class OnExpenseAddedTest extends Specification {
 
   def "can update the expenses details of the event"() {
     given:
-    jongo.collection("eventexpensesdetails_view") << [
+    jongo.collection("expensesdetails_view") << [
         _id: event.id,
         expenseCount: 1,
         expenses: [[label: "label", purchaserName: kim.name(), amount: 2, participantsNames: [kim.name()], description: "hello"]]
@@ -43,7 +43,7 @@ class OnExpenseAddedTest extends Specification {
     then:
     // TODO: For some reason (and since jongo 1.2) when checking with GMongo the list is transformed into a map
     // TODO: (i.e. [0:[...], 1:[...]]) after jongo update in test environment. Therefore the deserialized object is used instead.
-    def details = jongo.jongo().getCollection("eventexpensesdetails_view").findOne().as(EventExpensesDetails.class)
+    def details = jongo.jongo().getCollection("expensesdetails_view").findOne().as(ExpensesDetails.class)
     details.eventId == event.id
     details.expenseCount == 2
     details.expenses.size() == 2
@@ -62,7 +62,7 @@ class OnExpenseAddedTest extends Specification {
     handler.executeInternalEvent(new ExpenseAddedInternalEvent(expense))
 
     then:
-    def document = jongo.collection("eventexpensesdetails_view").findOne()
+    def document = jongo.collection("expensesdetails_view").findOne()
     document["_id"] == event.id
     document["expenses"].size() == 1
   }
