@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.command.event;
+package agoodfriendalwayspayshisdebts.command.participant;
 
 import com.vter.command.Command;
 import org.hibernate.validator.constraints.Email;

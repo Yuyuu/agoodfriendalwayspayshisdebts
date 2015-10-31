@@ -1,6 +1,6 @@
-package agoodfriendalwayspayshisdebts.web.actions.event;
+package agoodfriendalwayspayshisdebts.web.actions.participant;
 
-import agoodfriendalwayspayshisdebts.command.event.AddParticipantCommand;
+import agoodfriendalwayspayshisdebts.command.participant.AddParticipantCommand;
 import com.google.common.base.Throwables;
 import com.vter.command.CommandBus;
 import com.vter.infrastructure.bus.ExecutionResult;

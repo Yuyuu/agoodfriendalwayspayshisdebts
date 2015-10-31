@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.web.actions.event
+package agoodfriendalwayspayshisdebts.web.actions.expense
 
 import agoodfriendalwayspayshisdebts.search.expense.metadata.search.ExpensesMetadataSearch
 import com.vter.infrastructure.bus.ExecutionResult

@@ -1,6 +1,6 @@
 package agoodfriendalwayspayshisdebts.web.actions.event;
 
-import agoodfriendalwayspayshisdebts.command.email.SendReminderCommand;
+import agoodfriendalwayspayshisdebts.command.event.SendReminderCommand;
 import agoodfriendalwayspayshisdebts.infrastructure.services.RecipientReport;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.vter.command.CommandBus;

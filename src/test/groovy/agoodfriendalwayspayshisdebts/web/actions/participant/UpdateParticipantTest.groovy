@@ -1,6 +1,6 @@
-package agoodfriendalwayspayshisdebts.web.actions.event
+package agoodfriendalwayspayshisdebts.web.actions.participant
 
-import agoodfriendalwayspayshisdebts.command.event.UpdateParticipantCommand
+import agoodfriendalwayspayshisdebts.command.participant.UpdateParticipantCommand
 import com.vter.command.CommandBus
 import com.vter.infrastructure.bus.ExecutionResult
 import spock.lang.Specification

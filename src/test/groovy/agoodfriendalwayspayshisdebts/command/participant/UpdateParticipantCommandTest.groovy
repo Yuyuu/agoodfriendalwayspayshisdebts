@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.command.event
+package agoodfriendalwayspayshisdebts.command.participant
 
 import spock.lang.Specification
 

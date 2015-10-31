@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.web.actions.event;
+package agoodfriendalwayspayshisdebts.web.actions.expense;
 
 import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpensesDetails;
 import agoodfriendalwayspayshisdebts.search.expense.details.search.ExpensesDetailsSearch;

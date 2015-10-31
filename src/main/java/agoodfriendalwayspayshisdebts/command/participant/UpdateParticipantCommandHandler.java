@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.command.event;
+package agoodfriendalwayspayshisdebts.command.participant;
 
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
 import agoodfriendalwayspayshisdebts.model.event.Event;
