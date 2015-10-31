@@ -21,12 +21,10 @@ public class ValidParticipantsValidator implements ConstraintValidator<ValidPart
     }
 
     final Set<String> violationCodes = Sets.newHashSet();
-    participants.stream().forEach(participant -> violationCodes.addAll(participantViolations(participant)));
+    participants.forEach(participant -> violationCodes.addAll(participantViolations(participant)));
 
     context.disableDefaultConstraintViolation();
-    violationCodes.stream().forEach(
-        code -> context.buildConstraintViolationWithTemplate(code).addConstraintViolation()
-    );
+    violationCodes.forEach(code -> context.buildConstraintViolationWithTemplate(code).addConstraintViolation());
 
     return violationCodes.isEmpty();
   }

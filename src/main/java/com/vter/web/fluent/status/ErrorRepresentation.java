@@ -12,7 +12,7 @@ public class ErrorRepresentation {
 
   public static ErrorRepresentation fromErrorMessages(List<String> messages) {
     final ErrorRepresentation representation = new ErrorRepresentation();
-    messages.stream().forEach(representation::addErrorMessage);
+    messages.forEach(representation::addErrorMessage);
     return representation;
   }
 
