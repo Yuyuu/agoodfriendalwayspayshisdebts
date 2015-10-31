@@ -50,10 +50,11 @@ class EventExpensesDetailsSearchHandlerTest extends Specification {
     def details = handler.execute(search, jongo.jongo())
 
     then:
-    details.expenses*.label == result
+    details.expenseCount == 6
+    details.expenses*.label == expenses
 
     where:
-    skip | limit || result
+    skip | limit || expenses
     0    | 2     || ["e5", "e6"]
     2    | 2     || ["e3", "e4"]
     5    | 2     || ["e1"]
@@ -64,13 +65,12 @@ class EventExpensesDetailsSearchHandlerTest extends Specification {
     7    | 2     || []
   }
 
-  def "returns an empty expenses details if none is found for the event"() {
+  def "returns null if no document is found for the event"() {
     when:
     def search = new EventExpensesDetailsSearch(eventId)
     def details = handler.execute(search, jongo.jongo())
 
     then:
-    details.eventId == eventId
-    details.expenses.empty
+    details == null
   }
 }

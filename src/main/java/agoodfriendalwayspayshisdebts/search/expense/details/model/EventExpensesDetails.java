@@ -14,8 +14,4 @@ public class EventExpensesDetails {
 
   @SuppressWarnings("unused")
   private EventExpensesDetails() {}
-
-  public EventExpensesDetails(UUID eventId) {
-    this.eventId = eventId;
-  }
 }

@@ -20,17 +20,6 @@ class GetEventExpensesDetailsTest extends Specification {
     def result = action.getExpenses(UUID.randomUUID().toString(), 3, 2)
 
     then:
-    result == expensesDetails
-  }
-
-  def "creates an empty expenses details on the fly if none exists for the event"() {
-    given:
-    searchBus.sendAndWaitResponse(_ as EventExpensesDetailsSearch) >> ExecutionResult.success(null)
-
-    when:
-    def result = action.getExpenses(UUID.randomUUID().toString(), 2, 5)
-
-    then:
-    result.expenses.empty
+    result.get() == expensesDetails
   }
 }

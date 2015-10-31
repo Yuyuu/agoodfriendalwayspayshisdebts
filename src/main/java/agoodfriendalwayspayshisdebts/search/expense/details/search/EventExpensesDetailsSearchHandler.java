@@ -11,14 +11,15 @@ public class EventExpensesDetailsSearchHandler extends JongoSearchHandler<EventE
 
   @Override
   protected EventExpensesDetails execute(EventExpensesDetailsSearch search, Jongo jongo) {
-    final int expenseCount = expenseCount(search.eventId, jongo);
-    final int remainingExpenseCount = expenseCount - search.skip();
-
-    if (remainingExpenseCount < 1) {
-      return emptyEventExpensesDetails(search.eventId);
+    final Optional<Integer> optionalExpenseCount = expenseCount(search.eventId, jongo);
+    if (!optionalExpenseCount.isPresent()) {
+      return null;
     }
 
-    final int limit = (remainingExpenseCount >= search.limit()) ? search.limit() : remainingExpenseCount;
+    final int expenseCount = optionalExpenseCount.get();
+    final int unskippedExpenseCount = unskippedExpenseCount(expenseCount, search.skip());
+
+    final int limit = (unskippedExpenseCount >= search.limit()) ? search.limit() : unskippedExpenseCount;
     final int reverseSkip = search.skip() + limit;
 
     return jongo.getCollection("eventexpensesdetails_view")
@@ -27,26 +28,23 @@ public class EventExpensesDetailsSearchHandler extends JongoSearchHandler<EventE
         .as(EventExpensesDetails.class);
   }
 
-  private static int expenseCount(UUID eventId, Jongo jongo) {
-    final Optional<ExpenseCountQuery> optionalQuery = Optional.ofNullable(
+  private static Optional<Integer> expenseCount(UUID eventId, Jongo jongo) {
+    final Optional<ExpenseCountQuery> optionalQueryResult = Optional.ofNullable(
         jongo.getCollection("eventexpensesdetails_view")
             .findOne("{_id:#}", eventId)
             .projection("{_id:0, expenses:0}")
             .as(ExpenseCountQuery.class)
     );
-    final ExpenseCountQuery query = optionalQuery.orElseGet(ExpenseCountQuery::empty);
-    return query.expenseCount;
+    return optionalQueryResult.isPresent() ?
+        Optional.of(optionalQueryResult.get().expenseCount) : Optional.<Integer>empty();
   }
 
-  private static EventExpensesDetails emptyEventExpensesDetails(UUID eventId) {
-    return new EventExpensesDetails(eventId);
+  private static int unskippedExpenseCount(int expenseCount, int skip) {
+    int rawCount = expenseCount - skip;
+    return rawCount > 0 ? rawCount : 0;
   }
 
   private static class ExpenseCountQuery {
     public int expenseCount;
-
-    public static ExpenseCountQuery empty() {
-      return new ExpenseCountQuery();
-    }
   }
 }
