@@ -16,7 +16,7 @@ public class OnParticipantAdded implements InternalEventHandler<ParticipantAdded
 
   @Override
   public void executeInternalEvent(ParticipantAddedInternalEvent internalEvent) {
-    final ParticipantDetails participantDetails = ParticipantDetails.fromParticipant(internalEvent.participant);
+    final ParticipantDetails participantDetails = ParticipantDetails.forParticipant(internalEvent.participant);
     jongo.getCollection("eventdetails_view")
         .update("{_id:#}", internalEvent.eventId)
         .with("{$push:{participants:#}}", participantDetails);

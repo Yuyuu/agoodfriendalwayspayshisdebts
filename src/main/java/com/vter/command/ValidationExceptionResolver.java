@@ -14,6 +14,6 @@ public class ValidationExceptionResolver implements ExceptionResolver<Validation
   @Override
   public ErrorRepresentation representation(Throwable throwable) {
     final ValidationException exception = (ValidationException) throwable;
-    return ErrorRepresentation.fromErrorMessages(exception.messages());
+    return ErrorRepresentation.forErrorMessages(exception.messages());
   }
 }

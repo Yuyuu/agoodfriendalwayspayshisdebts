@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class ExpenseMetadataTest extends Specification {
 
-  def "creates from an expense"() {
+  def "creates for an expense"() {
     given:
     def expense = new Expense("hello", null, 3, [], null)
 

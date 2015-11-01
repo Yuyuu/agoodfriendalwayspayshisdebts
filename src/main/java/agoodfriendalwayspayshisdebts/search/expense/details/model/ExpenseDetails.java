@@ -19,7 +19,7 @@ public class ExpenseDetails {
 
   private ExpenseDetails() {}
 
-  public static ExpenseDetails fromExpense(Expense expense, Map<UUID, String> eventParticipantsNames) {
+  public static ExpenseDetails forExpense(Expense expense, Map<UUID, String> eventParticipantsNames) {
     final ExpenseDetails expenseDetails = new ExpenseDetails();
     expenseDetails.id = expense.id();
     expenseDetails.label = expense.label();

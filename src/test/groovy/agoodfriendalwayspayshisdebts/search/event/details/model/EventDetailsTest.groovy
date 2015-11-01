@@ -6,12 +6,12 @@ import spock.lang.Specification
 
 class EventDetailsTest extends Specification {
 
-  def "can create from an event"() {
+  def "can create for an event"() {
     given:
     def event = new Event("event", [new Participant("lea", 1, null)])
 
     when:
-    def eventDetails = EventDetails.fromEvent(event)
+    def eventDetails = EventDetails.forEvent(event)
 
     then:
     eventDetails.id == event.id

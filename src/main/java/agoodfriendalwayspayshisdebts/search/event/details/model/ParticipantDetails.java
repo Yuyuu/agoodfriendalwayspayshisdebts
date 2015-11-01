@@ -13,7 +13,7 @@ public class ParticipantDetails {
 
   public ParticipantDetails() {}
 
-  public static ParticipantDetails fromParticipant(Participant participant) {
+  public static ParticipantDetails forParticipant(Participant participant) {
     final ParticipantDetails participantDetails = new ParticipantDetails();
     participantDetails.id = participant.id();
     participantDetails.name = participant.name();

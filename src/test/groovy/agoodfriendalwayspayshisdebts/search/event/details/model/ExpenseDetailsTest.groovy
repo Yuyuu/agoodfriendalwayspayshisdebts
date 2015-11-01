@@ -6,7 +6,7 @@ import spock.lang.Specification
 
 class ExpenseDetailsTest extends Specification {
 
-  def "can create from an expense"() {
+  def "can create for an expense"() {
     given:
     def purchaserId = UUID.randomUUID()
     def participantsIds = [purchaserId]
@@ -15,7 +15,7 @@ class ExpenseDetailsTest extends Specification {
     expense.description = "description"
 
     when:
-    def expenseDetails = ExpenseDetails.fromExpense(expense, [(purchaserId): "ben"])
+    def expenseDetails = ExpenseDetails.forExpense(expense, [(purchaserId): "ben"])
 
     then:
     expenseDetails.id == expense.id()

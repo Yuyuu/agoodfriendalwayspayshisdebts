@@ -31,7 +31,7 @@ public class AddExpenseCommandHandler implements CommandHandler<AddExpenseComman
 
     final Map<UUID, String> eventParticipantsNames = event.participants().stream()
         .collect(Collectors.toMap(Participant::id, Participant::name));
-    return ExpenseDetails.fromExpense(expense, eventParticipantsNames);
+    return ExpenseDetails.forExpense(expense, eventParticipantsNames);
   }
 
   private static Optional<List<UUID>> toUuidsIfPresent(List<String> stringifiedUuids) {

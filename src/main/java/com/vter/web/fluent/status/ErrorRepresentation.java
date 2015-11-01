@@ -10,7 +10,7 @@ public class ErrorRepresentation {
 
   private ErrorRepresentation() {}
 
-  public static ErrorRepresentation fromErrorMessages(List<String> messages) {
+  public static ErrorRepresentation forErrorMessages(List<String> messages) {
     final ErrorRepresentation representation = new ErrorRepresentation();
     messages.forEach(representation::addErrorMessage);
     return representation;

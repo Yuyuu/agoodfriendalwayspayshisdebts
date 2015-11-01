@@ -36,7 +36,7 @@ public class OnExpenseAdded implements InternalEventHandler<ExpenseAddedInternal
   }
 
   private static ExpenseDetails createExpenseDetails(Expense expense, Map<UUID, String> eventParticipantsNames) {
-    return ExpenseDetails.fromExpense(expense, eventParticipantsNames);
+    return ExpenseDetails.forExpense(expense, eventParticipantsNames);
   }
 
   private final Jongo jongo;

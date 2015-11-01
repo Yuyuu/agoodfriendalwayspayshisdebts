@@ -16,12 +16,12 @@ public class EventDetails {
 
   private EventDetails() {}
 
-  public static EventDetails fromEvent(Event event) {
+  public static EventDetails forEvent(Event event) {
     final EventDetails eventDetails = new EventDetails();
     eventDetails.id = event.getId();
     eventDetails.name = event.name();
     eventDetails.participants.addAll(
-        event.participants().stream().map(ParticipantDetails::fromParticipant).collect(Collectors.toList())
+        event.participants().stream().map(ParticipantDetails::forParticipant).collect(Collectors.toList())
     );
     return eventDetails;
   }

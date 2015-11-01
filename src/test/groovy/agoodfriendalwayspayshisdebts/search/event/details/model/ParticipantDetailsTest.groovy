@@ -5,14 +5,14 @@ import spock.lang.Specification
 
 class ParticipantDetailsTest extends Specification {
 
-  def "can create from a participant"() {
+  def "can create for a participant"() {
     given:
     def eventId = UUID.randomUUID()
     def lea = new Participant("lea", 1, "lea@m.com")
     lea.eventId(eventId)
 
     when:
-    def leaDetails = ParticipantDetails.fromParticipant(lea)
+    def leaDetails = ParticipantDetails.forParticipant(lea)
 
     then:
     leaDetails.id == lea.id()
