@@ -1,7 +1,7 @@
 package agoodfriendalwayspayshisdebts.infrastructure.services;
 
-import agoodfriendalwayspayshisdebts.search.event.result.model.DebtTowardsParticipant;
-import agoodfriendalwayspayshisdebts.search.event.result.model.ParticipantResult;
+import agoodfriendalwayspayshisdebts.search.event.results.model.DebtTowardsParticipant;
+import agoodfriendalwayspayshisdebts.search.event.results.model.ParticipantResults;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -23,14 +23,14 @@ public class ReminderTemplateModel {
   private String totalDebt;
   private List<Map<String, Object>> debts = Lists.newArrayList();
 
-  public ReminderTemplateModel(ParticipantResult participantResult, Locale locale) {
+  public ReminderTemplateModel(ParticipantResults participantResults, Locale locale) {
     final NumberFormat format = NumberFormat.getCurrencyInstance(locale);
     format.setCurrency(euro);
-    participantName = participantResult.participantName();
-    totalSpent = format.format(participantResult.totalSpent());
-    hasDebts = participantResult.totalDebt() >= MINIMUM_DEBT_AMOUNT;
-    totalDebt = format.format(participantResult.totalDebt());
-    participantResult.debtsDetail().values().stream().filter(isNotZero()).forEach(populateModelWithFormat(format));
+    participantName = participantResults.participantName();
+    totalSpent = format.format(participantResults.totalSpent());
+    hasDebts = participantResults.totalDebt() >= MINIMUM_DEBT_AMOUNT;
+    totalDebt = format.format(participantResults.totalDebt());
+    participantResults.debtsDetails().values().stream().filter(isNotZero()).forEach(populateModelWithFormat(format));
   }
 
   private Consumer<DebtTowardsParticipant> populateModelWithFormat(NumberFormat format) {

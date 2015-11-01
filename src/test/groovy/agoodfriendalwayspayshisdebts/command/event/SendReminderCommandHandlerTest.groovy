@@ -28,7 +28,7 @@ class SendReminderCommandHandlerTest extends Specification {
 
   void setup() {
     RepositoryLocator.events().save(event)
-    jongo.collection("eventresult_view") << [_id: event.id, participantsResults: [(strLeaId): [:], (strBenId): [:]]]
+    jongo.collection("eventresults_view") << [_id: event.id, participantsResults: [(strLeaId): [:], (strBenId): [:]]]
     handler = new SendReminderCommandHandler(jongo.jongo(), emailSender)
   }
 

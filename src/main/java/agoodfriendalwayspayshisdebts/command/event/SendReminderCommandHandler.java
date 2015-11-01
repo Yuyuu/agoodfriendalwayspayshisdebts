@@ -4,8 +4,8 @@ import agoodfriendalwayspayshisdebts.infrastructure.services.RecipientReport;
 import agoodfriendalwayspayshisdebts.infrastructure.services.Reminder;
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
 import agoodfriendalwayspayshisdebts.model.event.Event;
-import agoodfriendalwayspayshisdebts.search.event.result.model.CalculationResult;
-import agoodfriendalwayspayshisdebts.search.event.result.model.ParticipantResult;
+import agoodfriendalwayspayshisdebts.search.event.results.model.EventResults;
+import agoodfriendalwayspayshisdebts.search.event.results.model.ParticipantResults;
 import com.vter.command.CommandHandler;
 import com.vter.infrastructure.services.EmailSender;
 import org.jongo.Jongo;
@@ -27,10 +27,10 @@ public class SendReminderCommandHandler implements CommandHandler<SendReminderCo
   @Override
   public Iterable<RecipientReport> execute(SendReminderCommand command) {
     final Event event = RepositoryLocator.events().get(command.eventId);
-    final CalculationResult calculationResult = jongo.getCollection("eventresult_view")
+    final EventResults eventResults = jongo.getCollection("eventresults_view")
         .findOne("{_id:#}", command.eventId)
-        .as(CalculationResult.class);
-    assert calculationResult != null;
+        .as(EventResults.class);
+    assert eventResults != null;
 
     final Locale reminderLocale = locale(command.locale);
     final List<UUID> recipientsIds = toUuids(command.recipientsUuids);
@@ -38,8 +38,8 @@ public class SendReminderCommandHandler implements CommandHandler<SendReminderCo
     return event.participants().stream()
         .filter(participant -> recipientsIds.contains(participant.id()))
         .map(participant -> {
-          final ParticipantResult participantResult = calculationResult.participantsResults.get(participant.id());
-          final Reminder reminder = reminder(participantResult, reminderLocale)
+          final ParticipantResults participantResults = eventResults.participantsResults.get(participant.id());
+          final Reminder reminder = reminder(participantResults, reminderLocale)
               .withEventModel(event.name(), command.eventLink)
               .to(participant.email());
 
@@ -71,10 +71,10 @@ public class SendReminderCommandHandler implements CommandHandler<SendReminderCo
     }
   }
 
-  private static Reminder reminder(ParticipantResult participantResult, Locale locale) {
+  private static Reminder reminder(ParticipantResults participantResults, Locale locale) {
     return (locale == null) ?
-        Reminder.withDefaultLocale(participantResult) :
-        Reminder.forLocale(locale, participantResult);
+        Reminder.withDefaultLocale(participantResults) :
+        Reminder.forLocale(locale, participantResults);
   }
 
   private final Jongo jongo;

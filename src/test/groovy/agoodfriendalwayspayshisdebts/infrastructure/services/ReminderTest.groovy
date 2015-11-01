@@ -1,7 +1,7 @@
 package agoodfriendalwayspayshisdebts.infrastructure.services
 
 import agoodfriendalwayspayshisdebts.model.participant.Participant
-import agoodfriendalwayspayshisdebts.search.event.result.model.ParticipantResult
+import agoodfriendalwayspayshisdebts.search.event.results.model.ParticipantResults
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -9,12 +9,12 @@ import spock.lang.Unroll
 class ReminderTest extends Specification {
   Participant kim = new Participant("kim", 1, "kim@email.com")
   UUID leaId = UUID.randomUUID()
-  ParticipantResult result = ParticipantResult.forParticipant(kim, [(leaId): "lea"])
+  ParticipantResults result = ParticipantResults.forParticipant(kim, [(leaId): "lea"])
 
   def setup() {
     result.totalSpent = 5D
     result.totalDebt = 5.4D
-    result.debtsDetail[leaId].mitigatedAmount = 3D
+    result.debtsDetails[leaId].mitigatedAmount = 3D
   }
 
   @Unroll
@@ -66,7 +66,7 @@ class ReminderTest extends Specification {
     reminder.to() == "joe+bob@somewhere.com"
   }
 
-  private static Reminder reminder(ParticipantResult result, Locale locale) {
+  private static Reminder reminder(ParticipantResults result, Locale locale) {
     return (locale == null) ? Reminder.withDefaultLocale(result) : Reminder.forLocale(locale, result)
   }
 

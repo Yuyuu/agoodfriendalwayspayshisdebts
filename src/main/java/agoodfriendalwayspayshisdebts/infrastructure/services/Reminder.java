@@ -1,6 +1,6 @@
 package agoodfriendalwayspayshisdebts.infrastructure.services;
 
-import agoodfriendalwayspayshisdebts.search.event.result.model.ParticipantResult;
+import agoodfriendalwayspayshisdebts.search.event.results.model.ParticipantResults;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.cache.GuavaTemplateCache;
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
@@ -13,22 +13,22 @@ import java.util.Locale;
 
 public class Reminder implements Email {
 
-  private Reminder(ParticipantResult participantResult, Locale locale) {
+  private Reminder(ParticipantResults participantResults, Locale locale) {
     this.locale = locale;
     try {
       template = handlebars.compile(TEMPLATE_NAME + "_" + locale.getLanguage()).as(ReminderTemplate.class);
-      templateModel = new ReminderTemplateModel(participantResult, locale);
+      templateModel = new ReminderTemplateModel(participantResults, locale);
     } catch (IOException e) {
       Throwables.propagate(e);
     }
   }
 
-  public static Reminder forLocale(Locale locale, ParticipantResult participantResult) {
-    return new Reminder(participantResult, locale);
+  public static Reminder forLocale(Locale locale, ParticipantResults participantResults) {
+    return new Reminder(participantResults, locale);
   }
 
-  public static Reminder withDefaultLocale(ParticipantResult participantResult) {
-    return new Reminder(participantResult, Locale.UK);
+  public static Reminder withDefaultLocale(ParticipantResults participantResults) {
+    return new Reminder(participantResults, Locale.UK);
   }
 
   @Override
