@@ -1,11 +1,11 @@
 package agoodfriendalwayspayshisdebts.infrastructure.persistence.mongo.mapping;
 
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
-import org.mongolink.domain.mapper.AggregateMap;
+import org.mongolink.domain.mapper.ComponentMap;
 
 /* This is implicitly used by MongoLink */
 @SuppressWarnings("unused")
-public class ParticipantMapping extends AggregateMap<Participant> {
+public class ParticipantMapping extends ComponentMap<Participant> {
 
   @Override
   public void map() {
