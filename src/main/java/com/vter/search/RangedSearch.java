@@ -1,13 +1,13 @@
 package com.vter.search;
 
-public abstract class PaginatedSearch<TResponse> implements Search<TResponse> {
+public abstract class RangedSearch<TResponse> implements Search<TResponse> {
 
-  public PaginatedSearch<TResponse> limit(int limit) {
+  public RangedSearch<TResponse> limit(int limit) {
     this.limit = limit;
     return this;
   }
 
-  public PaginatedSearch<TResponse> skip(int skip) {
+  public RangedSearch<TResponse> skip(int skip) {
     this.skip = skip;
     return this;
   }
