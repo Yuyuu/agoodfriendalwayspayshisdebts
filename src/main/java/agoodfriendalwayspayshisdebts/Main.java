@@ -2,12 +2,14 @@ package agoodfriendalwayspayshisdebts;
 
 import agoodfriendalwayspayshisdebts.web.AGoodFriendAlwaysPaysHisDebtsApplication;
 import com.vter.web.fluent.Server;
+import org.joda.time.DateTimeZone;
 
 import java.util.Optional;
 
 public class Main {
 
   public static void main(String[] args) throws Exception {
+    DateTimeZone.setDefault(DateTimeZone.UTC);
     new Server(new AGoodFriendAlwaysPaysHisDebtsApplication()).start(port());
   }
 
