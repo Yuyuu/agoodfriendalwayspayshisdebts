@@ -1,18 +1,17 @@
 package agoodfriendalwayspayshisdebts.infrastructure.persistence.mongo.mapping;
 
-import agoodfriendalwayspayshisdebts.model.participant.Participant;
+import agoodfriendalwayspayshisdebts.model.activity.Operation;
 import org.mongolink.domain.mapper.ComponentMap;
 
 /* This is implicitly used by MongoLink */
 @SuppressWarnings({"unused", "Duplicates"})
-public class ParticipantMapping extends ComponentMap<Participant> {
+public class OperationMapping extends ComponentMap<Operation> {
 
   @Override
   public void map() {
     property().onField("id");
-    property().onField("name");
-    property().onField("share");
-    property().onField("email");
+    property().onField("type");
+    property().onField("creationDate");
     property().onField("eventId");
   }
 }
