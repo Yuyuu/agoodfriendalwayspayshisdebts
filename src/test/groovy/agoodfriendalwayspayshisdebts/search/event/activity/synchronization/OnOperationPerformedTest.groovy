@@ -18,7 +18,7 @@ class OnOperationPerformedTest extends Specification {
   WithJongo jongo = new WithJongo()
 
   Event event = new Event("", [])
-  Operation operation = new Operation(OperationType.EVENT_CREATION, event.id)
+  Operation operation = new Operation(OperationType.EVENT_CREATION, "hello", event.id)
 
   OnOperationPerformed handler
 
@@ -41,6 +41,7 @@ class OnOperationPerformedTest extends Specification {
     document["operations"][0]["id"] == operation.id().toString()
     document["operations"][0]["type"] == "EVENT_CREATION"
     document["operations"][0]["creationDate"] == operation.creationDate().toString()
+    document["operations"][0]["data"] == "hello"
     document["operations"][0]["eventId"] == event.id.toString()
   }
 

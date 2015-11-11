@@ -74,6 +74,9 @@ public class Event implements EntityWithUuid {
   public void addExpense(Expense expense) {
     expenses.add(expense);
     publishInternalEvent(new ExpenseAddedInternalEvent(expense));
+    final Operation operation = new Operation(OperationType.NEW_EXPENSE, expense.label(), id);
+    operations.add(operation);
+    publishInternalEvent(new OperationPerformedInternalEvent(id, operation.id()));
   }
 
   public void deleteExpense(UUID expenseId) {

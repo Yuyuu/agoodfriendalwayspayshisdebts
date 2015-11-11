@@ -29,7 +29,7 @@ class MongoLinkEventRepositoryTest extends Specification {
         _id: id, name: "event",
         participants: [[id: kimId, name: "kim", share: 1, email: "kim@m.com", eventId: id]],
         expenses: [[id: expenseId, label: "errands", purchaserId: kimId, amount: 10, participantsIds: [kimId], description: "hello", eventId: id]],
-        operations: [[id: operationId, type: "EVENT_CREATION", creationDate: operationDate, eventId: id]]
+        operations: [[id: operationId, type: "EVENT_CREATION", creationDate: operationDate, data: "hello", eventId: id]]
     ]
 
     when:
@@ -56,6 +56,7 @@ class MongoLinkEventRepositoryTest extends Specification {
     operation.id() == operationId
     operation.type() == OperationType.EVENT_CREATION
     operation.creationDate() == operationDate
+    operation.data() == "hello"
     operation.eventId() == id
   }
 

@@ -9,7 +9,7 @@ class EventOperationTest extends Specification {
   def "can be created for an operation"() {
     given:
     def eventId = UUID.randomUUID()
-    def operation = new Operation(OperationType.EVENT_CREATION, eventId)
+    def operation = new Operation(OperationType.EVENT_CREATION, "hello", eventId)
 
     when:
     def eventOperation = EventOperation.forOperation(operation)
@@ -18,6 +18,7 @@ class EventOperationTest extends Specification {
     eventOperation.id == operation.id().toString()
     eventOperation.type == operation.type().toString()
     eventOperation.creationDate == operation.creationDate().toString()
+    eventOperation.data == "hello"
     eventOperation.eventId == operation.eventId().toString()
   }
 }

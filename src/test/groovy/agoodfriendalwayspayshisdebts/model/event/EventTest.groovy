@@ -170,6 +170,31 @@ class EventTest extends Specification {
     def event = Event.createAndPublishInternalEvent("", [])
 
     then:
+    def operation = event.operations().first()
+    operation.type() == OperationType.EVENT_CREATION
+    operation.data() == null
+
+    and:
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent != null
+    internalEvent.eventId == event.id
+    internalEvent.operationId != null
+  }
+
+  def "records the operation when an expense is added"() {
+    given:
+    def event = new Event("", [])
+
+    when:
+    def expense = new Expense("label", null, 2, [], event.id)
+    event.addExpense(expense)
+
+    then:
+    def operation = event.operations().first()
+    operation.type() == OperationType.NEW_EXPENSE
+    operation.data() == "label"
+
+    and:
     def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
     internalEvent != null
     internalEvent.eventId == event.id

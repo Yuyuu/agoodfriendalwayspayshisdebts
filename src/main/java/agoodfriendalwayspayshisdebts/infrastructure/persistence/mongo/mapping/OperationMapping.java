@@ -12,6 +12,7 @@ public class OperationMapping extends ComponentMap<Operation> {
     property().onField("id");
     property().onField("type");
     property().onField("creationDate");
+    property().onField("data");
     property().onField("eventId");
   }
 }

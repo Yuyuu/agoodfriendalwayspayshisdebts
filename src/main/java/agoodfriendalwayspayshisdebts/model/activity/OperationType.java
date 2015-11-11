@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.model.activity;
 
 public enum OperationType {
-  EVENT_CREATION
+  EVENT_CREATION,
+  NEW_EXPENSE
 }

@@ -7,6 +7,7 @@ public class EventOperation {
   public String id;
   public String type;
   public String creationDate;
+  public String data;
   public String eventId;
 
   private EventOperation() {}
@@ -16,6 +17,7 @@ public class EventOperation {
     eventOperation.id = operation.id().toString();
     eventOperation.type = operation.type().name();
     eventOperation.creationDate = operation.creationDate().toString();
+    eventOperation.data = operation.data();
     eventOperation.eventId = operation.eventId().toString();
     return eventOperation;
   }
