@@ -1,6 +1,7 @@
 package agoodfriendalwayspayshisdebts.model.event
 
 import agoodfriendalwayspayshisdebts.model.activity.Operation
+import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
 import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
@@ -162,5 +163,16 @@ class EventTest extends Specification {
 
     then:
     event.operations()[0].eventId() == event.id
+  }
+
+  def "records the operation when an event is created"() {
+    when:
+    def event = Event.createAndPublishInternalEvent("", [])
+
+    then:
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent != null
+    internalEvent.eventId == event.id
+    internalEvent.operationId != null
   }
 }

@@ -1,6 +1,8 @@
 package agoodfriendalwayspayshisdebts.model.event;
 
 import agoodfriendalwayspayshisdebts.model.activity.Operation;
+import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent;
+import agoodfriendalwayspayshisdebts.model.activity.OperationType;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent;
@@ -42,6 +44,9 @@ public class Event implements EntityWithUuid {
   public static Event createAndPublishInternalEvent(String name, Collection<Participant> participants) {
     final Event event = new Event(name, participants);
     publishInternalEvent(new EventCreatedInternalEvent(event.id));
+    final Operation operation = new Operation(OperationType.EVENT_CREATION, event.id);
+    event.operations.add(operation);
+    publishInternalEvent(new OperationPerformedInternalEvent(event.id, operation.id()));
     return event;
   }
 
