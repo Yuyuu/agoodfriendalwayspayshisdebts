@@ -2,9 +2,12 @@ package agoodfriendalwayspayshisdebts.command.event
 
 import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator
+import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
+import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import com.vter.infrastructure.services.SMTPEmailSender
+import com.vter.model.internal_event.WithEventBus
 import com.vter.search.WithJongo
 import org.junit.Rule
 import spock.lang.Specification
@@ -15,6 +18,9 @@ class SendReminderCommandHandlerTest extends Specification {
 
   @Rule
   WithMemoryRepository repository = new WithMemoryRepository()
+
+  @Rule
+  WithEventBus eventBus = new WithEventBus()
 
   SMTPEmailSender emailSender = Mock(SMTPEmailSender)
 
@@ -82,5 +88,24 @@ class SendReminderCommandHandlerTest extends Specification {
 
     then:
     1 * emailSender.send({it.locale == Locale.UK})
+  }
+
+  def "records the operation when a reminder is sent"() {
+    when:
+    def command = new SendReminderCommand(
+        eventId: event.id, recipientsUuids: [strLeaId, strBenId], locale: "de", eventLink: "http://link"
+    )
+    handler.execute(command)
+
+    then:
+    def operation = event.operations().first()
+    operation.type() == OperationType.NEW_REMINDER
+    operation.data() == "lea, ben"
+
+    and:
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent != null
+    internalEvent.eventId == event.id
+    internalEvent.operationId != null
   }
 }

@@ -26,6 +26,10 @@ public class RecipientReport {
     return success;
   }
 
+  public String recipientName() {
+    return recipientName;
+  }
+
   private final String recipientName;
   private final boolean success;
   private final String error;

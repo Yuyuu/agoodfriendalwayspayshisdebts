@@ -3,6 +3,8 @@ package agoodfriendalwayspayshisdebts.command.event;
 import agoodfriendalwayspayshisdebts.infrastructure.services.RecipientReport;
 import agoodfriendalwayspayshisdebts.infrastructure.services.Reminder;
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
+import agoodfriendalwayspayshisdebts.model.activity.Operation;
+import agoodfriendalwayspayshisdebts.model.activity.OperationType;
 import agoodfriendalwayspayshisdebts.model.event.Event;
 import agoodfriendalwayspayshisdebts.search.event.results.model.EventResults;
 import agoodfriendalwayspayshisdebts.search.event.results.model.ParticipantResults;
@@ -35,7 +37,7 @@ public class SendReminderCommandHandler implements CommandHandler<SendReminderCo
     final Locale reminderLocale = locale(command.locale);
     final List<UUID> recipientsIds = toUuids(command.recipientsUuids);
 
-    return event.participants().stream()
+    final List<RecipientReport> reports = event.participants().stream()
         .filter(participant -> recipientsIds.contains(participant.id()))
         .map(participant -> {
           final ParticipantResults participantResults = eventResults.participantsResults.get(participant.id());
@@ -51,6 +53,11 @@ public class SendReminderCommandHandler implements CommandHandler<SendReminderCo
           }
         })
         .collect(Collectors.toList());
+
+    final String recipients = reports.stream().map(RecipientReport::recipientName).collect(Collectors.joining(", "));
+    event.addOperation(new Operation(OperationType.NEW_REMINDER, recipients, event.getId()));
+
+    return reports;
   }
 
   private static List<UUID> toUuids(List<String> stringifiedUuids) {
