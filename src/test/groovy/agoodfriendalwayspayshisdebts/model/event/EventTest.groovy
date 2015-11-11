@@ -172,7 +172,7 @@ class EventTest extends Specification {
     then:
     def operation = event.operations().first()
     operation.type() == OperationType.EVENT_CREATION
-    operation.data() == null
+    operation.data().empty
 
     and:
     def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)

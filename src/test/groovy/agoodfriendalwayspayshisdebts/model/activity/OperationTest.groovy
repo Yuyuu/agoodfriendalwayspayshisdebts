@@ -26,7 +26,7 @@ class OperationTest extends Specification {
     operation.id() != null
     operation.type() == OperationType.EVENT_CREATION
     operation.creationDate() != null
-    operation.data() == null
+    operation.data().empty
     operation.eventId() == eventId
   }
 }

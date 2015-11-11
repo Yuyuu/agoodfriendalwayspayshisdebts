@@ -25,7 +25,7 @@ public class Operation {
   }
 
   public Operation(OperationType type, UUID eventId) {
-    this(type, null, eventId);
+    this(type, "", eventId);
   }
 
   public DateTime creationDate() {
