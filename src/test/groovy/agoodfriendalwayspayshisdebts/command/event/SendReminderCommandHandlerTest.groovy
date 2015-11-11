@@ -100,7 +100,7 @@ class SendReminderCommandHandlerTest extends Specification {
     then:
     def operation = event.operations().first()
     operation.type() == OperationType.NEW_REMINDER
-    operation.data() == "lea, ben"
+    operation.data() in ["lea, ben", "ben, lea"]
 
     and:
     def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
