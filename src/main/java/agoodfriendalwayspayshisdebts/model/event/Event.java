@@ -104,6 +104,11 @@ public class Event implements EntityWithUuid {
         .orElseThrow(UnknownParticipant::new);
   }
 
+  public void addOperation(Operation operation) {
+    operations.add(operation);
+    publishInternalEvent(new OperationPerformedInternalEvent(id, operation.id()));
+  }
+
   private Expense find(UUID expenseId) {
     return expenses.stream()
         .filter(expense -> expense.id().equals(expenseId))

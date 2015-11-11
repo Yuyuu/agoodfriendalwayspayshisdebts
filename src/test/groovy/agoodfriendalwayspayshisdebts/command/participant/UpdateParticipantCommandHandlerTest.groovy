@@ -2,6 +2,8 @@ package agoodfriendalwayspayshisdebts.command.participant
 
 import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator
+import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
+import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import com.vter.model.internal_event.WithEventBus
@@ -32,5 +34,24 @@ class UpdateParticipantCommandHandlerTest extends Specification {
     then:
     def lea = RepositoryLocator.events().get(event.id).participants().find {it.name() == "lea"}
     lea.email() == "lea@email.com"
+  }
+
+  def "records the operation when a participant is edited"() {
+    given:
+    def command = new UpdateParticipantCommand(eventId: event.id, id: lea.id(), email: "lea@email.com")
+
+    when:
+    new UpdateParticipantCommandHandler().execute(command)
+
+    then:
+    def operation = event.operations().first()
+    operation.type() == OperationType.PARTICIPANT_EDITED
+    operation.data() == "lea"
+
+    and:
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent != null
+    internalEvent.eventId == event.id
+    internalEvent.operationId != null
   }
 }

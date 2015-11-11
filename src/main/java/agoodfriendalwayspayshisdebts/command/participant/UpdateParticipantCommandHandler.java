@@ -1,6 +1,8 @@
 package agoodfriendalwayspayshisdebts.command.participant;
 
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
+import agoodfriendalwayspayshisdebts.model.activity.Operation;
+import agoodfriendalwayspayshisdebts.model.activity.OperationType;
 import agoodfriendalwayspayshisdebts.model.event.Event;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import com.vter.command.CommandHandler;
@@ -12,6 +14,7 @@ public class UpdateParticipantCommandHandler implements CommandHandler<UpdatePar
     final Event event = RepositoryLocator.events().get(command.eventId);
     final Participant participant = event.findParticipant(command.id);
     participant.update(command.email);
+    event.addOperation(new Operation(OperationType.PARTICIPANT_EDITED, participant.name(), event.getId()));
     return null;
   }
 }

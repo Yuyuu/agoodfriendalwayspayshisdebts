@@ -38,6 +38,19 @@ class ParticipantTest extends Specification {
     kim != kim2
   }
 
+  def "updates a participant"() {
+    given:
+    def eventId = UUID.randomUUID()
+    def participant = new Participant("", 1, "")
+    participant.eventId(eventId)
+
+    when:
+    participant.update("a@email.com")
+
+    then:
+    participant.email() == "a@email.com"
+  }
+
   def "emits an event when a participant is updated"() {
     given:
     def eventId = UUID.randomUUID()
