@@ -200,4 +200,25 @@ class EventTest extends Specification {
     internalEvent.eventId == event.id
     internalEvent.operationId != null
   }
+
+  def "records the operation when an expense is deleted"() {
+    given:
+    def event = new Event("", [])
+    def expense = new Expense("label", null, 1, [], event.id)
+    event.expenses().add(expense)
+
+    when:
+    event.deleteExpense(expense.id())
+
+    then:
+    def operation = event.operations().first()
+    operation.type() == OperationType.EXPENSE_DELETED
+    operation.data() == "label"
+
+    and:
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent != null
+    internalEvent.eventId == event.id
+    internalEvent.operationId != null
+  }
 }
