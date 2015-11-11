@@ -221,4 +221,24 @@ class EventTest extends Specification {
     internalEvent.eventId == event.id
     internalEvent.operationId != null
   }
+
+  def "records the operation when a participant is added"() {
+    given:
+    def event = new Event("", [])
+
+    when:
+    def ben = new Participant("ben", 1, null)
+    event.addParticipant(ben)
+
+    then:
+    def operation = event.operations().first()
+    operation.type() == OperationType.NEW_PARTICIPANT
+    operation.data() == "ben"
+
+    and:
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent != null
+    internalEvent.eventId == event.id
+    internalEvent.operationId != null
+  }
 }

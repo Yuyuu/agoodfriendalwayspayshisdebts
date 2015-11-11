@@ -92,6 +92,9 @@ public class Event implements EntityWithUuid {
     participant.eventId(id);
     participants.add(participant);
     publishInternalEvent(new ParticipantAddedInternalEvent(id, participant));
+    final Operation operation = new Operation(OperationType.NEW_PARTICIPANT, participant.name(), id);
+    operations.add(operation);
+    publishInternalEvent(new OperationPerformedInternalEvent(id, operation.id()));
   }
 
   public Participant findParticipant(UUID participantId) {
