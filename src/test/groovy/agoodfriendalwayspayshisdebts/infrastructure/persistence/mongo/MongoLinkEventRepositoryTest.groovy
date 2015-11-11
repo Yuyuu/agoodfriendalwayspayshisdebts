@@ -1,8 +1,10 @@
 package agoodfriendalwayspayshisdebts.infrastructure.persistence.mongo
 
+import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import com.vter.infrastructure.persistence.mongo.WithMongoLink
+import org.joda.time.DateTime
 import org.junit.Rule
 import spock.lang.Specification
 
@@ -21,10 +23,13 @@ class MongoLinkEventRepositoryTest extends Specification {
     def id = UUID.randomUUID()
     def kimId = UUID.randomUUID()
     def expenseId = UUID.randomUUID()
+    def operationId = UUID.randomUUID()
+    def operationDate = DateTime.now()
     mongoLink.collection("event") << [
         _id: id, name: "event",
         participants: [[id: kimId, name: "kim", share: 1, email: "kim@m.com", eventId: id]],
-        expenses: [[id: expenseId, label: "errands", purchaserId: kimId, amount: 10, participantsIds: [kimId], description: "hello", eventId: id]]
+        expenses: [[id: expenseId, label: "errands", purchaserId: kimId, amount: 10, participantsIds: [kimId], description: "hello", eventId: id]],
+        operations: [[id: operationId, type: "EVENT_CREATION", creationDate: operationDate, eventId: id]]
     ]
 
     when:
@@ -47,6 +52,11 @@ class MongoLinkEventRepositoryTest extends Specification {
     expense.participantsIds() == [kimId] as Set
     expense.description() == "hello"
     expense.eventId() == id
+    def operation = event.operations().first()
+    operation.id() == operationId
+    operation.type() == OperationType.EVENT_CREATION
+    operation.creationDate() == operationDate
+    operation.eventId() == id
   }
 
   def "can add an event"() {

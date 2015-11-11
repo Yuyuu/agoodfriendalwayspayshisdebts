@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.model.event
 
+import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent
@@ -103,7 +104,7 @@ class EventTest extends Specification {
     internalEvent.expense == expense
   }
 
-  def "contains participant"() {
+  def "contains participants"() {
     given:
     def kim = new Participant("kim", 1, null)
     def event = new Event("", [kim])
@@ -151,5 +152,13 @@ class EventTest extends Specification {
 
     then:
     thrown(UnknownParticipant)
+  }
+
+  def "contains operations"() {
+    when:
+    def event = Event.createAndPublishInternalEvent("", [])
+
+    then:
+    event.operations()[0].eventId() == event.id
   }
 }

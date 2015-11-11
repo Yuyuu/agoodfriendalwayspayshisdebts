@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.model.event;
 
+import agoodfriendalwayspayshisdebts.model.activity.Operation;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent;
@@ -25,6 +26,7 @@ public class Event implements EntityWithUuid {
   private String name;
   private Set<Participant> participants = Sets.newHashSet();
   private List<Expense> expenses = Lists.newArrayList();
+  private List<Operation> operations = Lists.newArrayList();
 
   /* This is used by mongolink */
   @SuppressWarnings("unused")
@@ -58,6 +60,10 @@ public class Event implements EntityWithUuid {
 
   public String name() {
     return name;
+  }
+
+  public List<Operation> operations() {
+    return operations;
   }
 
   public void addExpense(Expense expense) {
