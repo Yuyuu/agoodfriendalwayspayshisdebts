@@ -1,6 +1,7 @@
 package agoodfriendalwayspayshisdebts.model.event
 
-import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
+import agoodfriendalwayspayshisdebts.model.activity.Operation
+import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent
@@ -156,7 +157,8 @@ class EventTest extends Specification {
 
   def "contains operations"() {
     when:
-    def event = Event.createAndPublishInternalEvent("", [])
+    def event = new Event("", [])
+    event.operations() << new Operation(OperationType.EVENT_CREATION, event.id)
 
     then:
     event.operations()[0].eventId() == event.id
