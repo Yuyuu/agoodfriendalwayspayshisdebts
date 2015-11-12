@@ -32,7 +32,7 @@ public class ExpensesDetailsSearchHandler extends JongoSearchHandler<ExpensesDet
     final Optional<ExpenseCountQuery> optionalQueryResult = Optional.ofNullable(
         jongo.getCollection("expensesdetails_view")
             .findOne("{_id:#}", eventId)
-            .projection("{_id:0, expenses:0}")
+            .projection("{_id:0,expenses:0}")
             .as(ExpenseCountQuery.class)
     );
     return optionalQueryResult.isPresent() ?
