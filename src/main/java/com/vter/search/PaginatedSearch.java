@@ -2,8 +2,9 @@ package com.vter.search;
 
 public abstract class PaginatedSearch<TResponse> implements Search<TResponse> {
 
-  public void page(int page) {
+  public PaginatedSearch<TResponse> page(int page) {
     this.page = page;
+    return this;
   }
 
   public int page() {

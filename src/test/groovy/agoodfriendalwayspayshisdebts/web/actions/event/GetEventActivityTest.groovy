@@ -1,13 +1,28 @@
 package agoodfriendalwayspayshisdebts.web.actions.event
 
-import com.google.common.collect.Lists
+import agoodfriendalwayspayshisdebts.search.event.activity.search.EventActivitySearch
+import com.vter.infrastructure.bus.ExecutionResult
+import com.vter.search.SearchBus
 import spock.lang.Specification
 
 class GetEventActivityTest extends Specification {
-  GetEventActivity action = new GetEventActivity()
+  SearchBus searchBus = Mock(SearchBus)
 
-  def "responds with fake data"() {
-    expect:
-    Lists.newArrayList(action.get(UUID.randomUUID().toString()).get()).size() == 5
+  GetEventActivity action
+
+  def setup() {
+    action = new GetEventActivity(searchBus)
+  }
+
+  def "can return the operations of an event"() {
+    given:
+    def operations = Mock(List)
+    searchBus.sendAndWaitResponse(_ as EventActivitySearch) >> ExecutionResult.success(operations)
+
+    when:
+    def result = action.get(UUID.randomUUID().toString(), 1)
+
+    then:
+    result.get() == operations
   }
 }
