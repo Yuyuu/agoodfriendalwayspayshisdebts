@@ -45,6 +45,19 @@ class OnOperationPerformedTest extends Specification {
     document["operations"][0]["eventId"] == event.id.toString()
   }
 
+  def "stores the operations in reverse order"() {
+    given:
+    jongo.collection("eventactivity_view") << [_id: event.id, operations: [[id: UUID.randomUUID().toString()]]]
+
+    when:
+    handler.executeInternalEvent(new OperationPerformedInternalEvent(event.id, operation.id()))
+
+    then:
+    def document = jongo.collection("eventactivity_view").findOne()
+    document["operations"].size() == 2
+    document["operations"][0]["id"] == operation.id().toString()
+  }
+
   def "creates the document if it does not exist yet"() {
     when:
     handler.executeInternalEvent(new OperationPerformedInternalEvent(event.id, operation.id()))
