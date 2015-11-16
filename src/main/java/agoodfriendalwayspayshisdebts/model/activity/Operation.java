@@ -24,10 +24,6 @@ public class Operation {
     this.eventId = eventId;
   }
 
-  public Operation(OperationType type, UUID eventId) {
-    this(type, "", eventId);
-  }
-
   public DateTime creationDate() {
     return creationDate;
   }

@@ -44,7 +44,7 @@ public class Event implements EntityWithUuid {
   public static Event createAndPublishInternalEvent(String name, Collection<Participant> participants) {
     final Event event = new Event(name, participants);
     publishInternalEvent(new EventCreatedInternalEvent(event.id));
-    final Operation operation = new Operation(OperationType.EVENT_CREATION, event.id);
+    final Operation operation = new Operation(OperationType.EVENT_CREATION, event.name, event.id);
     event.operations.add(operation);
     publishInternalEvent(new OperationPerformedInternalEvent(event.id, operation.id()));
     return event;

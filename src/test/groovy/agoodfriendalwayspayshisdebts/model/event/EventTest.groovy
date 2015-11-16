@@ -159,7 +159,7 @@ class EventTest extends Specification {
   def "contains operations"() {
     when:
     def event = new Event("", [])
-    event.operations() << new Operation(OperationType.EVENT_CREATION, event.id)
+    event.operations() << new Operation(OperationType.EVENT_CREATION, "", event.id)
 
     then:
     event.operations()[0].eventId() == event.id
