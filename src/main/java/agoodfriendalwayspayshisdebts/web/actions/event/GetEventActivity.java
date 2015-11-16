@@ -7,12 +7,14 @@ import com.vter.search.SearchBus;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Resource;
 
+import javax.inject.Inject;
 import java.util.Optional;
 import java.util.UUID;
 
 @Resource
 public class GetEventActivity {
 
+  @Inject
   public GetEventActivity(SearchBus searchBus) {
     this.searchBus = searchBus;
   }
