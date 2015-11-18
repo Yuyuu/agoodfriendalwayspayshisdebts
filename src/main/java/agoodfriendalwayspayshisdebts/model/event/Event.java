@@ -2,7 +2,6 @@ package agoodfriendalwayspayshisdebts.model.event;
 
 import agoodfriendalwayspayshisdebts.model.activity.Operation;
 import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent;
-import agoodfriendalwayspayshisdebts.model.activity.OperationType;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent;
@@ -44,9 +43,6 @@ public class Event implements EntityWithUuid {
   public static Event createAndPublishInternalEvent(String name, Collection<Participant> participants) {
     final Event event = new Event(name, participants);
     publishInternalEvent(new EventCreatedInternalEvent(event.id));
-    final Operation operation = new Operation(OperationType.EVENT_CREATION, event.name, event.id);
-    event.operations.add(operation);
-    publishInternalEvent(new OperationPerformedInternalEvent(event.id, operation.id()));
     return event;
   }
 
@@ -74,27 +70,19 @@ public class Event implements EntityWithUuid {
   public void addExpense(Expense expense) {
     expenses.add(expense);
     publishInternalEvent(new ExpenseAddedInternalEvent(expense));
-    final Operation operation = new Operation(OperationType.NEW_EXPENSE, expense.label(), id);
-    operations.add(operation);
-    publishInternalEvent(new OperationPerformedInternalEvent(id, operation.id()));
   }
 
-  public void deleteExpense(UUID expenseId) {
+  public Expense deleteExpense(UUID expenseId) {
     final Expense expense = find(expenseId);
     expenses.remove(expense);
     publishInternalEvent(new ExpenseDeletedInternalEvent(expense));
-    final Operation operation = new Operation(OperationType.EXPENSE_DELETED, expense.label(), id);
-    operations.add(operation);
-    publishInternalEvent(new OperationPerformedInternalEvent(id, operation.id()));
+    return expense;
   }
 
   public void addParticipant(Participant participant) {
     participant.eventId(id);
     participants.add(participant);
     publishInternalEvent(new ParticipantAddedInternalEvent(id, participant));
-    final Operation operation = new Operation(OperationType.NEW_PARTICIPANT, participant.name(), id);
-    operations.add(operation);
-    publishInternalEvent(new OperationPerformedInternalEvent(id, operation.id()));
   }
 
   public Participant findParticipant(UUID participantId) {

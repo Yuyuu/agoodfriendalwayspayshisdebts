@@ -1,7 +1,6 @@
 package agoodfriendalwayspayshisdebts.model.event
 
 import agoodfriendalwayspayshisdebts.model.activity.Operation
-import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
 import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
@@ -85,9 +84,10 @@ class EventTest extends Specification {
     event.expenses().add(expense)
 
     when:
-    event.deleteExpense(expense.id())
+    def deletedExpense = event.deleteExpense(expense.id())
 
     then:
+    deletedExpense == expense
     event.expenses().empty
   }
 
@@ -163,82 +163,5 @@ class EventTest extends Specification {
 
     then:
     event.operations()[0].eventId() == event.id
-  }
-
-  def "records the operation when an event is created"() {
-    when:
-    def event = Event.createAndPublishInternalEvent("", [])
-
-    then:
-    def operation = event.operations().first()
-    operation.type() == OperationType.EVENT_CREATION
-    operation.data().empty
-
-    and:
-    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
-    internalEvent != null
-    internalEvent.eventId == event.id
-    internalEvent.operationId != null
-  }
-
-  def "records the operation when an expense is added"() {
-    given:
-    def event = new Event("", [])
-
-    when:
-    def expense = new Expense("label", null, 2, [], event.id)
-    event.addExpense(expense)
-
-    then:
-    def operation = event.operations().first()
-    operation.type() == OperationType.NEW_EXPENSE
-    operation.data() == "label"
-
-    and:
-    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
-    internalEvent != null
-    internalEvent.eventId == event.id
-    internalEvent.operationId != null
-  }
-
-  def "records the operation when an expense is deleted"() {
-    given:
-    def event = new Event("", [])
-    def expense = new Expense("label", null, 1, [], event.id)
-    event.expenses().add(expense)
-
-    when:
-    event.deleteExpense(expense.id())
-
-    then:
-    def operation = event.operations().first()
-    operation.type() == OperationType.EXPENSE_DELETED
-    operation.data() == "label"
-
-    and:
-    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
-    internalEvent != null
-    internalEvent.eventId == event.id
-    internalEvent.operationId != null
-  }
-
-  def "records the operation when a participant is added"() {
-    given:
-    def event = new Event("", [])
-
-    when:
-    def ben = new Participant("ben", 1, null)
-    event.addParticipant(ben)
-
-    then:
-    def operation = event.operations().first()
-    operation.type() == OperationType.NEW_PARTICIPANT
-    operation.data() == "ben"
-
-    and:
-    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
-    internalEvent != null
-    internalEvent.eventId == event.id
-    internalEvent.operationId != null
   }
 }

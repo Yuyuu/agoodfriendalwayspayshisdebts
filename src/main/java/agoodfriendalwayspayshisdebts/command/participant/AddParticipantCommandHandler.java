@@ -1,6 +1,8 @@
 package agoodfriendalwayspayshisdebts.command.participant;
 
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
+import agoodfriendalwayspayshisdebts.model.activity.Operation;
+import agoodfriendalwayspayshisdebts.model.activity.OperationType;
 import agoodfriendalwayspayshisdebts.model.event.Event;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
@@ -18,7 +20,6 @@ public class AddParticipantCommandHandler implements CommandHandler<AddParticipa
   @Override
   public UUID execute(AddParticipantCommand command) {
     final Event event = RepositoryLocator.events().get(command.eventId);
-
     final String email = Optional.ofNullable(command.email).orElse("");
     final Participant participant = new Participant(command.name, command.share, email);
     event.addParticipant(participant);
@@ -29,6 +30,7 @@ public class AddParticipantCommandHandler implements CommandHandler<AddParticipa
       expensesIds.stream().map(expenses::get).forEach(includeParticipant(participant));
     }
 
+    event.addOperation(new Operation(OperationType.NEW_PARTICIPANT, participant.name(), event.getId()));
     return participant.id();
   }
 

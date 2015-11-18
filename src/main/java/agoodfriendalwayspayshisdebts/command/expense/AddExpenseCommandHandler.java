@@ -1,6 +1,8 @@
 package agoodfriendalwayspayshisdebts.command.expense;
 
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
+import agoodfriendalwayspayshisdebts.model.activity.Operation;
+import agoodfriendalwayspayshisdebts.model.activity.OperationType;
 import agoodfriendalwayspayshisdebts.model.event.Event;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
@@ -28,6 +30,8 @@ public class AddExpenseCommandHandler implements CommandHandler<AddExpenseComman
     );
     expense.setDescription(sanitize(command.description));
     event.addExpense(expense);
+
+    event.addOperation(new Operation(OperationType.NEW_EXPENSE, expense.label(), event.getId()));
 
     final Map<UUID, String> eventParticipantsNames = event.participants().stream()
         .collect(Collectors.toMap(Participant::id, Participant::name));
