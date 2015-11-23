@@ -20,10 +20,7 @@ public class OnOperationPerformed implements InternalEventHandler<OperationPerfo
   @Override
   public void executeInternalEvent(OperationPerformedInternalEvent internalEvent) {
     final EventOperation eventOperation = eventOperation(internalEvent);
-    jongo.getCollection("eventactivity_view")
-        .update("{_id:#}", internalEvent.eventId)
-        .upsert()
-        .with("{$push:{operations:{$each:[#],$position:0}}}", eventOperation);
+    jongo.getCollection("eventactivity_view").insert(eventOperation);
   }
 
   private static EventOperation eventOperation(OperationPerformedInternalEvent internalEvent) {

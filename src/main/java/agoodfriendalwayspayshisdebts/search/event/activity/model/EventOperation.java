@@ -1,24 +1,29 @@
 package agoodfriendalwayspayshisdebts.search.event.activity.model;
 
 import agoodfriendalwayspayshisdebts.model.activity.Operation;
+import org.joda.time.DateTime;
+import org.jongo.marshall.jackson.oid.MongoId;
+
+import java.util.UUID;
 
 public class EventOperation {
 
-  public String id;
+  @MongoId
+  public UUID id;
   public String type;
-  public String creationDate;
+  public DateTime creationDate;
   public String data;
-  public String eventId;
+  public UUID eventId;
 
   private EventOperation() {}
 
   public static EventOperation forOperation(Operation operation) {
     final EventOperation eventOperation = new EventOperation();
-    eventOperation.id = operation.id().toString();
+    eventOperation.id = operation.id();
     eventOperation.type = operation.type().name();
-    eventOperation.creationDate = operation.creationDate().toString();
+    eventOperation.creationDate = operation.creationDate();
     eventOperation.data = operation.data();
-    eventOperation.eventId = operation.eventId().toString();
+    eventOperation.eventId = operation.eventId();
     return eventOperation;
   }
 }

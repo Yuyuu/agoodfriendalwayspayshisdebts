@@ -1,5 +1,7 @@
 package com.vter.web.fluent.extension;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.vter.web.fluent.status.ApplicationPayloadWriter;
 import com.vter.web.fluent.status.StatusService;
 import net.codestory.http.Request;
@@ -24,6 +26,12 @@ public class ApplicationExtensions implements Extensions {
   @Override
   public PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, Resources resources, CompilerFacade compilers) {
     return new ApplicationPayloadWriter(request, response, env, site, resources, compilers, statusService);
+  }
+
+  @Override
+  public ObjectMapper configureOrReplaceObjectMapper(ObjectMapper defaultObjectMapper, Env env) {
+    defaultObjectMapper.registerModule(new JodaModule());
+    return defaultObjectMapper;
   }
 
   private final StatusService statusService;

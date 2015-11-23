@@ -29,43 +29,16 @@ class OnOperationPerformedTest extends Specification {
   }
 
   def "includes the operation in the event activity"() {
-    given:
-    jongo.collection("eventactivity_view") << [_id: event.id, operations: []]
-
     when:
     handler.executeInternalEvent(new OperationPerformedInternalEvent(event.id, operation.id()))
 
     then:
     def document = jongo.collection("eventactivity_view").findOne()
-    document["_id"] == event.id
-    document["operations"][0]["id"] == operation.id().toString()
-    document["operations"][0]["type"] == "EVENT_CREATION"
-    document["operations"][0]["creationDate"] == operation.creationDate().toString()
-    document["operations"][0]["data"] == "hello"
-    document["operations"][0]["eventId"] == event.id.toString()
-  }
-
-  def "stores the operations in reverse order"() {
-    given:
-    jongo.collection("eventactivity_view") << [_id: event.id, operations: [[id: UUID.randomUUID().toString()]]]
-
-    when:
-    handler.executeInternalEvent(new OperationPerformedInternalEvent(event.id, operation.id()))
-
-    then:
-    def document = jongo.collection("eventactivity_view").findOne()
-    document["operations"].size() == 2
-    document["operations"][0]["id"] == operation.id().toString()
-  }
-
-  def "creates the document if it does not exist yet"() {
-    when:
-    handler.executeInternalEvent(new OperationPerformedInternalEvent(event.id, operation.id()))
-
-    then:
-    def document = jongo.collection("eventactivity_view").findOne()
-    document["_id"] == event.id
-    document["operations"].size() == 1
+    document["_id"] == operation.id()
+    document["type"] == "EVENT_CREATION"
+    document["creationDate"] == operation.creationDate().millis
+    document["data"] == "hello"
+    document["eventId"] == event.id
   }
 
   def "throws an exception if the operation cannot be found"() {

@@ -37,6 +37,7 @@ def libs = [
     guiceMultibindings  : "com.google.inject.extensions:guice-multibindings:$guiceVersion",
     handlebars          : "com.github.jknack:handlebars:$handlebarsVersion",
     handlebarsGuavaCache: "com.github.jknack:handlebars-guava-cache:$handlebarsVersion",
+    jacksonJoda         : "com.fasterxml.jackson.datatype:jackson-datatype-joda:2.6.3",
     javaMail            : "com.sun.mail:javax.mail:1.5.4",
     javaMailMock        : "org.jvnet.mock-javamail:mock-javamail:1.9",
     javassist           : "org.javassist:javassist:3.20.0-GA",
@@ -72,6 +73,7 @@ dependencies {
   compile libs.javaMail
 
   compile libs.jodaTime
+  compile libs.jacksonJoda
 
   compile libs.commandValidator
   compile libs.javaxEl

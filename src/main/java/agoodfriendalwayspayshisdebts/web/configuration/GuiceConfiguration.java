@@ -2,6 +2,8 @@ package agoodfriendalwayspayshisdebts.web.configuration;
 
 import agoodfriendalwayspayshisdebts.infrastructure.persistence.mongo.MongoLinkRepositoryLocator;
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
@@ -27,6 +29,7 @@ import com.vter.search.SearchBus;
 import com.vter.search.SearchHandler;
 import com.vter.web.fluent.status.resolver.ExceptionResolver;
 import org.jongo.Jongo;
+import org.jongo.marshall.jackson.JacksonMapper;
 import org.mongolink.MongoSessionManager;
 import org.mongolink.Settings;
 import org.mongolink.UpdateStrategies;
@@ -124,7 +127,13 @@ public class GuiceConfiguration extends AbstractModule {
   public Jongo jongo(MongoClientURI mongoUri) throws UnknownHostException {
     final MongoClient mongoClient = new MongoClient(mongoUri);
     final DB db = mongoClient.getDB(mongoUri.getDatabase());
-    return new Jongo(db);
+    return new Jongo(
+        db,
+        new JacksonMapper.Builder()
+            .registerModule(new JodaModule())
+            .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build()
+    );
   }
 
   @Provides
