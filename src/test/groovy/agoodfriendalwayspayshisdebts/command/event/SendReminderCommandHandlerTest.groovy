@@ -108,4 +108,18 @@ class SendReminderCommandHandlerTest extends Specification {
     internalEvent.eventId == event.id
     internalEvent.operationId != null
   }
+
+  def "only records the operation recipients to whom the delivery was successful"() {
+    given:
+    emailSender.send({it.to() == "ben@email.com"}) >> { throw new RuntimeException() }
+
+    when:
+    def command = new SendReminderCommand(
+        eventId: event.id, recipientsUuids: [strLeaId, strBenId], eventLink: "http://link"
+    )
+    handler.execute(command)
+
+    then:
+    event.operations().first().data() == "lea"
+  }
 }

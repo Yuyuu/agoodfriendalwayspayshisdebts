@@ -54,8 +54,11 @@ public class SendReminderCommandHandler implements CommandHandler<SendReminderCo
         })
         .collect(Collectors.toList());
 
-    final String recipients = reports.stream().map(RecipientReport::recipientName).collect(Collectors.joining(", "));
-    event.addOperation(new Operation(OperationType.NEW_REMINDER, recipients, event.getId()));
+    final String successfulRecipients = reports.stream()
+        .filter(RecipientReport::isSuccess)
+        .map(RecipientReport::recipientName)
+        .collect(Collectors.joining(", "));
+    event.addOperation(new Operation(OperationType.NEW_REMINDER, successfulRecipients, event.getId()));
 
     return reports;
   }
