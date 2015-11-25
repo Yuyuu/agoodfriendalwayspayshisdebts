@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.search.event.activity.search
 
+import agoodfriendalwayspayshisdebts.search.event.activity.model.ActivityFilter
 import com.vter.search.WithJongo
 import org.joda.time.DateTime
 import org.junit.Rule
@@ -21,7 +22,7 @@ class EventActivitySearchHandlerTest extends Specification {
     ]
 
     when:
-    def search = new EventActivitySearch(eventId)
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL)
     search.page(1)
     def operations = handler.execute(search, jongo.jongo())
 
@@ -46,7 +47,7 @@ class EventActivitySearchHandlerTest extends Specification {
     }
 
     when:
-    def search = new EventActivitySearch(eventId)
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL)
     search.page(page)
     def operations = handler.execute(search, jongo.jongo())
 
@@ -56,26 +57,17 @@ class EventActivitySearchHandlerTest extends Specification {
     where:
     page || expected
     1    || ["22", "21", "20", "19", "18", "17", "16", "15", "14", "13"]
+    2    || ["12", "11", "10", "9", "8", "7", "6", "5", "4", "3"]
     3    || ["2", "1"]
     4    || []
   }
 
   def "sorts the activity in descending order of creation date"() {
     given:
-    jongo.collection("eventactivity_view") << [
-        [data: "4", creationDate: date("2010-06-30T04:00")], [data: "9", creationDate: date("2010-06-30T09:00")],
-        [data: "6", creationDate: date("2010-06-30T06:00")], [data: "10", creationDate: date("2010-06-30T10:00")],
-        [data: "7", creationDate: date("2010-06-30T07:00")], [data: "1", creationDate: date("2010-06-30T01:00")],
-        [data: "12", creationDate: date("2010-06-30T12:00")], [data: "2", creationDate: date("2010-06-30T02:00")],
-        [data: "3", creationDate: date("2010-06-30T03:00")], [data: "5", creationDate: date("2010-06-30T05:00")],
-        [data: "11", creationDate: date("2010-06-30T11:00")], [data: "8", creationDate: date("2010-06-30T08:00")]
-    ].each {
-      it["_id"] = UUID.randomUUID()
-      it["eventId"] = eventId
-    }
+    populateView()
 
     when:
-    def search = new EventActivitySearch(eventId)
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL)
     search.page(1)
     def operations = handler.execute(search, jongo.jongo())
 
@@ -93,12 +85,86 @@ class EventActivitySearchHandlerTest extends Specification {
     }
 
     when:
-    def search = new EventActivitySearch(eventId)
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL)
     search.page(1)
     def operations = handler.execute(search, jongo.jongo())
 
     then:
     operations*.data == ["5", "3", "1"]
+  }
+
+  def "can return the activity that is only about expenses"() {
+    given:
+    populateView()
+
+    when:
+    def search = new EventActivitySearch(eventId, ActivityFilter.EXPENSES)
+    search.page(page)
+    def operations = handler.execute(search, jongo.jongo())
+
+    then:
+    operations*.data == expected
+
+    where:
+    page || expected
+    1    || ["12", "11", "10", "7", "4", "1"]
+    2    || []
+  }
+
+  def "can return the activity that is only about participants"() {
+    given:
+    populateView()
+
+    when:
+    def search = new EventActivitySearch(eventId, ActivityFilter.PARTICIPANTS)
+    search.page(page)
+    def operations = handler.execute(search, jongo.jongo())
+
+    then:
+    operations*.data == expected
+
+    where:
+    page || expected
+    1    || ["8", "3"]
+    2    || []
+  }
+
+  def "can return the activity that is only about reminders"() {
+    given:
+    populateView()
+
+    when:
+    def search = new EventActivitySearch(eventId, ActivityFilter.REMINDERS)
+    search.page(page)
+    def operations = handler.execute(search, jongo.jongo())
+
+    then:
+    operations*.data == expected
+
+    where:
+    page || expected
+    1    || ["9", "6", "2"]
+    2    || []
+  }
+
+  private void populateView() {
+    jongo.collection("eventactivity_view") << [
+        [data: "4", type: "NEW_EXPENSE", creationDate: date("2010-06-30T04:00")],
+        [data: "8", type: "NEW_PARTICIPANT", creationDate: date("2010-06-30T08:00")],
+        [data: "1", type: "EXPENSE_DELETED", creationDate: date("2010-06-30T01:00")],
+        [data: "11", type: "EXPENSE_DELETED", creationDate: date("2010-06-30T11:00")],
+        [data: "9", type: "NEW_REMINDER", creationDate: date("2010-06-30T09:00")],
+        [data: "6", type: "NEW_REMINDER", creationDate: date("2010-06-30T06:00")],
+        [data: "3", type: "PARTICIPANT_EDITED", creationDate: date("2010-06-30T03:00")],
+        [data: "10", type: "NEW_EXPENSE", creationDate: date("2010-06-30T10:00")],
+        [data: "7", type: "EXPENSE_DELETED", creationDate: date("2010-06-30T07:00")],
+        [data: "2", type: "NEW_REMINDER", creationDate: date("2010-06-30T02:00")],
+        [data: "12", type: "NEW_EXPENSE", creationDate: date("2010-06-30T12:00")],
+        [data: "5", type: "EVENT_CREATION", creationDate: date("2010-06-30T05:00")]
+    ].each {
+      it["_id"] = UUID.randomUUID()
+      it["eventId"] = eventId
+    }
   }
   
   private static long date(String dateAsString) {

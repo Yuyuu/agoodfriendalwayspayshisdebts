@@ -1,5 +1,6 @@
 package agoodfriendalwayspayshisdebts.web.actions.event;
 
+import agoodfriendalwayspayshisdebts.search.event.activity.model.ActivityFilter;
 import agoodfriendalwayspayshisdebts.search.event.activity.model.EventOperation;
 import agoodfriendalwayspayshisdebts.search.event.activity.search.EventActivitySearch;
 import com.vter.infrastructure.bus.ExecutionResult;
@@ -19,11 +20,12 @@ public class GetEventActivity {
     this.searchBus = searchBus;
   }
 
-  @Get("/events/:stringifiedEventUuid/activity?page=:page")
-  public Optional<Iterable<EventOperation>> get(String stringifiedEventUuid, int page) {
+  @Get("/events/:stringifiedEventUuid/activity?filter=:filter&page=:page")
+  public Optional<Iterable<EventOperation>> get(String stringifiedEventUuid, String filter, int page) {
     final UUID eventId = UUID.fromString(stringifiedEventUuid);
+    final ActivityFilter activityFilter = ActivityFilter.parseFromString(filter);
     final ExecutionResult<Iterable<EventOperation>> result = searchBus.sendAndWaitResponse(
-        new EventActivitySearch(eventId).page(page)
+        new EventActivitySearch(eventId, activityFilter).page(page)
     );
     return Optional.ofNullable(result.data());
   }

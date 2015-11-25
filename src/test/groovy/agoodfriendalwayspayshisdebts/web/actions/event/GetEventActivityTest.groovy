@@ -1,6 +1,6 @@
 package agoodfriendalwayspayshisdebts.web.actions.event
 
-import agoodfriendalwayspayshisdebts.search.event.activity.search.EventActivitySearch
+import agoodfriendalwayspayshisdebts.search.event.activity.model.ActivityFilter
 import com.vter.infrastructure.bus.ExecutionResult
 import com.vter.search.SearchBus
 import spock.lang.Specification
@@ -17,10 +17,10 @@ class GetEventActivityTest extends Specification {
   def "can return the operations of an event"() {
     given:
     def operations = Mock(List)
-    searchBus.sendAndWaitResponse(_ as EventActivitySearch) >> ExecutionResult.success(operations)
+    searchBus.sendAndWaitResponse({it.filter == ActivityFilter.ALL}) >> ExecutionResult.success(operations)
 
     when:
-    def result = action.get(UUID.randomUUID().toString(), 1)
+    def result = action.get(UUID.randomUUID().toString(), "all", 1)
 
     then:
     result.get() == operations
