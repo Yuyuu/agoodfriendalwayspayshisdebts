@@ -14,10 +14,11 @@ public class EventActivitySearchHandler extends JongoSearchHandler<EventActivity
 
   @Override
   protected Iterable<EventOperation> execute(EventActivitySearch search, Jongo jongo) {
-    final int skip = (search.page() - 1) * PAGE_SIZE;
+    final int pageSize = pageSize(search.filter);
+    final int skip = (search.page() - 1) * pageSize;
     final Find findQuery = findQuery(jongo.getCollection("eventactivity_view"), search.eventId, search.filter);
     return Lists.newArrayList(
-        findQuery.skip(skip).limit(PAGE_SIZE).sort("{creationDate:-1}").as(EventOperation.class).iterator()
+        findQuery.skip(skip).limit(pageSize).sort("{creationDate:-1}").as(EventOperation.class).iterator()
     );
   }
 
@@ -33,5 +34,14 @@ public class EventActivitySearchHandler extends JongoSearchHandler<EventActivity
     }
   }
 
-  private final static int PAGE_SIZE = 10;
+  private static int pageSize(ActivityFilter filter) {
+    switch (filter) {
+      case EXPENSES:
+      case PARTICIPANTS:
+      case REMINDERS:
+        return 3;
+      default:
+        return 10;
+    }
+  }
 }

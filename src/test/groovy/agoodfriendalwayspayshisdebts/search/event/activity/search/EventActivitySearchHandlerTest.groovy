@@ -72,7 +72,7 @@ class EventActivitySearchHandlerTest extends Specification {
     def operations = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.data == ["12", "11", "10", "9", "8", "7", "6", "5", "4", "3"]
+    operations*.data == ["15", "14", "13", "12", "11", "10", "9", "8", "7", "6"]
   }
 
   def "only retrieves activity of the given event"() {
@@ -107,8 +107,9 @@ class EventActivitySearchHandlerTest extends Specification {
 
     where:
     page || expected
-    1    || ["12", "11", "10", "7", "4", "1"]
-    2    || []
+    1    || ["12", "11", "10"]
+    2    || ["7", "4", "1"]
+    3    || []
   }
 
   def "can return the activity that is only about participants"() {
@@ -125,8 +126,9 @@ class EventActivitySearchHandlerTest extends Specification {
 
     where:
     page || expected
-    1    || ["8", "3"]
-    2    || []
+    1    || ["15", "13", "8"]
+    2    || ["3"]
+    3    || []
   }
 
   def "can return the activity that is only about reminders"() {
@@ -143,8 +145,9 @@ class EventActivitySearchHandlerTest extends Specification {
 
     where:
     page || expected
-    1    || ["9", "6", "2"]
-    2    || []
+    1    || ["14", "9", "6"]
+    2    || ["2"]
+    3    || []
   }
 
   private void populateView() {
@@ -160,7 +163,10 @@ class EventActivitySearchHandlerTest extends Specification {
         [data: "7", type: "EXPENSE_DELETED", creationDate: date("2010-06-30T07:00")],
         [data: "2", type: "NEW_REMINDER", creationDate: date("2010-06-30T02:00")],
         [data: "12", type: "NEW_EXPENSE", creationDate: date("2010-06-30T12:00")],
-        [data: "5", type: "EVENT_CREATION", creationDate: date("2010-06-30T05:00")]
+        [data: "5", type: "EVENT_CREATION", creationDate: date("2010-06-30T05:00")],
+        [data: "14", type: "NEW_REMINDER", creationDate: date("2010-06-30T14:00")],
+        [data: "15", type: "NEW_PARTICIPANT", creationDate: date("2010-06-30T15:00")],
+        [data: "13", type: "PARTICIPANT_EDITED", creationDate: date("2010-06-30T13:00")]
     ].each {
       it["_id"] = UUID.randomUUID()
       it["eventId"] = eventId
