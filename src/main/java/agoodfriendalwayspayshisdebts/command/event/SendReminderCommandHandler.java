@@ -54,11 +54,13 @@ public class SendReminderCommandHandler implements CommandHandler<SendReminderCo
         })
         .collect(Collectors.toList());
 
-    final String successfulRecipients = reports.stream()
+    final String reportSummary = reports.stream()
         .filter(RecipientReport::isSuccess)
         .map(RecipientReport::recipientName)
         .collect(Collectors.joining(", "));
-    event.addOperation(new Operation(OperationType.NEW_REMINDER, successfulRecipients, event.getId()));
+    if (!reportSummary.isEmpty()) {
+      event.addOperation(new Operation(OperationType.NEW_REMINDER, reportSummary, event.getId()));
+    }
 
     return reports;
   }
