@@ -18,7 +18,7 @@ public class EventActivitySearchHandler extends JongoSearchHandler<EventActivity
     final int skip = (search.page() - 1) * pageSize;
     final Find findQuery = findQuery(jongo.getCollection("eventactivity_view"), search.eventId, search.filter);
     return Lists.newArrayList(
-        findQuery.skip(skip).limit(pageSize).sort("{creationDate:-1}").as(EventOperation.class).iterator()
+        findQuery.sort("{creationDate:-1}").skip(skip).limit(pageSize).as(EventOperation.class).iterator()
     );
   }
 
