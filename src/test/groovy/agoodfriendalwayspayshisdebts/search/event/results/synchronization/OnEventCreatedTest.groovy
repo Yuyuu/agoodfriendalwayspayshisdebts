@@ -42,6 +42,7 @@ class OnEventCreatedTest extends Specification {
     kimResultDocument["participantShare"] == 1
     kimResultDocument["totalSpent"] == 0D
     kimResultDocument["totalDebt"] == 0D
-    kimResultDocument["debtsDetails"][strKimId] == null
+    kimResultDocument["totalAdvance"] == 0D
+    kimResultDocument["details"][strKimId] == null
   }
 }

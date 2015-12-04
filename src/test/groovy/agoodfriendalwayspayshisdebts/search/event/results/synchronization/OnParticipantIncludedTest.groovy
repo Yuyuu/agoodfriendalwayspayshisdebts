@@ -32,9 +32,9 @@ class OnParticipantIncludedTest extends Specification {
     and:
     jongo.collection("eventresults_view") << [
         _id: eventId, participantsResults: [
-            (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 9D, totalDebt: 2D, debtsDetails: [(strBenId): [creditorName: "ben", rawAmount: 2D, mitigatedAmount: 2D], (strLeaId): [:]]],
-            (strLeaId): [participantName: "lea", participantShare: 1, totalSpent: 0D, totalDebt: 4.5D, debtsDetails: [(strKimId): [creditorName: "kim", rawAmount: 4.5D, mitigatedAmount: 4.5D], (strBenId): [:]]],
-            (strBenId): [participantName: "ben", participantShare: 2, totalSpent: 0D, totalDebt: 0D, debtsDetails: [(strKimId): [creditorName: "kim", rawAmount: 0D, mitigatedAmount: 0D], (strLeaId): [:]]]
+            (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 9D, totalDebt: 2D, totalAdvance: 4.5D, details: [(strBenId): [participantName: "ben", rawDebt: 2D, mitigatedDebt: 2D, advance: 0D], (strLeaId): [advance: 4.5D]]],
+            (strLeaId): [participantName: "lea", participantShare: 1, totalSpent: 0D, totalDebt: 4.5D, totalAdvance: 0D, details: [(strKimId): [participantName: "kim", rawDebt: 4.5D, mitigatedDebt: 4.5D, advance: 0D], (strBenId): [:]]],
+            (strBenId): [participantName: "ben", participantShare: 2, totalSpent: 0D, totalDebt: 0D, totalAdvance: 2D, details: [(strKimId): [participantName: "kim", rawDebt: 0D, mitigatedDebt: 0D, advance: 2D], (strLeaId): [:]]]
         ]
     ]
 
@@ -47,27 +47,36 @@ class OnParticipantIncludedTest extends Specification {
     def kimResultDocument = participantsResultsDocument[strKimId]
     kimResultDocument["totalSpent"] == 9D
     kimResultDocument["totalDebt"] == 0D
-    kimResultDocument["debtsDetails"][strBenId]["rawAmount"] == 2D
-    kimResultDocument["debtsDetails"][strBenId]["mitigatedAmount"] == 0D
-    kimResultDocument["debtsDetails"][strLeaId]["rawAmount"] == 0D
-    kimResultDocument["debtsDetails"][strLeaId]["mitigatedAmount"] == 0D
+    kimResultDocument["totalAdvance"] == 4.75D
+    kimResultDocument["details"][strBenId]["rawDebt"] == 2D
+    kimResultDocument["details"][strBenId]["mitigatedDebt"] == 0D
+    kimResultDocument["details"][strBenId]["advance"] == 2.5D
+    kimResultDocument["details"][strLeaId]["rawDebt"] == 0D
+    kimResultDocument["details"][strLeaId]["mitigatedDebt"] == 0D
+    kimResultDocument["details"][strLeaId]["advance"] == 2.25D
 
     and:
     def benResultDocument = participantsResultsDocument[strBenId]
     benResultDocument["totalSpent"] == 0D
     benResultDocument["totalDebt"] == 2.5D
-    benResultDocument["debtsDetails"][strKimId]["rawAmount"] == 4.5D
-    benResultDocument["debtsDetails"][strKimId]["mitigatedAmount"] == 2.5D
-    benResultDocument["debtsDetails"][strLeaId]["rawAmount"] == 0D
-    benResultDocument["debtsDetails"][strLeaId]["mitigatedAmount"] == 0D
+    benResultDocument["totalAdvance"] == 0D
+    benResultDocument["details"][strKimId]["rawDebt"] == 4.5D
+    benResultDocument["details"][strKimId]["mitigatedDebt"] == 2.5D
+    benResultDocument["details"][strKimId]["advance"] == 0D
+    benResultDocument["details"][strLeaId]["rawDebt"] == 0D
+    benResultDocument["details"][strLeaId]["mitigatedDebt"] == 0D
+    benResultDocument["details"][strLeaId]["advance"] == 0D
 
     and:
     def leaResultDocument = participantsResultsDocument[strLeaId]
     leaResultDocument["totalSpent"] == 0D
     leaResultDocument["totalDebt"] == 2.25D
-    leaResultDocument["debtsDetails"][strKimId]["rawAmount"] == 2.25D
-    leaResultDocument["debtsDetails"][strKimId]["mitigatedAmount"] == 2.25D
-    leaResultDocument["debtsDetails"][strBenId]["rawAmount"] == 0D
-    leaResultDocument["debtsDetails"][strBenId]["mitigatedAmount"] == 0D
+    leaResultDocument["totalAdvance"] == 0D
+    leaResultDocument["details"][strKimId]["rawDebt"] == 2.25D
+    leaResultDocument["details"][strKimId]["mitigatedDebt"] == 2.25D
+    leaResultDocument["details"][strKimId]["advance"] == 0D
+    leaResultDocument["details"][strBenId]["rawDebt"] == 0D
+    leaResultDocument["details"][strBenId]["mitigatedDebt"] == 0D
+    leaResultDocument["details"][strBenId]["advance"] == 0D
   }
 }

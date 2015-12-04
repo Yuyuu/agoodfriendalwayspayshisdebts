@@ -42,14 +42,17 @@ class OnParticipantAddedTest extends Specification {
     leaDocument["participantShare"] == 2
     leaDocument["totalSpent"] == 0D
     leaDocument["totalDebt"] == 0D
-    leaDocument["debtsDetails"][strKimId]["creditorName"] == "kim"
-    leaDocument["debtsDetails"][strKimId]["rawAmount"] == 0D
-    leaDocument["debtsDetails"][strKimId]["mitigatedAmount"] == 0D
+    leaDocument["totalAdvance"] == 0D
+    leaDocument["details"][strKimId]["participantName"] == "kim"
+    leaDocument["details"][strKimId]["rawDebt"] == 0D
+    leaDocument["details"][strKimId]["mitigatedDebt"] == 0D
+    leaDocument["details"][strKimId]["advance"] == 0D
 
     and:
     def kimDocument = jongo.collection("eventresults_view").findOne()["participantsResults"][strKimId]
-    kimDocument["debtsDetails"][strLeaId]["creditorName"] == "lea"
-    kimDocument["debtsDetails"][strLeaId]["rawAmount"] == 0D
-    kimDocument["debtsDetails"][strLeaId]["mitigatedAmount"] == 0D
+    kimDocument["details"][strLeaId]["participantName"] == "lea"
+    kimDocument["details"][strLeaId]["rawDebt"] == 0D
+    kimDocument["details"][strLeaId]["mitigatedDebt"] == 0D
+    kimDocument["details"][strLeaId]["advance"] == 0D
   }
 }

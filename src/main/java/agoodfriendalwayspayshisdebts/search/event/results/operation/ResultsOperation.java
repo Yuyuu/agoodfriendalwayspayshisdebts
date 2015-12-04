@@ -26,13 +26,13 @@ public abstract class ResultsOperation implements Consumer<EventResults> {
 
     if (bDebtTowardsA > aDebtTowardsB) {
       participantsResults.get(bId).updateDebtTowards(aId, mitigatedDebt);
-      participantsResults.get(aId).updateDebtTowards(bId, NO_DEBT);
+      participantsResults.get(aId).updateAdvanceTowards(bId, mitigatedDebt);
     } else if (bDebtTowardsA < aDebtTowardsB) {
-      participantsResults.get(bId).updateDebtTowards(aId, NO_DEBT);
+      participantsResults.get(bId).updateAdvanceTowards(aId, mitigatedDebt);
       participantsResults.get(aId).updateDebtTowards(bId, mitigatedDebt);
     } else {
-      participantsResults.get(bId).updateDebtTowards(aId, NO_DEBT);
-      participantsResults.get(aId).updateDebtTowards(bId, NO_DEBT);
+      participantsResults.get(bId).reset(aId);
+      participantsResults.get(aId).reset(bId);
     }
   }
 
@@ -41,5 +41,4 @@ public abstract class ResultsOperation implements Consumer<EventResults> {
   }
 
   protected Map<UUID, ParticipantResults> participantsResults;
-  private static final double NO_DEBT = 0D;
 }

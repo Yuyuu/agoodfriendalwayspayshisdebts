@@ -1,6 +1,6 @@
 package agoodfriendalwayspayshisdebts.infrastructure.services;
 
-import agoodfriendalwayspayshisdebts.search.event.results.model.DebtTowardsParticipant;
+import agoodfriendalwayspayshisdebts.search.event.results.model.DetailsWithParticipant;
 import agoodfriendalwayspayshisdebts.search.event.results.model.ParticipantResults;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -33,17 +33,17 @@ public class ReminderTemplateModel {
     participantResults.debtsDetails().values().stream().filter(isNotZero()).forEach(populateModelWithFormat(format));
   }
 
-  private Consumer<DebtTowardsParticipant> populateModelWithFormat(NumberFormat format) {
+  private Consumer<DetailsWithParticipant> populateModelWithFormat(NumberFormat format) {
     return debt -> {
       Map<String, Object> map = Maps.newHashMap();
-      map.put("mitigatedAmount", format.format(debt.mitigatedAmount));
-      map.put("creditorName", debt.creditorName);
+      map.put("mitigatedDebt", format.format(debt.mitigatedDebt));
+      map.put("participantName", debt.participantName);
       debts.add(map);
     };
   }
 
-  private static Predicate<DebtTowardsParticipant> isNotZero() {
-    return debt -> debt.mitigatedAmount >= MINIMUM_DEBT_AMOUNT;
+  private static Predicate<DetailsWithParticipant> isNotZero() {
+    return debt -> debt.mitigatedDebt >= MINIMUM_DEBT_AMOUNT;
   }
 
   @SuppressWarnings("unused")

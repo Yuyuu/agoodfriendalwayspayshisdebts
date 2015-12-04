@@ -9,7 +9,9 @@ class EventResultsSearchHandlerTest extends Specification {
   WithJongo jongo = new WithJongo()
 
   UUID kimId = UUID.randomUUID()
+  String strKimId = kimId.toString()
   UUID benId = UUID.randomUUID()
+  String strBenId = benId.toString()
   UUID eventId = UUID.randomUUID()
 
   EventResultsSearchHandler handler = new EventResultsSearchHandler()
@@ -19,8 +21,8 @@ class EventResultsSearchHandlerTest extends Specification {
     jongo.collection("eventresults_view") << [
         _id: eventId,
         participantsResults: [
-            (kimId.toString()): [participantName: "kim", totalSpent: 5D, totalDebt: 0D, debtsDetails: [(benId.toString()): [creditorName: "ben", rawAmount: 0D, mitigatedAmount: 0D]]],
-            (benId.toString()): [participantName: "ben", totalSpent: 0D, totalDebt: 2.5D, debtsDetails: [(kimId.toString()): [creditorName: "ben", rawAmount: 2.5D, mitigatedAmount: 2.5D]]]
+            (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 5D, totalDebt: 0D, totalAdvance: 2.5D, details: [(strBenId): [participantName: "ben", rawDebt: 0D, mitigatedDebt: 0D, advance: 2.5D]]],
+            (strBenId): [participantName: "ben", participantShare: 1, totalSpent: 0D, totalDebt: 2.5D, totalAdvance: 0D, details: [(strKimId): [participantName: "kim", rawDebt: 2.5D, mitigatedDebt: 2.5D, advance: 0D]]]
         ]
     ]
 
@@ -35,9 +37,13 @@ class EventResultsSearchHandlerTest extends Specification {
     results[1].totalSpent() == 0D
     results[0].totalDebt() == 0D
     results[1].totalDebt() == 2.5D
+    results[0].totalAdvance() == 2.5D
+    results[1].totalAdvance() == 0D
     results[0].mitigatedDebtTowards(benId) == 0D
     results[1].mitigatedDebtTowards(kimId) == 2.5D
     results[0].rawDebtTowards(benId) == 0D
     results[1].rawDebtTowards(kimId) == 2.5D
+    results[0].advanceTowards(benId) == 2.5D
+    results[1].advanceTowards(kimId) == 0D
   }
 }

@@ -14,7 +14,7 @@ class ReminderTest extends Specification {
   def setup() {
     result.totalSpent = 5D
     result.totalDebt = 5.4D
-    result.debtsDetails[leaId].mitigatedAmount = 3D
+    result.details[leaId].mitigatedDebt = 3D
   }
 
   @Unroll

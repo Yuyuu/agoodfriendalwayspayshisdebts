@@ -31,8 +31,8 @@ class OnExpenseAddedTest extends Specification {
     jongo.collection("eventresults_view") << [
         _id: eventId,
         participantsResults: [
-            (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 5D, totalDebt: 0D, debtsDetails: [(strBenId): [creditorName: "ben", rawAmount: 0D, mitigatedAmount: 0D]]],
-            (strBenId): [participantName: "ben", participantShare: 1, totalSpent: 0D, totalDebt: 2.5D, debtsDetails: [(strKimId): [creditorName: "kim", rawAmount: 2.5D, mitigatedAmount: 2.5D]]]
+            (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 5D, totalDebt: 0D, totalAdvance: 2.5D, details: [(strBenId): [participantName: "ben", rawDebt: 0D, mitigatedDebt: 0D, advance: 2.5D]]],
+            (strBenId): [participantName: "ben", participantShare: 1, totalSpent: 0D, totalDebt: 2.5D, totalAdvance: 0D, details: [(strKimId): [participantName: "kim", rawDebt: 2.5D, mitigatedDebt: 2.5D, advance: 0D]]]
         ]
     ]
 
@@ -44,18 +44,22 @@ class OnExpenseAddedTest extends Specification {
     def kimResultDocument = participantsResultsDocument[strKimId]
     kimResultDocument["totalSpent"] == 5D
     kimResultDocument["totalDebt"] == 0D
-    kimResultDocument["debtsDetails"][strKimId] == null
-    kimResultDocument["debtsDetails"][strBenId]["rawAmount"] == 1D
-    kimResultDocument["debtsDetails"][strBenId]["mitigatedAmount"] == 0D
-    kimResultDocument["debtsDetails"][strBenId]["creditorName"] == "ben"
+    kimResultDocument["totalAdvance"] == 1.5D
+    kimResultDocument["details"][strKimId] == null
+    kimResultDocument["details"][strBenId]["rawDebt"] == 1D
+    kimResultDocument["details"][strBenId]["mitigatedDebt"] == 0D
+    kimResultDocument["details"][strBenId]["advance"] == 1.5D
+    kimResultDocument["details"][strBenId]["participantName"] == "ben"
 
     and:
     def benResultDocument = participantsResultsDocument[strBenId]
     benResultDocument["totalSpent"] == 2D
     benResultDocument["totalDebt"] == 1.5D
-    benResultDocument["debtsDetails"][strBenId] == null
-    benResultDocument["debtsDetails"][strKimId]["rawAmount"] == 2.5D
-    benResultDocument["debtsDetails"][strKimId]["mitigatedAmount"] == 1.5D
-    benResultDocument["debtsDetails"][strKimId]["creditorName"] == "kim"
+    benResultDocument["totalAdvance"] == 0D
+    benResultDocument["details"][strBenId] == null
+    benResultDocument["details"][strKimId]["rawDebt"] == 2.5D
+    benResultDocument["details"][strKimId]["mitigatedDebt"] == 1.5D
+    benResultDocument["details"][strKimId]["advance"] == 0D
+    benResultDocument["details"][strKimId]["participantName"] == "kim"
   }
 }

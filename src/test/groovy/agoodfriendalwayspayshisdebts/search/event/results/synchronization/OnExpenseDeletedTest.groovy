@@ -28,8 +28,8 @@ class OnExpenseDeletedTest extends Specification {
     jongo.collection("eventresults_view") << [
         _id: eventId,
         participantsResults: [
-            (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 6D, totalDebt: 0D, debtsDetails: [(strBenId): [creditorName: "ben", rawAmount: 1D, mitigatedAmount:0D]]],
-            (strBenId): [participantName: "ben", participantShare: 1, totalSpent: 2D, totalDebt: 2D, debtsDetails: [(strKimId): [creditorName: "kim", rawAmount: 3D, mitigatedAmount:2D]]]
+            (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 6D, totalDebt: 0D, totalAdvance: 3D, details: [(strBenId): [participantName: "ben", rawDebt: 1D, mitigatedDebt: 0D, advance: 2D]]],
+            (strBenId): [participantName: "ben", participantShare: 1, totalSpent: 2D, totalDebt: 2D, totalAdvance: 0D, details: [(strKimId): [participantName: "kim", rawDebt: 3D, mitigatedDebt: 2D, advance: 0D]]]
         ]
     ]
 
@@ -45,9 +45,13 @@ class OnExpenseDeletedTest extends Specification {
     benResultDocument["totalSpent"] == 2D
     kimResultDocument["totalDebt"] == 0D
     benResultDocument["totalDebt"] == 1D
-    kimResultDocument["debtsDetails"][strBenId]["rawAmount"] == 1D
-    kimResultDocument["debtsDetails"][strBenId]["mitigatedAmount"] == 0D
-    benResultDocument["debtsDetails"][strKimId]["rawAmount"] == 2D
-    benResultDocument["debtsDetails"][strKimId]["mitigatedAmount"] == 1D
+    kimResultDocument["totalAdvance"] == 2D
+    benResultDocument["totalAdvance"] == 0D
+    kimResultDocument["details"][strBenId]["rawDebt"] == 1D
+    kimResultDocument["details"][strBenId]["mitigatedDebt"] == 0D
+    kimResultDocument["details"][strBenId]["advance"] == 1D
+    benResultDocument["details"][strKimId]["rawDebt"] == 2D
+    benResultDocument["details"][strKimId]["mitigatedDebt"] == 1D
+    benResultDocument["details"][strKimId]["advance"] == 0D
   }
 }

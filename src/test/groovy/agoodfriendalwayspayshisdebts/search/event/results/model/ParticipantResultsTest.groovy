@@ -3,19 +3,43 @@ package agoodfriendalwayspayshisdebts.search.event.results.model
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import spock.lang.Specification
 
+@SuppressWarnings("GroovyAccessibility")
 class ParticipantResultsTest extends Specification {
   def kim = new Participant("kim", 1, null)
   def ben = new Participant("ben", 1, null)
 
-  def "keeps the total debt up to date"() {
+  def "keeps the results up to date when updating the debt towards a participant"() {
     given:
     def kimResult = ParticipantResults.forParticipant(kim, [(ben.id()): ben.name()])
+    kimResult.debtsDetails().get(ben.id()).mitigatedDebt = 0D
+    kimResult.debtsDetails().get(ben.id()).advance = 1D
+    kimResult.totalAdvance = 2D
 
     when:
     kimResult.updateDebtTowards(ben.id(), 3D)
 
     then:
+    kimResult.debtsDetails().get(ben.id()).mitigatedDebt == 3D
+    kimResult.debtsDetails().get(ben.id()).advance == 0D
     kimResult.totalDebt() == 3D
+    kimResult.totalAdvance() == 1D
+  }
+
+  def "keeps the results up to date when updating the advance towards a participant"() {
+    given:
+    def kimResult = ParticipantResults.forParticipant(kim, [(ben.id()): ben.name()])
+    kimResult.debtsDetails().get(ben.id()).mitigatedDebt = 5D
+    kimResult.debtsDetails().get(ben.id()).advance = 0D
+    kimResult.totalDebt = 7D
+
+    when:
+    kimResult.updateAdvanceTowards(ben.id(), 3D)
+
+    then:
+    kimResult.debtsDetails().get(ben.id()).mitigatedDebt == 0D
+    kimResult.debtsDetails().get(ben.id()).advance == 3D
+    kimResult.totalDebt() == 2D
+    kimResult.totalAdvance() == 3D
   }
 
   def "increases the total amount spent"() {

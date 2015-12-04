@@ -1,7 +1,7 @@
 package agoodfriendalwayspayshisdebts.search.event.results.operation;
 
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
-import agoodfriendalwayspayshisdebts.search.event.results.model.DebtTowardsParticipant;
+import agoodfriendalwayspayshisdebts.search.event.results.model.DetailsWithParticipant;
 import agoodfriendalwayspayshisdebts.search.event.results.model.ParticipantResults;
 
 import java.util.Map;
@@ -25,7 +25,7 @@ public class AddParticipantOperation extends ResultsOperation {
 
   private Consumer<ParticipantResults> includeParticipant() {
     return participantResult ->
-        participantResult.debtsDetails().put(participant.id(),new DebtTowardsParticipant(participant.name()));
+        participantResult.debtsDetails().put(participant.id(),new DetailsWithParticipant(participant.name()));
   }
 
   private final Participant participant;
