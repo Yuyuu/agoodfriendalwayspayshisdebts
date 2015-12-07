@@ -2,4 +2,3 @@
 *.iml
 .gradle/
 build/
-dev_secret.env

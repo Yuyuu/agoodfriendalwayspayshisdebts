@@ -38,8 +38,6 @@ def libs = [
     handlebars          : "com.github.jknack:handlebars:$handlebarsVersion",
     handlebarsGuavaCache: "com.github.jknack:handlebars-guava-cache:$handlebarsVersion",
     jacksonJoda         : "com.fasterxml.jackson.datatype:jackson-datatype-joda:2.6.3",
-    javaMail            : "com.sun.mail:javax.mail:1.5.4",
-    javaMailMock        : "org.jvnet.mock-javamail:mock-javamail:1.9",
     javassist           : "org.javassist:javassist:3.20.0-GA",
     javaxEl             : "org.glassfish.web:javax.el:2.2.5",
     javaxElApi          : "javax.el:javax.el-api:2.2.5",
@@ -70,7 +68,6 @@ dependencies {
 
   compile libs.handlebars
   compile libs.handlebarsGuavaCache
-  compile libs.javaMail
 
   compile libs.jodaTime
   compile libs.jacksonJoda
@@ -94,7 +91,6 @@ dependencies {
   testCompile libs.mongoLinkTestTools
   testCompile libs.fongo
   testCompile libs.gmongo
-  testCompile libs.javaMailMock
 }
 
 task deps(type: Sync) {
