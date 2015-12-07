@@ -29,6 +29,6 @@ class ActivityFilterTest extends Specification {
     ActivityFilter.ALL          | 0             | []
     ActivityFilter.EXPENSES     | 2             | [OperationType.NEW_EXPENSE, OperationType.EXPENSE_DELETED]
     ActivityFilter.PARTICIPANTS | 2             | [OperationType.NEW_PARTICIPANT, OperationType.PARTICIPANT_EDITED]
-    ActivityFilter.REMINDERS    | 1             | [OperationType.NEW_REMINDER]
+    ActivityFilter.REMINDERS    | 2             | [OperationType.REMINDER_DELIVERED, OperationType.REMINDER_DROPPED]
   }
 }

@@ -9,7 +9,7 @@ public enum ActivityFilter {
   ALL,
   EXPENSES(OperationType.NEW_EXPENSE, OperationType.EXPENSE_DELETED),
   PARTICIPANTS(OperationType.NEW_PARTICIPANT, OperationType.PARTICIPANT_EDITED),
-  REMINDERS(OperationType.NEW_REMINDER);
+  REMINDERS(OperationType.REMINDER_DELIVERED, OperationType.REMINDER_DROPPED);
 
   private final int associatedOperationCount;
   private final List<OperationType> operationTypes;
