@@ -1,11 +1,11 @@
 package com.vter.web.fluent.status;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import com.vter.web.fluent.status.resolver.ExceptionResolver;
 import net.codestory.http.constants.HttpStatus;
 
 import javax.inject.Inject;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,30 +13,24 @@ public class ApplicationStatusService implements StatusService {
 
   @Inject
   public ApplicationStatusService(Set<ExceptionResolver> resolvers) {
-    resolvers.forEach(resolver -> this.resolvers.put(resolver.exceptionType(), resolver));
+    this.resolvers.addAll(resolvers);
   }
 
   @Override
   public int getStatus(Throwable throwable) {
     final Optional<ExceptionResolver> resolver = resolver(throwable);
-    if (resolver.isPresent()) {
-      return resolver.get().status();
-    }
-    return HttpStatus.INTERNAL_SERVER_ERROR;
+    return resolver.isPresent() ? resolver.get().status() : HttpStatus.INTERNAL_SERVER_ERROR;
   }
 
   @Override
   public ErrorRepresentation getRepresentation(Throwable throwable) {
     final Optional<ExceptionResolver> resolver = resolver(throwable);
-    if (resolver.isPresent()) {
-      return resolver.get().representation(throwable);
-    }
-    return null;
+    return resolver.isPresent() ? resolver.get().representation(throwable) : null;
   }
 
   private Optional<ExceptionResolver> resolver(Throwable throwable) {
-    return Optional.ofNullable(resolvers.get(throwable.getClass()));
+    return resolvers.stream().filter(resolver -> resolver.canResolve(throwable)).findFirst();
   }
 
-  private Map<Class<?>, ExceptionResolver> resolvers = Maps.newHashMap();
+  private List<ExceptionResolver> resolvers = Lists.newArrayList();
 }

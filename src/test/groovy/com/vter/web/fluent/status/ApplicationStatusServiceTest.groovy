@@ -1,7 +1,7 @@
 package com.vter.web.fluent.status
 
 import com.vter.command.ValidationException
-import com.vter.command.ValidationExceptionResolver
+import com.vter.web.fluent.status.resolver.ValidationExceptionResolver
 import spock.lang.Specification
 
 class ApplicationStatusServiceTest extends Specification {

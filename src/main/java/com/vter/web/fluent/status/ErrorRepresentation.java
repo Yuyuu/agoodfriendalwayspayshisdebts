@@ -16,6 +16,10 @@ public class ErrorRepresentation {
     return representation;
   }
 
+  public List<Map<String, String>> errors() {
+    return errors;
+  }
+
   public void addErrorMessage(String errorMessage) {
     final Map<String, String> error = Maps.newHashMap();
     error.put("message", errorMessage);

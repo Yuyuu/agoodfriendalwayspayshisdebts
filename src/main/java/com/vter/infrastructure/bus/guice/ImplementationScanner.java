@@ -10,21 +10,21 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
-public final class HandlerScanner {
+public final class ImplementationScanner {
 
-  private HandlerScanner() {}
+  private ImplementationScanner() {}
 
   public static <T> void scanPackageAndBind(String packageName, Class<T> type, Binder binder) {
     final Reflections reflections = new Reflections(ClasspathHelper.forPackage("com.vter"), ClasspathHelper.forPackage(packageName));
-    final Set<Class<? extends T>> searches = reflections.getSubTypesOf(type);
+    final Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(type);
     final Multibinder<T> searchMultibinder = Multibinder.newSetBinder(binder, type);
-    searches.forEach(foundType -> {
-      if (!Modifier.isAbstract(foundType.getModifiers())) {
-        LOGGER.debug("Found implementation for {}: {}", type, foundType);
-        searchMultibinder.addBinding().to(foundType);
+    subTypes.forEach(subType -> {
+      if (!Modifier.isAbstract(subType.getModifiers()) && subType.getCanonicalName().startsWith(packageName)) {
+        LOGGER.debug("Found implementation for {}: {}", type, subType);
+        searchMultibinder.addBinding().to(subType);
       }
     });
   }
 
-  private static Logger LOGGER = LoggerFactory.getLogger(HandlerScanner.class);
+  private static Logger LOGGER = LoggerFactory.getLogger(ImplementationScanner.class);
 }

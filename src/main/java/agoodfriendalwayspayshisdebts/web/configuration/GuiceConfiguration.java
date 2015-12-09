@@ -15,7 +15,7 @@ import com.vter.command.CommandBus;
 import com.vter.command.CommandHandler;
 import com.vter.command.CommandSynchronization;
 import com.vter.command.CommandValidator;
-import com.vter.infrastructure.bus.guice.HandlerScanner;
+import com.vter.infrastructure.bus.guice.ImplementationScanner;
 import com.vter.infrastructure.persistence.mongo.MongoLinkContext;
 import com.vter.model.internal_event.AsynchronousInternalEventBus;
 import com.vter.model.internal_event.InternalEventBus;
@@ -23,7 +23,9 @@ import com.vter.model.internal_event.InternalEventHandler;
 import com.vter.model.internal_event.InternalEventSynchronization;
 import com.vter.search.SearchBus;
 import com.vter.search.SearchHandler;
+import com.vter.web.fluent.status.resolver.BusinessErrorResolver;
 import com.vter.web.fluent.status.resolver.ExceptionResolver;
+import com.vter.web.fluent.status.resolver.ValidationExceptionResolver;
 import org.jongo.Jongo;
 import org.jongo.marshall.jackson.JacksonMapper;
 import org.mongolink.MongoSessionManager;
@@ -59,24 +61,26 @@ public class GuiceConfiguration extends AbstractModule {
     multibinder.addBinding().to(MongoLinkContext.class);
     multibinder.addBinding().to(CommandValidator.class);
     multibinder.addBinding().to(AsynchronousInternalEventBus.class);
-    HandlerScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.command", CommandHandler.class, binder());
+    ImplementationScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.command", CommandHandler.class, binder());
     bind(CommandBus.class).asEagerSingleton();
   }
 
   private void configureEvents() {
     final Multibinder<InternalEventSynchronization> multibinder = Multibinder.newSetBinder(binder(), InternalEventSynchronization.class);
     multibinder.addBinding().to(MongoLinkContext.class);
-    HandlerScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.search", InternalEventHandler.class, binder());
+    ImplementationScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.search", InternalEventHandler.class, binder());
     bind(InternalEventBus.class).to(AsynchronousInternalEventBus.class).asEagerSingleton();
   }
 
   private void configureSearches() {
-    HandlerScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.search", SearchHandler.class, binder());
+    ImplementationScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.search", SearchHandler.class, binder());
     bind(SearchBus.class).asEagerSingleton();
   }
 
   private void configureExceptionResolvers() {
-    HandlerScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.model", ExceptionResolver.class, binder());
+    final Multibinder<ExceptionResolver> multibinder = Multibinder.newSetBinder(binder(), ExceptionResolver.class);
+    multibinder.addBinding().to(ValidationExceptionResolver.class);
+    multibinder.addBinding().to(BusinessErrorResolver.class);
   }
 
   @Provides
@@ -86,7 +90,8 @@ public class GuiceConfiguration extends AbstractModule {
 
   @Provides
   @Singleton
-  private AsynchronousInternalEventBus asynchronousInternalEventBus(Set<InternalEventSynchronization> internalEventSynchronizations, Set<InternalEventHandler> internalEventHandlers) {
+  private AsynchronousInternalEventBus asynchronousInternalEventBus(
+      Set<InternalEventSynchronization> internalEventSynchronizations, Set<InternalEventHandler> internalEventHandlers) {
     return new AsynchronousInternalEventBus(internalEventSynchronizations, internalEventHandlers);
   }
 
