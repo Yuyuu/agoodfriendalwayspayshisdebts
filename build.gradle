@@ -3,14 +3,16 @@ apply plugin: "groovy"
 
 version = "1.0-SNAPSHOT"
 
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
-
 repositories {
   mavenCentral()
 }
 
 compileJava.options.encoding = "UTF-8"
+
+allprojects {
+  sourceCompatibility = "1.8"
+  targetCompatibility = "1.8"
+}
 
 ext {
   guiceVersion = "4.0"
@@ -91,6 +93,10 @@ dependencies {
   testCompile libs.mongoLinkTestTools
   testCompile libs.fongo
   testCompile libs.gmongo
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = "2.8"
 }
 
 task deps(type: Sync) {
