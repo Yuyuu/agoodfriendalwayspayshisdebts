@@ -2,6 +2,8 @@ package agoodfriendalwayspayshisdebts.model;
 
 import agoodfriendalwayspayshisdebts.model.event.EventRepository;
 
+import javax.inject.Inject;
+
 public abstract class RepositoryLocator {
 
   public static void initialize(RepositoryLocator instance) {
@@ -14,5 +16,6 @@ public abstract class RepositoryLocator {
 
   protected abstract EventRepository getEvents();
 
+  @Inject
   private static RepositoryLocator instance;
 }

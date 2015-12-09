@@ -48,6 +48,7 @@ public class GuiceConfiguration extends AbstractModule {
     configureEvents();
     configureSearches();
     configureExceptionResolvers();
+    requestStaticInjection(RepositoryLocator.class);
   }
 
   private void configurePersistence() {

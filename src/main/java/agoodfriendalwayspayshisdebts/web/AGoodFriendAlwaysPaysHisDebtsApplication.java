@@ -1,6 +1,5 @@
 package agoodfriendalwayspayshisdebts.web;
 
-import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
 import agoodfriendalwayspayshisdebts.web.configuration.GuiceConfiguration;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -21,7 +20,6 @@ public class AGoodFriendAlwaysPaysHisDebtsApplication extends BaseApplication {
   public AGoodFriendAlwaysPaysHisDebtsApplication() {
     injector = Guice.createInjector(stage(), new GuiceConfiguration());
     InternalEventBusLocator.initialize(injector.getInstance(InternalEventBus.class));
-    RepositoryLocator.initialize(injector.getInstance(RepositoryLocator.class));
   }
 
   private Stage stage() {
