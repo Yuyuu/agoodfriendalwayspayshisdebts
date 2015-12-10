@@ -27,7 +27,7 @@ class AsynchronousBusTest extends Specification {
     given:
     def executor = Mock(ExecutorService)
     def bus = bus()
-    bus.executor = executor
+    bus.asyncExecutor = executor
 
     when:
     bus.send(new FakeMessage())
@@ -50,23 +50,24 @@ class AsynchronousBusTest extends Specification {
     then:
     1 * synchronization.afterExecution()
     then:
-    1 * synchronization.ultimately()
+    1 * synchronization.ultimately(command)
   }
 
   def "still calls the synchronization on error"() {
     given:
     def handler = new FakeCommandHandler()
     handler.returnException()
-    def synchronisationBus = Mock(BusSynchronization)
-    def bus = busWith(synchronisationBus, handler)
+    def synchronization = Mock(BusSynchronization)
+    def bus = busWith(synchronization, handler)
+    def command = new FakeMessage()
 
     when:
-    bus.send(new FakeMessage())
+    bus.send(command)
 
     then:
-    1 * synchronisationBus.onError()
+    1 * synchronization.onError()
     then:
-    1 * synchronisationBus.ultimately()
+    1 * synchronization.ultimately(command)
   }
 
   def "returns the result of a command"() {
@@ -101,12 +102,14 @@ class AsynchronousBusTest extends Specification {
     def handler1 = new FakeCommandHandler()
     def handler2 = new FakeCommandHandler()
     def bus = busWith(handler1, handler2)
+    def message = new FakeMessage()
 
     when:
-    bus.sendAndWaitResponse(new FakeMessage())
+    bus.sendAndWaitResponse(message)
 
     then:
-    [handler1, handler2]*.commandReceived != null
+    handler1.commandReceived == message
+    handler2.commandReceived == message
   }
 
   def "returns a result on error"() {
@@ -152,7 +155,7 @@ class AsynchronousBusTest extends Specification {
   private AsynchronousBus busWith(BusSynchronization synchronisationBus, FakeCommandHandler... handlers) {
     final AsynchronousBus bus = new AsynchronousBus(Sets.newHashSet(synchronisationBus), Sets.newHashSet(handlers)) {
     }
-    bus.executor = executor()
+    bus.asyncExecutor = executor()
     return bus
   }
 

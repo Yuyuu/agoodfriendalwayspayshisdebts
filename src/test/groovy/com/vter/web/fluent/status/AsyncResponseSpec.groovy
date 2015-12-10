@@ -62,7 +62,7 @@ class AsyncResponseSpec extends AbstractProdWebServerSpecification {
     get("/").should().respond(500).beEmpty()
   }
 
-  private void routes(Configuration configuration) {
+  private static void routes(Configuration configuration) {
     final Configuration additionalConfiguration = { routes ->
       routes.setExtensions(new Extensions() {
         @Override

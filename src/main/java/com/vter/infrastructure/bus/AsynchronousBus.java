@@ -4,6 +4,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.*;
+import com.vter.command.ValidationException;
+import com.vter.model.BusinessError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,53 +25,69 @@ public abstract class AsynchronousBus implements Bus {
 
   @Override
   public <TResponse> ExecutionResult<TResponse> sendAndWaitResponse(Message<TResponse> message) {
-    return Futures.getUnchecked(Futures.successfulAsList(futures(message))).get(0);
+    return Futures.getUnchecked(submitWithExecutor(message, directExecutorService));
   }
 
   @Override
   public <TResponse> ListenableFuture<ExecutionResult<TResponse>> send(Message<TResponse> message) {
-    return futures(message).get(0);
+    return submitWithExecutor(message, executorService);
   }
 
-  private <TResponse> List<ListenableFuture<ExecutionResult<TResponse>>> futures(Message<TResponse> message) {
-    final Collection<MessageHandler> handlers = this.handlers.get(message.getClass());
-    if (handlers.isEmpty()) {
+  private <TResponse> ListenableFuture<ExecutionResult<TResponse>> submitWithExecutor(
+      Message<TResponse> message, ListeningExecutorService executorService) {
+    final Collection<MessageHandler> messageHandlers = handlers.get(message.getClass());
+    if (messageHandlers.isEmpty()) {
       LOGGER.warn("Impossible to find a handler for {}", message.getClass());
-      return Lists.newArrayList(
-          Futures.immediateFuture(ExecutionResult.error(new BusError("Impossible to find a handler")))
-      );
+      return Futures.immediateFuture(ExecutionResult.error(new BusError("Impossible to find a handler")));
     }
 
-    LOGGER.debug("Executing handlers for {}", message.getClass());
+    LOGGER.debug("New message: {}", message.getClass().getSimpleName());
     final List<ListenableFuture<ExecutionResult<TResponse>>> futures = Lists.newArrayList();
-    handlers.forEach(handler -> futures.add(executorService.submit(execute(message, handler))));
-    return futures;
+    messageHandlers.forEach(handler -> futures.add(executorService.submit(execute(message, handler))));
+    return futures.get(0);
   }
 
   private <TResponse> Callable<ExecutionResult<TResponse>> execute(
       Message<TResponse> message, MessageHandler<Message<TResponse>, TResponse> messageHandler) {
     return () -> {
       try {
+        LOGGER.debug("Executing handler {}", messageHandler.getClass());
         synchronizations.forEach(synchronization -> synchronization.beforeExecution(message));
         final TResponse response = messageHandler.execute(message);
         synchronizations.forEach(BusSynchronization::afterExecution);
         return ExecutionResult.success(response);
       } catch (Throwable error) {
         synchronizations.forEach(BusSynchronization::onError);
-        LOGGER.error("Error on message", error);
+        logErrorIfUnresolved(error);
         return ExecutionResult.error(error);
       } finally {
-        synchronizations.forEach(BusSynchronization::ultimately);
+        synchronizations.forEach(synchronization -> synchronization.ultimately(message));
       }
     };
   }
 
-  public void setExecutor(ExecutorService executor) {
+  public void setSyncExecutor(ListeningExecutorService executor) {
+    directExecutorService = MoreExecutors.listeningDecorator(executor);
+  }
+
+  public void setAsyncExecutor(ExecutorService executor) {
     executorService = MoreExecutors.listeningDecorator(executor);
+  }
+
+  protected void addSynchronization(BusSynchronization synchronization) {
+    synchronizations.add(synchronization);
+  }
+
+  private static void logErrorIfUnresolved(Throwable error) {
+    if (!ValidationException.class.isAssignableFrom(error.getClass()) &&
+        !BusinessError.class.isAssignableFrom(error.getClass())) {
+      LOGGER.error("Error on message", error);
+    }
   }
 
   private final List<BusSynchronization> synchronizations = Lists.newArrayList();
   private final Multimap<Class<?>, MessageHandler> handlers = ArrayListMultimap.create();
+  private ListeningExecutorService directExecutorService = MoreExecutors.newDirectExecutorService();
   private ListeningExecutorService executorService = MoreExecutors.listeningDecorator(
       Executors.newCachedThreadPool(
           new ThreadFactoryBuilder().setNameFormat(getClass().getSimpleName() + "-%d").build()

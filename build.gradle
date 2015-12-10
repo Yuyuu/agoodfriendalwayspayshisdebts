@@ -25,6 +25,7 @@ test {
     events "passed", "skipped", "failed"
     showStandardStreams = true
   }
+  environment "AGFAPHD_API_MONGO_URI", "mongodb://localhost:27017/debts-test"
 }
 
 def libs = [

@@ -23,11 +23,11 @@ class WithProdWebServer extends ExternalResource {
     server.get().configure(Configuration.NO_ROUTE)
   }
 
-  public void configure(Configuration configuration) {
+  static void configure(Configuration configuration) {
     server.get().configure(configuration)
   }
 
-  public int port() {
+  static int port() {
     return server.get().port()
   }
 }

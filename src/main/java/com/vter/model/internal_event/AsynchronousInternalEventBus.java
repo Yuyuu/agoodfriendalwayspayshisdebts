@@ -5,19 +5,21 @@ import com.vter.command.CommandSynchronization;
 import com.vter.infrastructure.bus.AsynchronousBus;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.Set;
 
-public class AsynchronousInternalEventBus extends AsynchronousBus implements InternalEventBus, CommandSynchronization {
+public class AsynchronousInternalEventBus extends AsynchronousBus implements InternalEventBus, CommandSynchronization, InternalEventSynchronization {
 
   @Inject
   public AsynchronousInternalEventBus(Set<InternalEventSynchronization> synchronizations, Set<InternalEventHandler> handlers) {
     super(synchronizations, handlers);
+    addSynchronization(this);
   }
 
   @Override
-  public void publish(InternalEvent event) {
-    events.get().add(event);
+  public void publish(InternalEvent... internalEvents) {
+    events.get().addAll(Arrays.asList(internalEvents));
   }
 
   @Override

@@ -19,6 +19,7 @@ public class OnEventCreated implements InternalEventHandler<EventCreatedInternal
   @Override
   public void executeInternalEvent(EventCreatedInternalEvent internalEvent) {
     final Event event = RepositoryLocator.events().get(internalEvent.eventId);
+    assert event != null;
     final EventResults result = EventResults.forEvent(event);
     jongo.getCollection("eventresults_view").insert(result);
   }

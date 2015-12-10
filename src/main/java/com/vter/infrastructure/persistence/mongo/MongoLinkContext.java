@@ -20,8 +20,10 @@ public class MongoLinkContext implements CommandSynchronization, InternalEventSy
 
   @Override
   public void beforeExecution(Message<?> message) {
-    LOGGER.debug("Starting a new session");
-    sessions.get().start();
+    if (message == null || message.requiresNewMongoSession()) {
+      LOGGER.debug("Starting a new session");
+      sessions.get().start();
+    }
   }
 
   @Override
@@ -37,10 +39,12 @@ public class MongoLinkContext implements CommandSynchronization, InternalEventSy
   }
 
   @Override
-  public void ultimately() {
-    LOGGER.debug("Stopping the session");
-    sessions.get().stop();
-    sessions.remove();
+  public void ultimately(Message<?> message) {
+    if (message == null || message.requiresNewMongoSession()) {
+      LOGGER.debug("Stopping the session");
+      sessions.get().stop();
+      sessions.remove();
+    }
   }
 
   @Override

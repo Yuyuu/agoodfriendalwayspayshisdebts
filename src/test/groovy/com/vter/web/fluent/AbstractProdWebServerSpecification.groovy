@@ -7,14 +7,14 @@ import spock.lang.Specification
 
 abstract class AbstractProdWebServerSpecification extends Specification implements FluentRestTest {
   @ClassRule
-  public static WithProdWebServer server = new WithProdWebServer()
+  static WithProdWebServer server = new WithProdWebServer()
 
   @Override
-  public int port() {
+  int port() {
     return server.port()
   }
 
-  protected void configure(Configuration configuration) {
+  protected static void configure(Configuration configuration) {
     server.configure(configuration)
   }
 }

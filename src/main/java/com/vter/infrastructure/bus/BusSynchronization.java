@@ -8,5 +8,5 @@ public interface BusSynchronization {
 
   default void afterExecution() {}
 
-  default void ultimately() {}
+  default void ultimately(Message<?> message) {}
 }
