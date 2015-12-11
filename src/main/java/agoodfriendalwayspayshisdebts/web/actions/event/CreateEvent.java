@@ -1,9 +1,9 @@
 package agoodfriendalwayspayshisdebts.web.actions.event;
 
 import agoodfriendalwayspayshisdebts.command.event.CreateEventCommand;
-import com.google.common.base.Throwables;
 import com.vter.command.CommandBus;
 import com.vter.infrastructure.bus.ExecutionResult;
+import com.vter.web.actions.BaseAction;
 import net.codestory.http.annotations.Post;
 import net.codestory.http.annotations.Resource;
 import net.codestory.http.constants.HttpStatus;
@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import java.util.UUID;
 
 @Resource
-public class CreateEvent {
+public class CreateEvent extends BaseAction {
 
   @Inject
   public CreateEvent(CommandBus commandBus) {
@@ -23,19 +23,8 @@ public class CreateEvent {
   @Post("/events")
   public Payload create(CreateEventCommand command) {
     final ExecutionResult<UUID> result = commandBus.sendAndWaitResponse(command);
-    if (!result.isSuccess()) {
-      Throwables.propagate(result.error());
-    }
-    return new Payload(new EventIdJsonObject(result.data())).withCode(HttpStatus.CREATED);
+    return getIdPayloadOrFail(result, HttpStatus.CREATED);
   }
 
   private final CommandBus commandBus;
-
-  private static class EventIdJsonObject {
-    public UUID id;
-
-    public EventIdJsonObject(UUID id) {
-      this.id = id;
-    }
-  }
 }

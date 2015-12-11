@@ -4,6 +4,7 @@ import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpensesDetail
 import agoodfriendalwayspayshisdebts.search.expense.details.search.ExpensesDetailsSearch;
 import com.vter.infrastructure.bus.ExecutionResult;
 import com.vter.search.SearchBus;
+import com.vter.web.actions.BaseAction;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Resource;
 
@@ -12,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Resource
-public class GetExpensesDetails {
+public class GetExpensesDetails extends BaseAction {
 
   @Inject
   public GetExpensesDetails(SearchBus searchBus) {
@@ -25,7 +26,7 @@ public class GetExpensesDetails {
     final ExecutionResult<ExpensesDetails> result = searchBus.sendAndWaitResponse(
         new ExpensesDetailsSearch(eventId).skip(skip).limit(limit)
     );
-    return Optional.ofNullable(result.data());
+    return getOptionalDataOrFail(result);
   }
 
   private final SearchBus searchBus;

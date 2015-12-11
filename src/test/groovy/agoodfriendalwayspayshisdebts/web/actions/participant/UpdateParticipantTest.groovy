@@ -23,7 +23,7 @@ class UpdateParticipantTest extends Specification {
     def payload = action.update(UUID.randomUUID().toString(), UUID.randomUUID().toString(), command)
 
     then:
-    payload.code() == 200
+    payload.code() == 204
   }
 
   def "propagates the error if any occurred"() {

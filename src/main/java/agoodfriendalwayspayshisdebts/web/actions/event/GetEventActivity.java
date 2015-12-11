@@ -5,6 +5,7 @@ import agoodfriendalwayspayshisdebts.search.event.activity.model.EventOperation;
 import agoodfriendalwayspayshisdebts.search.event.activity.search.EventActivitySearch;
 import com.vter.infrastructure.bus.ExecutionResult;
 import com.vter.search.SearchBus;
+import com.vter.web.actions.BaseAction;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Resource;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Resource
-public class GetEventActivity {
+public class GetEventActivity extends BaseAction {
 
   @Inject
   public GetEventActivity(SearchBus searchBus) {
@@ -27,7 +28,7 @@ public class GetEventActivity {
     final ExecutionResult<Iterable<EventOperation>> result = searchBus.sendAndWaitResponse(
         new EventActivitySearch(eventId, activityFilter).page(page)
     );
-    return Optional.ofNullable(result.data());
+    return getOptionalDataOrFail(result);
   }
 
   private final SearchBus searchBus;

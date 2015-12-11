@@ -4,6 +4,7 @@ import agoodfriendalwayspayshisdebts.search.expense.metadata.model.ExpenseMetada
 import agoodfriendalwayspayshisdebts.search.expense.metadata.search.ExpensesMetadataSearch;
 import com.vter.infrastructure.bus.ExecutionResult;
 import com.vter.search.SearchBus;
+import com.vter.web.actions.BaseAction;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Resource;
 
@@ -12,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Resource
-public class GetExpensesMetadata {
+public class GetExpensesMetadata extends BaseAction {
 
   @Inject
   public GetExpensesMetadata(SearchBus searchBus) {
@@ -25,7 +26,7 @@ public class GetExpensesMetadata {
     final ExecutionResult<Iterable<ExpenseMetadata>> result = searchBus.sendAndWaitResponse(
         new ExpensesMetadataSearch(eventId)
     );
-    return Optional.ofNullable(result.data());
+    return getOptionalDataOrFail(result);
   }
 
   private final SearchBus searchBus;

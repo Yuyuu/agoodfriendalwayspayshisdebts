@@ -4,6 +4,7 @@ import agoodfriendalwayspayshisdebts.search.event.results.model.ParticipantResul
 import agoodfriendalwayspayshisdebts.search.event.results.search.EventResultsSearch;
 import com.vter.infrastructure.bus.ExecutionResult;
 import com.vter.search.SearchBus;
+import com.vter.web.actions.BaseAction;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Resource;
 
@@ -12,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Resource
-public class GetEventResults {
+public class GetEventResults extends BaseAction {
 
   @Inject
   public GetEventResults(SearchBus searchBus) {
@@ -23,7 +24,7 @@ public class GetEventResults {
   public Optional<Iterable<ParticipantResults>> retrieve(String stringifiedUuid) {
     final UUID eventId = UUID.fromString(stringifiedUuid);
     final ExecutionResult<Iterable<ParticipantResults>> result = searchBus.sendAndWaitResponse(new EventResultsSearch(eventId));
-    return Optional.ofNullable(result.data());
+    return getOptionalDataOrFail(result);
   }
 
   private final SearchBus searchBus;
