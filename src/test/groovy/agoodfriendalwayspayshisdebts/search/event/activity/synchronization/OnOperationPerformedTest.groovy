@@ -25,16 +25,16 @@ class OnOperationPerformedTest extends Specification {
   def setup() {
     handler = new OnOperationPerformed(jongo.jongo())
     event.operations() << operation
-    RepositoryLocator.events().save(event)
+    RepositoryLocator.events().add(event)
   }
 
   def "includes the operation in the event activity"() {
     when:
-    handler.executeInternalEvent(new OperationPerformedInternalEvent(event.id, operation.id()))
+    handler.executeInternalEvent(new OperationPerformedInternalEvent(event.id, operation.id))
 
     then:
     def document = jongo.collection("eventactivity_view").findOne()
-    document["_id"] == operation.id()
+    document["_id"] == operation.id
     document["type"] == "EVENT_CREATION"
     document["creationDate"] == operation.creationDate().millis
     document["data"] == "hello"

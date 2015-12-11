@@ -26,7 +26,7 @@ public class OnOperationPerformed implements InternalEventHandler<OperationPerfo
   private static EventOperation eventOperation(OperationPerformedInternalEvent internalEvent) {
     final Event event = RepositoryLocator.events().get(internalEvent.eventId);
     final Operation operation = event.operations().stream()
-        .filter(it -> internalEvent.operationId.equals(it.id()))
+        .filter(it -> internalEvent.operationId.equals(it.getId()))
         .findFirst()
         .orElseThrow(IllegalStateException::new);
     return EventOperation.forOperation(operation);

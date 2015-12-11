@@ -20,12 +20,12 @@ public class AddParticipantOperation extends ResultsOperation {
     participantsResults.values().forEach(includeParticipant());
 
     final ParticipantResults participantResults = ParticipantResults.forParticipant(participant, eventParticipantsNames);
-    participantsResults.put(participant.id(), participantResults);
+    participantsResults.put(participant.getId(), participantResults);
   }
 
   private Consumer<ParticipantResults> includeParticipant() {
     return participantResult ->
-        participantResult.debtsDetails().put(participant.id(),new DetailsWithParticipant(participant.name()));
+        participantResult.debtsDetails().put(participant.getId(), new DetailsWithParticipant(participant.name()));
   }
 
   private final Participant participant;

@@ -23,8 +23,8 @@ class OnExpenseDeletedTest extends Specification {
 
   def "can recalculate the result when an expense is deleted"() {
     given:
-    def strKimId = kim.id().toString()
-    def strBenId = ben.id().toString()
+    def strKimId = kim.id.toString()
+    def strBenId = ben.id.toString()
     jongo.collection("eventresults_view") << [
         _id: eventId,
         participantsResults: [
@@ -34,7 +34,7 @@ class OnExpenseDeletedTest extends Specification {
     ]
 
     when:
-    def expense = new Expense("", kim.id(), 2D, [kim.id(), ben.id()], eventId)
+    def expense = new Expense("", kim.id, 2D, [kim.id, ben.id], eventId)
     handler.executeInternalEvent(new ExpenseDeletedInternalEvent(expense))
 
     then:

@@ -9,7 +9,7 @@ public class ExpenseMapping extends ComponentMap<Expense> {
 
   @Override
   public void map() {
-    property().onField("id");
+    property().onProperty(Expense::getId);
     property().onField("label");
     property().onField("purchaserId");
     property().onField("amount");

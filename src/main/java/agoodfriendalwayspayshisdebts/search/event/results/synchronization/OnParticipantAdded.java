@@ -35,7 +35,7 @@ public class OnParticipantAdded implements InternalEventHandler<ParticipantAdded
   }
 
   private static Map<UUID, String> participantsNames(Event event) {
-    return event.participants().stream().collect(Collectors.toMap(Participant::id, Participant::name));
+    return event.participants().stream().collect(Collectors.toMap(Participant::getId, Participant::name));
   }
 
   private final Jongo jongo;

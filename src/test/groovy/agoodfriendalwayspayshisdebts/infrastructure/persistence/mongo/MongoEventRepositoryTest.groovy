@@ -8,14 +8,14 @@ import org.joda.time.DateTime
 import org.junit.Rule
 import spock.lang.Specification
 
-class MongoLinkEventRepositoryTest extends Specification {
+class MongoEventRepositoryTest extends Specification {
   @Rule
   WithMongoLink mongoLink = WithMongoLink.withPackage("agoodfriendalwayspayshisdebts.infrastructure.persistence.mongo.mapping")
 
-  MongoLinkEventRepository repository
+  MongoEventRepository repository
 
   def setup() {
-    repository = new MongoLinkEventRepository(mongoLink.currentSession())
+    repository = new MongoEventRepository(mongoLink.currentSession())
   }
 
   def "can retrieve an event"() {
@@ -39,13 +39,13 @@ class MongoLinkEventRepositoryTest extends Specification {
     event.id == id
     event.name() == "event"
     def kim = event.participants().first()
-    kim.id() == kimId
+    kim.id == kimId
     kim.name() == "kim"
     kim.share() == 1
     kim.email() == "kim@m.com"
     kim.eventId() == id
     def expense = event.expenses().first()
-    expense.id() == expenseId
+    expense.id == expenseId
     expense.label() == "errands"
     expense.purchaserId() == kimId
     expense.amount() == 10
@@ -53,7 +53,7 @@ class MongoLinkEventRepositoryTest extends Specification {
     expense.description() == "hello"
     expense.eventId() == id
     def operation = event.operations().first()
-    operation.id() == operationId
+    operation.id == operationId
     operation.type() == OperationType.EVENT_CREATION
     operation.creationDate() == operationDate
     operation.data() == "hello"
@@ -63,7 +63,7 @@ class MongoLinkEventRepositoryTest extends Specification {
   def "can add an event"() {
     when:
     def event = new Event("event", [new Participant("kim", 1, null)])
-    repository.save(event)
+    repository.add(event)
     mongoLink.cleanSession()
 
     then:
@@ -79,7 +79,7 @@ class MongoLinkEventRepositoryTest extends Specification {
   def "can delete an event"() {
     given:
     def event = new Event("event", [new Participant("kim", 1, null)])
-    repository.save(event)
+    repository.add(event)
 
     when:
     repository.delete(event)

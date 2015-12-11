@@ -13,7 +13,7 @@ public class ExpenseMetadata {
 
   public static ExpenseMetadata forExpense(Expense expense) {
     final ExpenseMetadata expenseMetadata = new ExpenseMetadata();
-    expenseMetadata.id = expense.id();
+    expenseMetadata.id = expense.getId();
     expenseMetadata.label = expense.label();
     return expenseMetadata;
   }

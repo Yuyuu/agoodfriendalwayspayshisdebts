@@ -1,15 +1,13 @@
 package com.vter.infrastructure.persistence.mongo
 
-import com.vter.model.Entity
+import com.vter.model.Aggregate
 
-class FakeEntity implements Entity<String> {
-
-  String id;
+class FakeAggregate implements Aggregate<String> {
 
   @SuppressWarnings("GroovyUnusedDeclaration")
-  public FakeEntity() {}
+  public FakeAggregate() {}
 
-  public FakeEntity(String id) {
+  public FakeAggregate(String id) {
     this.id = id
   }
 
@@ -17,4 +15,6 @@ class FakeEntity implements Entity<String> {
   String getId() {
     return id
   }
+
+  String id
 }

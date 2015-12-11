@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class AddParticipantCommandHandler implements CommandHandler<AddParticipantCommand, UUID> {
@@ -31,7 +32,7 @@ public class AddParticipantCommandHandler implements CommandHandler<AddParticipa
     }
 
     event.addOperation(new Operation(OperationType.NEW_PARTICIPANT, participant.name(), event.getId()));
-    return participant.id();
+    return participant.getId();
   }
 
   private static List<UUID> toUuids(List<String> expensesUuids) {
@@ -39,7 +40,7 @@ public class AddParticipantCommandHandler implements CommandHandler<AddParticipa
   }
 
   private static Map<UUID, Expense> expenses(Event event) {
-    return event.expenses().stream().collect(Collectors.toMap(Expense::id, expense -> expense));
+    return event.expenses().stream().collect(Collectors.toMap(Expense::getId, Function.identity()));
   }
 
   private static Consumer<Expense> includeParticipant(Participant participant) {

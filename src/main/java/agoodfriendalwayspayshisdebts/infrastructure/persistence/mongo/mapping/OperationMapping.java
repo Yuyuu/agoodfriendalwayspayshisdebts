@@ -9,7 +9,7 @@ public class OperationMapping extends ComponentMap<Operation> {
 
   @Override
   public void map() {
-    property().onField("id");
+    property().onProperty(Operation::getId);
     property().onField("type");
     property().onField("creationDate");
     property().onField("data");

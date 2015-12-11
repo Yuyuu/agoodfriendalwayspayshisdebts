@@ -10,7 +10,7 @@ class OperationTest extends Specification {
     def operation = new Operation(OperationType.EVENT_CREATION, "hello", eventId)
 
     expect:
-    operation.id() != null
+    operation.id != null
     operation.type() == OperationType.EVENT_CREATION
     operation.creationDate() != null
     operation.data() == "hello"

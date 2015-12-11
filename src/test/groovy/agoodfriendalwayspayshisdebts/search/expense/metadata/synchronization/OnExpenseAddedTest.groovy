@@ -30,7 +30,7 @@ class OnExpenseAddedTest extends Specification {
     def document = jongo.collection("expensesmetadata_view").findOne()
     document["metadata"].size() == 2
     def expenseMetadataDocument = document["metadata"][1]
-    expenseMetadataDocument["id"] == expense.id()
+    expenseMetadataDocument["id"] == expense.id
     expenseMetadataDocument["label"] == expense.label()
   }
 
@@ -43,7 +43,7 @@ class OnExpenseAddedTest extends Specification {
     def document = jongo.collection("expensesmetadata_view").findOne()
     document["_id"] == eventId
     def expenseMetadataDocument = document["metadata"][0]
-    expenseMetadataDocument["id"] == expense.id()
+    expenseMetadataDocument["id"] == expense.id
     expenseMetadataDocument["label"] == expense.label()
   }
 }

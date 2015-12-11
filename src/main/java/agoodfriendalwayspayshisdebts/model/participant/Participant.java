@@ -1,13 +1,12 @@
 package agoodfriendalwayspayshisdebts.model.participant;
 
-import com.google.common.base.Objects;
+import com.vter.model.BaseEntityWithUuid;
 import com.vter.model.internal_event.InternalEventBus;
 
 import java.util.UUID;
 
-public class Participant {
+public class Participant extends BaseEntityWithUuid {
 
-  private UUID id;
   private String name;
   private int share;
   private String email;
@@ -18,14 +17,9 @@ public class Participant {
   protected Participant() {}
 
   public Participant(String name, int share, String email) {
-    id = UUID.randomUUID();
     this.name = name;
     this.share = share;
     this.email = email;
-  }
-
-  public UUID id() {
-    return id;
   }
 
   public String name() {
@@ -50,19 +44,6 @@ public class Participant {
 
   public void update(String email) {
     this.email = email;
-    InternalEventBus.INSTANCE().publish(new ParticipantUpdatedInternalEvent(eventId, id));
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Participant that = (Participant) o;
-    return Objects.equal(id, that.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(id);
+    InternalEventBus.INSTANCE().publish(new ParticipantUpdatedInternalEvent(eventId, getId()));
   }
 }

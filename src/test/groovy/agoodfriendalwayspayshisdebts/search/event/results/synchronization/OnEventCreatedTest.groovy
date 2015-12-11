@@ -17,14 +17,14 @@ class OnEventCreatedTest extends Specification {
   WithMemoryRepository repository = new WithMemoryRepository()
 
   Participant kim = new Participant("kim", 1, null)
-  String strKimId = kim.id().toString()
+  String strKimId = kim.id.toString()
   Event event = new Event("", [kim])
 
   OnEventCreated handler
 
   def setup() {
     handler = new OnEventCreated(jongo.jongo())
-    RepositoryLocator.events().save(event)
+    RepositoryLocator.events().add(event)
   }
 
   def "initializes the calculation result of the event"() {

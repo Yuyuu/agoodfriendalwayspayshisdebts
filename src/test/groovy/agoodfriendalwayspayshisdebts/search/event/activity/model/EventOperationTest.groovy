@@ -15,7 +15,7 @@ class EventOperationTest extends Specification {
     def eventOperation = EventOperation.forOperation(operation)
 
     then:
-    eventOperation.id == operation.id()
+    eventOperation.id == operation.id
     eventOperation.type == operation.type().toString()
     eventOperation.creationDate == operation.creationDate()
     eventOperation.data == "hello"

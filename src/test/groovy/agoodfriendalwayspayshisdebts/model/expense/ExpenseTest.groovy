@@ -17,7 +17,7 @@ class ExpenseTest extends Specification {
     def expense = new Expense("food", purchaserId, 10, [purchaserId], eventId)
 
     expect:
-    expense.id() != null
+    expense.id != null
     expense.label() == "food"
     expense.purchaserId() == purchaserId
     expense.amount() == 10
@@ -34,7 +34,7 @@ class ExpenseTest extends Specification {
     expense.includeParticipant(participant)
 
     then:
-    expense.participantsIds().contains(participant.id())
+    expense.participantsIds().contains(participant.id)
   }
 
   def "is shared between at most each participant once"() {
@@ -63,7 +63,7 @@ class ExpenseTest extends Specification {
   def "two expenses with the same id are equal"() {
     given:
     def expense1 = new Expense()
-    def expense2 = new Expense(id: expense1.id())
+    def expense2 = new Expense(id: expense1.id)
 
     expect:
     expense1 == expense2

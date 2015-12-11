@@ -2,17 +2,16 @@ package agoodfriendalwayspayshisdebts.model.expense;
 
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import agoodfriendalwayspayshisdebts.model.participant.ParticipantIncludedInternalEvent;
-import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
+import com.vter.model.BaseEntityWithUuid;
 import com.vter.model.internal_event.InternalEventBus;
 
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class Expense {
+public class Expense extends BaseEntityWithUuid {
 
-  private UUID id;
   private String label;
   private UUID purchaserId;
   private double amount;
@@ -25,7 +24,6 @@ public class Expense {
   protected Expense() {}
 
   public Expense(String label, UUID purchaserId, double amount, List<UUID> participantsIds, UUID eventId) {
-    id = UUID.randomUUID();
     this.label = label;
     this.purchaserId = purchaserId;
     this.amount = amount;
@@ -45,10 +43,6 @@ public class Expense {
     return eventId;
   }
 
-  public UUID id() {
-    return id;
-  }
-
   public String label() {
     return label;
   }
@@ -66,20 +60,7 @@ public class Expense {
   }
 
   public void includeParticipant(Participant participant) {
-    participantsIds.add(participant.id());
+    participantsIds.add(participant.getId());
     InternalEventBus.INSTANCE().publish(new ParticipantIncludedInternalEvent(this, participant));
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Expense expense = (Expense) o;
-    return Objects.equal(id, expense.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(id);
   }
 }

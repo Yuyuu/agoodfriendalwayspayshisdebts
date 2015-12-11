@@ -34,7 +34,7 @@ public class AddExpenseCommandHandler implements CommandHandler<AddExpenseComman
     event.addOperation(new Operation(OperationType.NEW_EXPENSE, expense.label(), event.getId()));
 
     final Map<UUID, String> eventParticipantsNames = event.participants().stream()
-        .collect(Collectors.toMap(Participant::id, Participant::name));
+        .collect(Collectors.toMap(Participant::getId, Participant::name));
     return ExpenseDetails.forExpense(expense, eventParticipantsNames);
   }
 
@@ -50,7 +50,7 @@ public class AddExpenseCommandHandler implements CommandHandler<AddExpenseComman
   }
 
   private static Supplier<List<UUID>> participantsIds(Event event) {
-    return () -> event.participants().stream().map(Participant::id).collect(Collectors.toList());
+    return () -> event.participants().stream().map(Participant::getId).collect(Collectors.toList());
   }
 
   private static String sanitize(String originalDescription) {

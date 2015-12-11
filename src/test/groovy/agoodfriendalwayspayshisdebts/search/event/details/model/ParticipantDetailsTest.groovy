@@ -15,7 +15,7 @@ class ParticipantDetailsTest extends Specification {
     def leaDetails = ParticipantDetails.forParticipant(lea)
 
     then:
-    leaDetails.id == lea.id()
+    leaDetails.id == lea.id
     leaDetails.name == "lea"
     leaDetails.share == 1
     leaDetails.email == "lea@m.com"

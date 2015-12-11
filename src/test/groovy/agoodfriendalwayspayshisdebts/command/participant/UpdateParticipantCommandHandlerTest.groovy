@@ -21,12 +21,12 @@ class UpdateParticipantCommandHandlerTest extends Specification {
   Event event = new Event("", [lea])
 
   def setup() {
-    RepositoryLocator.events().save(event)
+    RepositoryLocator.events().add(event)
   }
 
   def "updates the participant"() {
     given:
-    def command = new UpdateParticipantCommand(eventId: event.id, id: lea.id(), email: "lea@email.com")
+    def command = new UpdateParticipantCommand(eventId: event.id, id: lea.id, email: "lea@email.com")
 
     when:
     new UpdateParticipantCommandHandler().execute(command)
@@ -38,7 +38,7 @@ class UpdateParticipantCommandHandlerTest extends Specification {
 
   def "records the operation when a participant is edited"() {
     given:
-    def command = new UpdateParticipantCommand(eventId: event.id, id: lea.id(), email: "lea@email.com")
+    def command = new UpdateParticipantCommand(eventId: event.id, id: lea.id, email: "lea@email.com")
 
     when:
     new UpdateParticipantCommandHandler().execute(command)

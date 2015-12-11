@@ -27,7 +27,7 @@ class OnParticipantAddedTest extends Specification {
 
     then:
     def leaDocument = jongo.collection("eventdetails_view").findOne()["participants"][0]
-    leaDocument["id"] == lea.id()
+    leaDocument["id"] == lea.id
     leaDocument["name"] == "lea"
     leaDocument["share"] == 2
     leaDocument["email"] == "lea@email.com"

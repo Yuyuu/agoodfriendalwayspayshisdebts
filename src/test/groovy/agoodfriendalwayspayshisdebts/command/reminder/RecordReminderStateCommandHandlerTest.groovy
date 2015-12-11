@@ -23,12 +23,12 @@ class RecordReminderStateCommandHandlerTest extends Specification {
   RecordReminderStateCommandHandler handler = new RecordReminderStateCommandHandler()
 
   def setup() {
-    RepositoryLocator.events().save(event)
+    RepositoryLocator.events().add(event)
   }
 
   def "records the state of the reminder as an operation"() {
     when:
-    handler.execute(new RecordReminderStateCommand(event: state, eventId: event.id, participantId: bob.id()))
+    handler.execute(new RecordReminderStateCommand(event: state, eventId: event.id, participantId: bob.id))
 
     then:
     def event = RepositoryLocator.events().get(event.id)
@@ -40,7 +40,7 @@ class RecordReminderStateCommandHandlerTest extends Specification {
     def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
     internalEvent != null
     internalEvent.eventId == event.id
-    internalEvent.operationId == operation.id()
+    internalEvent.operationId == operation.id
 
     where:
     state       || operationType

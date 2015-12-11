@@ -12,9 +12,9 @@ class OnExpenseAddedTest extends Specification {
   WithJongo jongo = new WithJongo()
 
   Participant kim = new Participant("kim", 1, null)
-  String strKimId = kim.id().toString()
+  String strKimId = kim.id.toString()
   Participant ben = new Participant("ben", 1, null)
-  String strBenId = ben.id().toString()
+  String strBenId = ben.id.toString()
   UUID eventId = UUID.randomUUID()
 
   OnExpenseAdded handler
@@ -25,7 +25,7 @@ class OnExpenseAddedTest extends Specification {
 
   def "can update the result of the event"() {
     given:
-    def expense = new Expense("label", ben.id(), 2D, [kim.id(), ben.id()], eventId)
+    def expense = new Expense("label", ben.id, 2D, [kim.id, ben.id], eventId)
 
     and:
     jongo.collection("eventresults_view") << [

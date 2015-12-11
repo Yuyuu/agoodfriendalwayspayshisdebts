@@ -1,12 +1,12 @@
 package agoodfriendalwayspayshisdebts.model.activity;
 
+import com.vter.model.BaseEntityWithUuid;
 import org.joda.time.DateTime;
 
 import java.util.UUID;
 
-public class Operation {
+public class Operation extends BaseEntityWithUuid {
 
-  private UUID id;
   private OperationType type;
   private DateTime creationDate;
   private String data;
@@ -17,7 +17,6 @@ public class Operation {
   protected Operation() {}
 
   public Operation(OperationType type, String data, UUID eventId) {
-    this.id = UUID.randomUUID();
     this.type = type;
     this.creationDate = DateTime.now();
     this.data = data;
@@ -34,10 +33,6 @@ public class Operation {
 
   public UUID eventId() {
     return eventId;
-  }
-
-  public UUID id() {
-    return id;
   }
 
   public OperationType type() {

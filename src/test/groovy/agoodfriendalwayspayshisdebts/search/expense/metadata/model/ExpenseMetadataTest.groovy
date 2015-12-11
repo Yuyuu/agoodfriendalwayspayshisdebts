@@ -13,7 +13,7 @@ class ExpenseMetadataTest extends Specification {
     def expenseMetadata = ExpenseMetadata.forExpense(expense)
 
     then:
-    expenseMetadata.id == expense.id()
+    expenseMetadata.id == expense.id
     expenseMetadata.label == expense.label()
   }
 }

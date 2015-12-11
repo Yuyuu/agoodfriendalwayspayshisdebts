@@ -17,7 +17,7 @@ public class CreateEventCommandHandler implements CommandHandler<CreateEventComm
   @Override
   public UUID execute(CreateEventCommand command) {
     final Event event = Event.createAndPublishInternalEvent(command.name, extractParticipants(command.participants));
-    RepositoryLocator.events().save(event);
+    RepositoryLocator.events().add(event);
     event.addOperation(new Operation(OperationType.EVENT_CREATION, event.name(), event.getId()));
     return event.getId();
   }

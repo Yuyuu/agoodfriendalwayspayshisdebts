@@ -19,7 +19,7 @@ public class EventOperation {
 
   public static EventOperation forOperation(Operation operation) {
     final EventOperation eventOperation = new EventOperation();
-    eventOperation.id = operation.id();
+    eventOperation.id = operation.getId();
     eventOperation.type = operation.type().name();
     eventOperation.creationDate = operation.creationDate();
     eventOperation.data = operation.data();

@@ -22,7 +22,7 @@ class OnParticipantUpdatedTest extends Specification {
   OnParticipantUpdated handler
 
   def setup() {
-    RepositoryLocator.events().save(event)
+    RepositoryLocator.events().add(event)
     handler = new OnParticipantUpdated(jongo.jongo())
   }
 

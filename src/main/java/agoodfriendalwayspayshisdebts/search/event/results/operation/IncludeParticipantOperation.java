@@ -19,12 +19,12 @@ public class IncludeParticipantOperation extends ResultsOperation {
         .reduce(0, Integer::sum);
 
     expense.participantsIds().stream()
-        .filter(hasNotId(participant.id(), expense.purchaserId()))
+        .filter(hasNotId(participant.getId(), expense.purchaserId()))
         .forEach(restoreDebtSurplus(currentNumberOfShares));
 
     final double amount = expense.amount() / currentNumberOfShares * participant.share();
-    participantsResults.get(participant.id()).increaseRawDebtTowards(expense.purchaserId(), amount);
-    mitigateDebtBetween(expense.purchaserId(), participant.id());
+    participantsResults.get(participant.getId()).increaseRawDebtTowards(expense.purchaserId(), amount);
+    mitigateDebtBetween(expense.purchaserId(), participant.getId());
   }
 
   private Consumer<UUID> restoreDebtSurplus(int currentNumberOfShares) {

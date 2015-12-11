@@ -21,24 +21,24 @@ class AddExpenseCommandHandlerTest extends Specification {
   Event event = new Event("event", [kim])
 
   def setup() {
-    RepositoryLocator.events().save(event)
+    RepositoryLocator.events().add(event)
   }
 
   def "can add the expense to an event"() {
     when:
     new AddExpenseCommandHandler().execute(
         new AddExpenseCommand(
-            eventId: event.id, label: "label", purchaserUuid: kim.id().toString(), amount: 1,
-            participantsUuids: [kim.id().toString()], description: "description"
+            eventId: event.id, label: "label", purchaserUuid: kim.id.toString(), amount: 1,
+            participantsUuids: [kim.id.toString()], description: "description"
         )
     )
 
     then:
     def expense = RepositoryLocator.events().get(event.id).expenses()[0]
     expense.label() == "label"
-    expense.purchaserId() == kim.id()
+    expense.purchaserId() == kim.id
     expense.amount() == 1
-    expense.participantsIds() == [kim.id()] as Set
+    expense.participantsIds() == [kim.id] as Set
     expense.description() == "description"
   }
 
@@ -46,8 +46,8 @@ class AddExpenseCommandHandlerTest extends Specification {
     when:
     def details = new AddExpenseCommandHandler().execute(
         new AddExpenseCommand(
-            eventId: event.id, label: "label", purchaserUuid: kim.id().toString(), amount: 1,
-            participantsUuids: [kim.id().toString()], description: "description"
+            eventId: event.id, label: "label", purchaserUuid: kim.id.toString(), amount: 1,
+            participantsUuids: [kim.id.toString()], description: "description"
         )
     )
 
@@ -63,22 +63,22 @@ class AddExpenseCommandHandlerTest extends Specification {
     given:
     def lea = new Participant("lea", 1, null)
     event.participants().add(lea)
-    RepositoryLocator.events().save(event)
+    RepositoryLocator.events().add(event)
 
     when:
     new AddExpenseCommandHandler().execute(
-        new AddExpenseCommand(eventId: event.id, label: "test", purchaserUuid: kim.id().toString(), amount: 1)
+        new AddExpenseCommand(eventId: event.id, label: "test", purchaserUuid: kim.id.toString(), amount: 1)
     )
 
     then:
     def expense = RepositoryLocator.events().get(event.id).expenses()[0]
-    expense.participantsIds() == event.participants()*.id() as Set
+    expense.participantsIds() == event.participants()*.id as Set
   }
 
   def "adds an empty description if none is provided"() {
     when:
     new AddExpenseCommandHandler().execute(
-        new AddExpenseCommand(eventId: event.id, label: "test", purchaserUuid: kim.id().toString(), amount: 1)
+        new AddExpenseCommand(eventId: event.id, label: "test", purchaserUuid: kim.id.toString(), amount: 1)
     )
 
     then:
@@ -90,7 +90,7 @@ class AddExpenseCommandHandlerTest extends Specification {
     when:
     new AddExpenseCommandHandler().execute(
         new AddExpenseCommand(
-            eventId: event.id, label: "test", purchaserUuid: kim.id().toString(), amount: 1,
+            eventId: event.id, label: "test", purchaserUuid: kim.id.toString(), amount: 1,
             description: "     hello  hi       "
         )
     )
@@ -103,7 +103,7 @@ class AddExpenseCommandHandlerTest extends Specification {
   def "records the operation when an expense is added"() {
     when:
     new AddExpenseCommandHandler().execute(
-        new AddExpenseCommand(eventId: event.id, label: "label", purchaserUuid: kim.id().toString(), amount: 1)
+        new AddExpenseCommand(eventId: event.id, label: "label", purchaserUuid: kim.id.toString(), amount: 1)
     )
 
     then:

@@ -9,7 +9,7 @@ public class ParticipantMapping extends ComponentMap<Participant> {
 
   @Override
   public void map() {
-    property().onField("id");
+    property().onProperty(Participant::getId);
     property().onField("name");
     property().onField("share");
     property().onField("email");

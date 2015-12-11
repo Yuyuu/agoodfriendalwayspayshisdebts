@@ -15,7 +15,7 @@ public class ParticipantDetails {
 
   public static ParticipantDetails forParticipant(Participant participant) {
     final ParticipantDetails participantDetails = new ParticipantDetails();
-    participantDetails.id = participant.id();
+    participantDetails.id = participant.getId();
     participantDetails.name = participant.name();
     participantDetails.share = participant.share();
     participantDetails.email = participant.email();

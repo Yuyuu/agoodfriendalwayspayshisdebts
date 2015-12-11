@@ -25,11 +25,11 @@ public class EventResults {
   public static EventResults forEvent(Event event) {
     final EventResults result = new EventResults(event.getId());
     final Map<UUID, String> participantsNames = event.participants().stream()
-        .collect(Collectors.toMap(Participant::id, Participant::name));
+        .collect(Collectors.toMap(Participant::getId, Participant::name));
 
     event.participants().forEach(participant -> {
       final ParticipantResults participantResults = ParticipantResults.forParticipant(participant, participantsNames);
-      result.participantsResults.put(participant.id(), participantResults);
+      result.participantsResults.put(participant.getId(), participantResults);
     });
 
     return result;

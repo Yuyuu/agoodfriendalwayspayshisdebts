@@ -17,16 +17,16 @@ class OnParticipantAddedTest extends Specification {
   WithJongo jongo = new WithJongo()
 
   Participant kim = new Participant("kim", 1, null)
-  String strKimId = kim.id().toString()
+  String strKimId = kim.id.toString()
   Participant lea = new Participant("lea", 2, null)
-  String strLeaId = lea.id().toString()
+  String strLeaId = lea.id.toString()
   Event event = new Event("", [kim])
 
   OnParticipantAdded handler
 
   def setup() {
     handler = new OnParticipantAdded(jongo.jongo())
-    RepositoryLocator.events().save(event)
+    RepositoryLocator.events().add(event)
   }
 
   def "includes the new participant in the event result"() {

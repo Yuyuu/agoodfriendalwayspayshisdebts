@@ -21,7 +21,7 @@ class AddParticipantCommandHandlerTest extends Specification {
   Event event = new Event("", [])
 
   def setup() {
-    RepositoryLocator.events().save(event)
+    RepositoryLocator.events().add(event)
   }
 
   def "adds the participant to the event"() {
@@ -40,7 +40,7 @@ class AddParticipantCommandHandlerTest extends Specification {
     given:
     def expense = new Expense("", null, 1, [], event.id)
     event.expenses().add(expense)
-    def command = new AddParticipantCommand(eventId: event.id, name: "lea", share: 1, email: "", expensesUuids: [expense.id().toString()])
+    def command = new AddParticipantCommand(eventId: event.id, name: "lea", share: 1, email: "", expensesUuids: [expense.id.toString()])
 
     when:
     def participantId = new AddParticipantCommandHandler().execute(command)

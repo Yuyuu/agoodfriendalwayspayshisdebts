@@ -12,11 +12,11 @@ class OnParticipantIncludedTest extends Specification {
   WithJongo jongo = new WithJongo()
 
   Participant kim = new Participant("kim", 1, null)
-  String strKimId = kim.id().toString()
+  String strKimId = kim.id.toString()
   Participant lea = new Participant("lea", 1, null)
-  String strLeaId = lea.id().toString()
+  String strLeaId = lea.id.toString()
   Participant ben = new Participant("ben", 2, null)
-  String strBenId = ben.id().toString()
+  String strBenId = ben.id.toString()
   UUID eventId = UUID.randomUUID()
 
   OnParticipantIncluded handler
@@ -27,7 +27,7 @@ class OnParticipantIncludedTest extends Specification {
 
   def "can update the result of the event"() {
     given:
-    def expense = new Expense("label", kim.id(), 9D, [kim.id(), lea.id()], eventId)
+    def expense = new Expense("label", kim.id, 9D, [kim.id, lea.id], eventId)
 
     and:
     jongo.collection("eventresults_view") << [
@@ -39,7 +39,7 @@ class OnParticipantIncludedTest extends Specification {
     ]
 
     when:
-    expense.participantsIds() << ben.id()
+    expense.participantsIds() << ben.id
     handler.executeInternalEvent(new ParticipantIncludedInternalEvent(expense, ben))
 
     then:

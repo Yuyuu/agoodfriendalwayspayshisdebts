@@ -44,7 +44,7 @@ class EventTest extends Specification {
     def event = new Event("cool event", [kim])
 
     when:
-    def expense = new Expense("label", kim.id(), 5, [kim.id()], event.id)
+    def expense = new Expense("label", kim.id, 5, [kim.id], event.id)
     event.addExpense(expense)
 
     then:
@@ -84,7 +84,7 @@ class EventTest extends Specification {
     event.expenses().add(expense)
 
     when:
-    def deletedExpense = event.deleteExpense(expense.id())
+    def deletedExpense = event.deleteExpense(expense.id)
 
     then:
     deletedExpense == expense
@@ -98,7 +98,7 @@ class EventTest extends Specification {
     event.expenses().add(expense)
 
     when:
-    event.deleteExpense(expense.id())
+    event.deleteExpense(expense.id)
 
     then:
     def internalEvent = eventBus.bus.lastEvent(ExpenseDeletedInternalEvent)
@@ -142,7 +142,7 @@ class EventTest extends Specification {
     def event = new Event("", [kim])
 
     expect:
-    event.findParticipant(kim.id()) == kim
+    event.findParticipant(kim.id) == kim
   }
 
   def "throws an error if the searched participant does not exist"() {

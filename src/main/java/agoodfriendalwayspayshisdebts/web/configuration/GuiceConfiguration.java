@@ -1,6 +1,6 @@
 package agoodfriendalwayspayshisdebts.web.configuration;
 
-import agoodfriendalwayspayshisdebts.infrastructure.persistence.mongo.MongoLinkRepositoryLocator;
+import agoodfriendalwayspayshisdebts.infrastructure.persistence.mongo.MongoRepositoryLocator;
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
@@ -54,7 +54,7 @@ public class GuiceConfiguration extends AbstractModule {
   private void configurePersistence() {
     bind(MongoLinkContext.class).in(Singleton.class);
 
-    bind(RepositoryLocator.class).to(MongoLinkRepositoryLocator.class).in(Singleton.class);
+    bind(RepositoryLocator.class).to(MongoRepositoryLocator.class).in(Singleton.class);
   }
 
   private void configureCommands() {

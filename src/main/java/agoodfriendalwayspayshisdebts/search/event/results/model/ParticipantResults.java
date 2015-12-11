@@ -26,7 +26,7 @@ public class ParticipantResults {
   public static ParticipantResults forParticipant(Participant participant, Map<UUID, String> participantsNames) {
     final ParticipantResults participantResults = new ParticipantResults(participant.name(), participant.share());
     participantsNames.entrySet().stream()
-        .filter(participantEntry -> !participantEntry.getKey().equals(participant.id()))
+        .filter(participantEntry -> !participantEntry.getKey().equals(participant.getId()))
         .forEach(participantEntry -> participantResults.details
             .put(participantEntry.getKey(), new DetailsWithParticipant(participantEntry.getValue())));
     return participantResults;

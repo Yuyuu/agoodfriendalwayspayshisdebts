@@ -1,10 +1,10 @@
 package com.vter.model;
 
-public interface Repository<TId, TEntity extends Entity<TId>> {
+public interface Repository<TId, TAggregate extends Aggregate<TId>> {
 
-  TEntity get(TId id);
+  TAggregate get(TId id);
 
-  void save(TEntity entity);
+  void add(TAggregate entity);
 
-  void delete(TEntity entity);
+  void delete(TAggregate entity);
 }

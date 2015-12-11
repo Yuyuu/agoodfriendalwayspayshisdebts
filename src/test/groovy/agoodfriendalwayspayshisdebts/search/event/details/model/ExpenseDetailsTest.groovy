@@ -18,7 +18,7 @@ class ExpenseDetailsTest extends Specification {
     def expenseDetails = ExpenseDetails.forExpense(expense, [(purchaserId): "ben"])
 
     then:
-    expenseDetails.id == expense.id()
+    expenseDetails.id == expense.id
     expenseDetails.label == "label"
     expenseDetails.purchaserName == "ben"
     expenseDetails.amount == 10

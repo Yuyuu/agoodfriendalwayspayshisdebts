@@ -23,11 +23,11 @@ class OnParticipantIncludedTest extends Specification {
 
   def "updates the participants names of the expense"() {
     given:
-    def expense = new Expense("", kim.id(), 2, [kim.id()], event.id)
+    def expense = new Expense("", kim.id, 2, [kim.id], event.id)
     jongo.collection("expensesdetails_view") << [
         _id: event.id,
         expenseCount: 1,
-        expenses: [[id: expense.id(), label: "label", purchaserName: kim.name(), amount: 2, participantsNames: [kim.name()]]]
+        expenses: [[id: expense.id, label: "label", purchaserName: kim.name(), amount: 2, participantsNames: [kim.name()]]]
     ]
 
     when:

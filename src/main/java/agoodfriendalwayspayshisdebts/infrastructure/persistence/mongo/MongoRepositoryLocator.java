@@ -6,16 +6,16 @@ import com.vter.infrastructure.persistence.mongo.MongoLinkContext;
 
 import javax.inject.Inject;
 
-public class MongoLinkRepositoryLocator extends RepositoryLocator {
+public class MongoRepositoryLocator extends RepositoryLocator {
 
   @Inject
-  public MongoLinkRepositoryLocator(MongoLinkContext mongoLinkContext) {
+  public MongoRepositoryLocator(MongoLinkContext mongoLinkContext) {
     this.mongoLinkContext = mongoLinkContext;
   }
 
   @Override
   protected EventRepository getEvents() {
-    return new MongoLinkEventRepository(mongoLinkContext.currentSession());
+    return new MongoEventRepository(mongoLinkContext.currentSession());
   }
 
   private final MongoLinkContext mongoLinkContext;

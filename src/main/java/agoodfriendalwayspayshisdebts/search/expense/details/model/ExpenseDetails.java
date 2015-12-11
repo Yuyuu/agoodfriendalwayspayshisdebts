@@ -21,7 +21,7 @@ public class ExpenseDetails {
 
   public static ExpenseDetails forExpense(Expense expense, Map<UUID, String> eventParticipantsNames) {
     final ExpenseDetails expenseDetails = new ExpenseDetails();
-    expenseDetails.id = expense.id();
+    expenseDetails.id = expense.getId();
     expenseDetails.label = expense.label();
     expenseDetails.purchaserName = eventParticipantsNames.get(expense.purchaserId());
     expenseDetails.amount = expense.amount();

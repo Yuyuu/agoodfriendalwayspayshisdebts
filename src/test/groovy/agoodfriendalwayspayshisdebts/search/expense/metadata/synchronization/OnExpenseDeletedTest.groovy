@@ -21,7 +21,7 @@ class OnExpenseDeletedTest extends Specification {
   def "deletes the expense metadata from the collection"() {
     given:
     def expense = new Expense("", null, 1, [], eventId)
-    jongo.collection("expensesmetadata_view") << [_id: eventId, metadata: [[id:expense.id()]]]
+    jongo.collection("expensesmetadata_view") << [_id: eventId, metadata: [[id:expense.id]]]
 
     when:
     handler.executeInternalEvent(new ExpenseDeletedInternalEvent(expense))

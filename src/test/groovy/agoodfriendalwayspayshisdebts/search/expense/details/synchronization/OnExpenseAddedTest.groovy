@@ -25,7 +25,7 @@ class OnExpenseAddedTest extends Specification {
 
   def setup() {
     handler = new OnExpenseAdded(jongo.jongo())
-    RepositoryLocator.events().save(event)
+    RepositoryLocator.events().add(event)
   }
 
   def "can update the expenses details of the event"() {
@@ -37,7 +37,7 @@ class OnExpenseAddedTest extends Specification {
     ]
 
     when:
-    def expense = new Expense("hey", kim.id(), 4, [kim.id()], event.id)
+    def expense = new Expense("hey", kim.id, 4, [kim.id], event.id)
     handler.executeInternalEvent(new ExpenseAddedInternalEvent(expense))
 
     then:
@@ -47,7 +47,7 @@ class OnExpenseAddedTest extends Specification {
     details.eventId == event.id
     details.expenseCount == 2
     details.expenses.size() == 2
-    details.expenses[1].id == expense.id()
+    details.expenses[1].id == expense.id
     details.expenses[1].label == "hey"
     details.expenses[1].purchaserName == "kim"
     details.expenses[1].amount == 4
@@ -58,7 +58,7 @@ class OnExpenseAddedTest extends Specification {
 
   def "creates the expenses details if it does not exist yet"() {
     when:
-    def expense = new Expense("hey", kim.id(), 4, [kim.id()], event.id)
+    def expense = new Expense("hey", kim.id, 4, [kim.id], event.id)
     handler.executeInternalEvent(new ExpenseAddedInternalEvent(expense))
 
     then:

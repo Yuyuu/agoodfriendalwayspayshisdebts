@@ -22,12 +22,12 @@ class DeleteExpenseCommandHandlerTest extends Specification {
 
   def setup() {
     event.expenses().add(expense)
-    RepositoryLocator.events().save(event);
+    RepositoryLocator.events().add(event);
   }
 
   def "deletes the expense from the event"() {
     when:
-    new DeleteExpenseCommandHandler().execute(new DeleteExpenseCommand(eventId: event.id, expenseId: expense.id()))
+    new DeleteExpenseCommandHandler().execute(new DeleteExpenseCommand(eventId: event.id, expenseId: expense.id))
 
     then:
     def updatedEvent = RepositoryLocator.events().get(event.id)
@@ -36,7 +36,7 @@ class DeleteExpenseCommandHandlerTest extends Specification {
 
   def "records the operation when an expense is deleted"() {
     when:
-    new DeleteExpenseCommandHandler().execute(new DeleteExpenseCommand(eventId: event.id, expenseId: expense.id()))
+    new DeleteExpenseCommandHandler().execute(new DeleteExpenseCommand(eventId: event.id, expenseId: expense.id))
 
     then:
     def operation = event.operations().first()
