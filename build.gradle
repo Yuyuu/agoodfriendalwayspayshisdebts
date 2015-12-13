@@ -17,7 +17,6 @@ allprojects {
 ext {
   guiceVersion = "4.0"
   mongoLinkVersion = "1.2.2"
-  handlebarsVersion = "2.2.3"
 }
 
 test {
@@ -37,8 +36,6 @@ def libs = [
     guava               : "com.google.guava:guava:18.0",
     guice               : "com.google.inject:guice:$guiceVersion",
     guiceMultibindings  : "com.google.inject.extensions:guice-multibindings:$guiceVersion",
-    handlebars          : "com.github.jknack:handlebars:$handlebarsVersion",
-    handlebarsGuavaCache: "com.github.jknack:handlebars-guava-cache:$handlebarsVersion",
     jacksonJoda         : "com.fasterxml.jackson.datatype:jackson-datatype-joda:2.6.3",
     javassist           : "org.javassist:javassist:3.20.0-GA",
     javaxEl             : "org.glassfish.web:javax.el:2.2.5",
@@ -67,9 +64,6 @@ dependencies {
   compile(libs.fluentHttp) {
     exclude module: "slf4j-simple"
   }
-
-  compile libs.handlebars
-  compile libs.handlebarsGuavaCache
 
   compile libs.jodaTime
   compile libs.jacksonJoda
