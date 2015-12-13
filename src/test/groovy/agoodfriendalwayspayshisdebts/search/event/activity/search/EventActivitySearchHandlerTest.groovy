@@ -22,8 +22,7 @@ class EventActivitySearchHandlerTest extends Specification {
     ]
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.ALL)
-    search.page(1)
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL, 1)
     def operations = handler.execute(search, jongo.jongo())
 
     then:
@@ -47,8 +46,7 @@ class EventActivitySearchHandlerTest extends Specification {
     }
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.ALL)
-    search.page(page)
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL, page)
     def operations = handler.execute(search, jongo.jongo())
 
     then:
@@ -67,8 +65,7 @@ class EventActivitySearchHandlerTest extends Specification {
     populateView()
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.ALL)
-    search.page(1)
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL, 1)
     def operations = handler.execute(search, jongo.jongo())
 
     then:
@@ -85,8 +82,7 @@ class EventActivitySearchHandlerTest extends Specification {
     }
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.ALL)
-    search.page(1)
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL, 1)
     def operations = handler.execute(search, jongo.jongo())
 
     then:
@@ -98,8 +94,7 @@ class EventActivitySearchHandlerTest extends Specification {
     populateView()
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.EXPENSES)
-    search.page(page)
+    def search = new EventActivitySearch(eventId, ActivityFilter.EXPENSES, page)
     def operations = handler.execute(search, jongo.jongo())
 
     then:
@@ -117,8 +112,7 @@ class EventActivitySearchHandlerTest extends Specification {
     populateView()
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.PARTICIPANTS)
-    search.page(page)
+    def search = new EventActivitySearch(eventId, ActivityFilter.PARTICIPANTS, page)
     def operations = handler.execute(search, jongo.jongo())
 
     then:
@@ -136,8 +130,7 @@ class EventActivitySearchHandlerTest extends Specification {
     populateView()
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.REMINDERS)
-    search.page(page)
+    def search = new EventActivitySearch(eventId, ActivityFilter.REMINDERS, page)
     def operations = handler.execute(search, jongo.jongo())
 
     then:

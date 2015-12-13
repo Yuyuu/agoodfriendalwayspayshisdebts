@@ -26,7 +26,7 @@ public class GetEventActivity extends BaseAction {
     final UUID eventId = UUID.fromString(stringifiedEventUuid);
     final ActivityFilter activityFilter = ActivityFilter.parseFromString(filter);
     final ExecutionResult<Iterable<EventOperation>> result = searchBus.sendAndWaitResponse(
-        new EventActivitySearch(eventId, activityFilter).page(page)
+        new EventActivitySearch(eventId, activityFilter, page)
     );
     return getOptionalDataOrFail(result);
   }
