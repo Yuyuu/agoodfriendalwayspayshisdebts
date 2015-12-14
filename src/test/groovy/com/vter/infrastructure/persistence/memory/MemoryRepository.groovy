@@ -20,5 +20,9 @@ class MemoryRepository<TId, TAggregate extends Aggregate<TId>> implements Reposi
     entities.remove(entity)
   }
 
+  public Set<TAggregate> getAll() {
+    return entities;
+  }
+
   final Set<TAggregate> entities = []
 }

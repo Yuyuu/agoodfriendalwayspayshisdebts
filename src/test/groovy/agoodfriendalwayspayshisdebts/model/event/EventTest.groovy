@@ -1,6 +1,8 @@
 package agoodfriendalwayspayshisdebts.model.event
 
-import agoodfriendalwayspayshisdebts.model.activity.Operation
+import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.MemoryOperationRepository
+import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
+import agoodfriendalwayspayshisdebts.model.RepositoryLocator
 import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
@@ -17,6 +19,9 @@ class EventTest extends Specification {
   @Rule
   WithEventBus eventBus = new WithEventBus()
 
+  @Rule
+  WithMemoryRepository memoryRepository = new WithMemoryRepository()
+
   def "can create an event with a name and a list of participants"() {
     given:
     def event = new Event("cool event", [new Participant("kim", 1, null)])
@@ -26,6 +31,18 @@ class EventTest extends Specification {
     event.name() == "cool event"
     event.participants().first().name() == "kim"
     event.participants().first().eventId() == event.id
+  }
+
+  def "records the operation when an event is created"() {
+    when:
+    Event.createAndPublishInternalEvent("cool event", [])
+
+    then:
+    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
+    operation.id != null
+    operation.type() == OperationType.EVENT_CREATION
+    operation.data() == "cool event"
+    operation.creationDate()!= null
   }
 
   def "emits an internal event when creating a new event"() {
@@ -50,6 +67,38 @@ class EventTest extends Specification {
     then:
     event.expenses().size() == 1
     event.expenses()[0] == expense
+  }
+
+  def "records the operation when an expense is added"() {
+    given:
+    def event = new Event("", [])
+
+    when:
+    event.addExpense(new Expense("label", null, 0L, [], event.id))
+
+    then:
+    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
+    operation.id != null
+    operation.type() == OperationType.NEW_EXPENSE
+    operation.data() == "label"
+    operation.creationDate()!= null
+  }
+
+  def "records the operation when an expense is deleted"() {
+    given:
+    def event = new Event("", [])
+    def expense = new Expense("label", null, 0L, [], event.id)
+    event.expenses().add(expense)
+
+    when:
+    event.deleteExpense(expense.id)
+
+    then:
+    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
+    operation.id != null
+    operation.type() == OperationType.EXPENSE_DELETED
+    operation.data() == "label"
+    operation.creationDate()!= null
   }
 
   def "emits an event when an expense is added"() {
@@ -121,6 +170,21 @@ class EventTest extends Specification {
     event.participants().find { it.name() == "ben" } != null
   }
 
+  def "records the operation when a participant is added"() {
+    given:
+    def event = new Event("", [])
+
+    when:
+    event.addParticipant(new Participant("lea", 1, null))
+
+    then:
+    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
+    operation.id != null
+    operation.type() == OperationType.NEW_PARTICIPANT
+    operation.data() == "lea"
+    operation.creationDate()!= null
+  }
+
   def "emits an event when a participant is added"() {
     given:
     def event = new Event("", [new Participant("kim", 1, null)])
@@ -154,14 +218,5 @@ class EventTest extends Specification {
 
     then:
     thrown(UnknownParticipant)
-  }
-
-  def "contains operations"() {
-    when:
-    def event = new Event("", [])
-    event.operations() << new Operation(OperationType.EVENT_CREATION, "", event.id)
-
-    then:
-    event.operations()[0].eventId() == event.id
   }
 }

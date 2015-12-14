@@ -3,6 +3,7 @@ package com.vter.infrastructure.persistence.mongo;
 import com.vter.command.CommandSynchronization;
 import com.vter.infrastructure.bus.Message;
 import com.vter.model.internal_event.InternalEventSynchronization;
+import com.vter.search.SearchSynchronization;
 import org.mongolink.MongoSession;
 import org.mongolink.MongoSessionManager;
 import org.slf4j.Logger;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
-public class MongoLinkContext implements CommandSynchronization, InternalEventSynchronization {
+public class MongoLinkContext implements CommandSynchronization, InternalEventSynchronization, SearchSynchronization, MongoSessionProvider {
 
   @Inject
   public MongoLinkContext(MongoSessionManager sessionManager) {
@@ -42,6 +43,7 @@ public class MongoLinkContext implements CommandSynchronization, InternalEventSy
     sessions.remove();
   }
 
+  @Override
   public MongoSession currentSession() {
     return sessions.get();
   }

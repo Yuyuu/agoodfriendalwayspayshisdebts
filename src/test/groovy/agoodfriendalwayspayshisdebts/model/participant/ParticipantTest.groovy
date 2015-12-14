@@ -1,5 +1,9 @@
 package agoodfriendalwayspayshisdebts.model.participant
 
+import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.MemoryOperationRepository
+import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
+import agoodfriendalwayspayshisdebts.model.RepositoryLocator
+import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import com.vter.model.internal_event.WithEventBus
 import org.junit.Rule
 import spock.lang.Specification
@@ -7,6 +11,9 @@ import spock.lang.Specification
 class ParticipantTest extends Specification {
   @Rule
   WithEventBus eventBus = new WithEventBus()
+
+  @Rule
+  WithMemoryRepository memoryRepository = new WithMemoryRepository()
 
   def "can create a participant with a name and a share"() {
     given:
@@ -49,6 +56,21 @@ class ParticipantTest extends Specification {
 
     then:
     participant.email() == "a@email.com"
+  }
+
+  def "records the operation when a participant is edited"() {
+    given:
+    def participant = new Participant("lea", 1, null)
+
+    when:
+    participant.update("email")
+
+    then:
+    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
+    operation.id != null
+    operation.type() == OperationType.PARTICIPANT_EDITED
+    operation.data() == "lea"
+    operation.creationDate()!= null
   }
 
   def "emits an event when a participant is updated"() {

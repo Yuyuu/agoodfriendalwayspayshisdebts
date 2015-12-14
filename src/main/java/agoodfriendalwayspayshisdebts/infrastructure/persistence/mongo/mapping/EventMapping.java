@@ -13,6 +13,5 @@ public class EventMapping extends AggregateMap<Event> {
     property().onField("name");
     collection().onField("participants");
     collection().onField("expenses");
-    collection().onField("operations");
   }
 }

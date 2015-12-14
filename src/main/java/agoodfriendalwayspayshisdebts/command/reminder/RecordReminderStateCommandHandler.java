@@ -15,7 +15,7 @@ public class RecordReminderStateCommandHandler implements CommandHandler<RecordR
     final Event event = RepositoryLocator.events().get(command.eventId);
     final Participant participant = event.findParticipant(command.participantId);
     final OperationType operationType = operationType(command.event);
-    event.addOperation(new Operation(operationType, participant.name(), event.getId()));
+    RepositoryLocator.operations().add(new Operation(operationType, participant.name(), event.getId()));
     return null;
   }
 

@@ -7,7 +7,7 @@ class WithMemoryRepository extends ExternalResource {
 
   @Override
   protected void before() throws Throwable {
-    MemoryRepositoryLocator.initialize(new MemoryRepositoryLocator())
+    RepositoryLocator.initialize(new MemoryRepositoryLocator())
   }
 
   @Override

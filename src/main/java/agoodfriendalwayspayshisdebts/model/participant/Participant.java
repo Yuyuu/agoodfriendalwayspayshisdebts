@@ -1,5 +1,8 @@
 package agoodfriendalwayspayshisdebts.model.participant;
 
+import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
+import agoodfriendalwayspayshisdebts.model.activity.Operation;
+import agoodfriendalwayspayshisdebts.model.activity.OperationType;
 import com.vter.model.BaseEntityWithUuid;
 import com.vter.model.internal_event.InternalEventBus;
 
@@ -44,6 +47,7 @@ public class Participant extends BaseEntityWithUuid {
 
   public void update(String email) {
     this.email = email;
+    RepositoryLocator.operations().add(new Operation(OperationType.PARTICIPANT_EDITED, name, eventId));
     InternalEventBus.INSTANCE().publish(new ParticipantUpdatedInternalEvent(eventId, getId()));
   }
 }

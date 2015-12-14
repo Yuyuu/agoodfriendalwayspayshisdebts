@@ -1,7 +1,7 @@
 package agoodfriendalwayspayshisdebts.web.actions.event;
 
+import agoodfriendalwayspayshisdebts.model.activity.Operation;
 import agoodfriendalwayspayshisdebts.search.event.activity.model.ActivityFilter;
-import agoodfriendalwayspayshisdebts.search.event.activity.model.EventOperation;
 import agoodfriendalwayspayshisdebts.search.event.activity.search.EventActivitySearch;
 import com.vter.infrastructure.bus.ExecutionResult;
 import com.vter.search.SearchBus;
@@ -22,10 +22,10 @@ public class GetEventActivity extends BaseAction {
   }
 
   @Get("/events/:stringifiedEventUuid/activity?filter=:filter&page=:page")
-  public Optional<Iterable<EventOperation>> get(String stringifiedEventUuid, String filter, int page) {
+  public Optional<Iterable<Operation>> get(String stringifiedEventUuid, String filter, int page) {
     final UUID eventId = UUID.fromString(stringifiedEventUuid);
     final ActivityFilter activityFilter = ActivityFilter.parseFromString(filter);
-    final ExecutionResult<Iterable<EventOperation>> result = searchBus.sendAndWaitResponse(
+    final ExecutionResult<Iterable<Operation>> result = searchBus.sendAndWaitResponse(
         new EventActivitySearch(eventId, activityFilter, page)
     );
     return getOptionalDataOrFail(result);

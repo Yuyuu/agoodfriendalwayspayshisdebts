@@ -2,8 +2,6 @@ package agoodfriendalwayspayshisdebts.command.participant
 
 import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator
-import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
-import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.participant.Participant
@@ -73,22 +71,5 @@ class AddParticipantCommandHandlerTest extends Specification {
 
     then:
     0 * expense.includeParticipant(_ as Participant)
-  }
-
-  def "records the operation when a participant is added"() {
-    when:
-    def command = new AddParticipantCommand(eventId: event.id, name: "lea", share: 1)
-    new AddParticipantCommandHandler().execute(command)
-
-    then:
-    def operation = event.operations().first()
-    operation.type() == OperationType.NEW_PARTICIPANT
-    operation.data() == "lea"
-
-    and:
-    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
-    internalEvent != null
-    internalEvent.eventId == event.id
-    internalEvent.operationId != null
   }
 }

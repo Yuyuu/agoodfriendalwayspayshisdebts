@@ -1,36 +1,42 @@
 package agoodfriendalwayspayshisdebts.search.event.activity.search;
 
+import agoodfriendalwayspayshisdebts.model.activity.Operation;
 import agoodfriendalwayspayshisdebts.search.event.activity.model.ActivityFilter;
-import agoodfriendalwayspayshisdebts.search.event.activity.model.EventOperation;
-import com.google.common.collect.Lists;
-import com.vter.search.JongoSearchHandler;
-import org.jongo.Find;
-import org.jongo.Jongo;
-import org.jongo.MongoCollection;
+import com.vter.search.MongoSearchHandler;
+import org.mongolink.domain.criteria.Criteria;
+import org.mongolink.domain.criteria.Order;
+import org.mongolink.domain.criteria.Restrictions;
 
-import java.util.UUID;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class EventActivitySearchHandler extends JongoSearchHandler<EventActivitySearch, Iterable<EventOperation>> {
+public class EventActivitySearchHandler extends MongoSearchHandler<EventActivitySearch, Iterable<Operation>> {
 
   @Override
-  protected Iterable<EventOperation> execute(EventActivitySearch search, Jongo jongo) {
+  public Iterable<Operation> execute(EventActivitySearch search) {
     final int pageSize = pageSize(search.filter);
     final int skip = (search.page - 1) * pageSize;
-    final Find findQuery = findQuery(jongo.getCollection("eventactivity_view"), search.eventId, search.filter);
-    return Lists.newArrayList(
-        findQuery.sort("{creationDate:-1}").skip(skip).limit(pageSize).as(EventOperation.class).iterator()
-    );
+    final Criteria<Operation> criteria = session().createCriteria(Operation.class);
+    criteria.add(Restrictions.equals("eventId", search.eventId));
+    applyTypeRestriction(criteria, search.filter);
+    criteria.sort("creationDate", Order.DESCENDING);
+    criteria.skip(skip);
+    criteria.limit(pageSize);
+    return criteria.list();
   }
 
-  private static Find findQuery(MongoCollection view, UUID eventId, ActivityFilter filter) {
+  private static void applyTypeRestriction(Criteria criteria, ActivityFilter filter) {
     assert filter.associatedOperationCount() >= 0;
     switch (filter.associatedOperationCount()) {
       case 0:
-        return view.find("{eventId:#}", eventId);
+        return;
       case 1:
-        return view.find("{eventId:#,type:#}", eventId, filter.operationTypes().get(0));
+        criteria.add(Restrictions.equals("type", filter.operationTypes().get(0).name()));
+        break;
       default:
-        return view.find("{eventId:#,type:{$in:#}}", eventId, filter.operationTypes());
+        final List<String> operationTypes = filter.operationTypes().stream().map(Enum::name).collect(Collectors.toList());
+        criteria.add(Restrictions.in("type", operationTypes));
+        break;
     }
   }
 

@@ -17,12 +17,14 @@ import com.vter.command.CommandSynchronization;
 import com.vter.command.CommandValidator;
 import com.vter.infrastructure.bus.guice.ImplementationScanner;
 import com.vter.infrastructure.persistence.mongo.MongoLinkContext;
+import com.vter.infrastructure.persistence.mongo.MongoSessionProvider;
 import com.vter.model.internal_event.AsynchronousInternalEventBus;
 import com.vter.model.internal_event.InternalEventBus;
 import com.vter.model.internal_event.InternalEventHandler;
 import com.vter.model.internal_event.InternalEventSynchronization;
 import com.vter.search.SearchBus;
 import com.vter.search.SearchHandler;
+import com.vter.search.SearchSynchronization;
 import com.vter.web.fluent.status.resolver.BusinessErrorResolver;
 import com.vter.web.fluent.status.resolver.ExceptionResolver;
 import com.vter.web.fluent.status.resolver.ValidationExceptionResolver;
@@ -53,6 +55,7 @@ public class GuiceConfiguration extends AbstractModule {
 
   private void configurePersistence() {
     bind(MongoLinkContext.class).in(Singleton.class);
+    bind(MongoSessionProvider.class).to(MongoLinkContext.class);
 
     bind(RepositoryLocator.class).to(MongoRepositoryLocator.class).in(Singleton.class);
   }
@@ -74,6 +77,8 @@ public class GuiceConfiguration extends AbstractModule {
   }
 
   private void configureSearches() {
+    final Multibinder<SearchSynchronization> multibinder = Multibinder.newSetBinder(binder(), SearchSynchronization.class);
+    multibinder.addBinding().to(MongoLinkContext.class);
     ImplementationScanner.scanPackageAndBind("agoodfriendalwayspayshisdebts.search", SearchHandler.class, binder());
     bind(SearchBus.class).asEagerSingleton();
   }

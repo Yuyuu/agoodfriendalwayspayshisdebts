@@ -1,8 +1,8 @@
 package agoodfriendalwayspayshisdebts.command.reminder
 
+import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.MemoryOperationRepository
 import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator
-import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
 import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.participant.Participant
@@ -31,16 +31,11 @@ class RecordReminderStateCommandHandlerTest extends Specification {
     handler.execute(new RecordReminderStateCommand(event: state, eventId: event.id, participantId: bob.id))
 
     then:
-    def event = RepositoryLocator.events().get(event.id)
-    def operation = event.operations().first()
+    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
+    operation.id != null
     operation.type() == operationType
     operation.data() == "bob"
-
-    and:
-    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
-    internalEvent != null
-    internalEvent.eventId == event.id
-    internalEvent.operationId == operation.id
+    operation.creationDate()!= null
 
     where:
     state       || operationType

@@ -1,11 +1,11 @@
 package agoodfriendalwayspayshisdebts.model.activity;
 
-import com.vter.model.BaseEntityWithUuid;
+import com.vter.model.BaseAggregateWithUuid;
 import org.joda.time.DateTime;
 
 import java.util.UUID;
 
-public class Operation extends BaseEntityWithUuid {
+public class Operation extends BaseAggregateWithUuid {
 
   private OperationType type;
   private DateTime creationDate;

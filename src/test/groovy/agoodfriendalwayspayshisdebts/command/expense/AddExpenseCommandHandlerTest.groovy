@@ -2,8 +2,6 @@ package agoodfriendalwayspayshisdebts.command.expense
 
 import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator
-import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
-import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import com.vter.model.internal_event.WithEventBus
@@ -98,23 +96,5 @@ class AddExpenseCommandHandlerTest extends Specification {
     then:
     def expense = RepositoryLocator.events().get(event.id).expenses()[0]
     expense.description() == "hello  hi"
-  }
-
-  def "records the operation when an expense is added"() {
-    when:
-    new AddExpenseCommandHandler().execute(
-        new AddExpenseCommand(eventId: event.id, label: "label", purchaserUuid: kim.id.toString(), amount: 1)
-    )
-
-    then:
-    def operation = event.operations().first()
-    operation.type() == OperationType.NEW_EXPENSE
-    operation.data() == "label"
-
-    and:
-    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
-    internalEvent != null
-    internalEvent.eventId == event.id
-    internalEvent.operationId != null
   }
 }

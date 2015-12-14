@@ -1,7 +1,8 @@
 package agoodfriendalwayspayshisdebts.model.event;
 
+import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
 import agoodfriendalwayspayshisdebts.model.activity.Operation;
-import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent;
+import agoodfriendalwayspayshisdebts.model.activity.OperationType;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent;
@@ -25,7 +26,6 @@ public class Event extends BaseAggregateWithUuid {
   private String name;
   private Set<Participant> participants = Sets.newHashSet();
   private List<Expense> expenses = Lists.newArrayList();
-  private List<Operation> operations = Lists.newArrayList();
 
   /* This is used by mongolink */
   @SuppressWarnings("unused")
@@ -39,6 +39,7 @@ public class Event extends BaseAggregateWithUuid {
 
   public static Event createAndPublishInternalEvent(String name, Collection<Participant> participants) {
     final Event event = new Event(name, participants);
+    RepositoryLocator.operations().add(new Operation(OperationType.EVENT_CREATION, event.name(), event.getId()));
     publishInternalEvent(new EventCreatedInternalEvent(event.getId()));
     return event;
   }
@@ -55,18 +56,16 @@ public class Event extends BaseAggregateWithUuid {
     return name;
   }
 
-  public List<Operation> operations() {
-    return operations;
-  }
-
   public void addExpense(Expense expense) {
     expenses.add(expense);
+    RepositoryLocator.operations().add(new Operation(OperationType.NEW_EXPENSE, expense.label(), getId()));
     publishInternalEvent(new ExpenseAddedInternalEvent(expense));
   }
 
   public Expense deleteExpense(UUID expenseId) {
     final Expense expense = find(expenseId);
     expenses.remove(expense);
+    RepositoryLocator.operations().add(new Operation(OperationType.EXPENSE_DELETED, expense.label(), getId()));
     publishInternalEvent(new ExpenseDeletedInternalEvent(expense));
     return expense;
   }
@@ -74,6 +73,7 @@ public class Event extends BaseAggregateWithUuid {
   public void addParticipant(Participant participant) {
     participant.eventId(getId());
     participants.add(participant);
+    RepositoryLocator.operations().add(new Operation(OperationType.NEW_PARTICIPANT, participant.name(), getId()));
     publishInternalEvent(new ParticipantAddedInternalEvent(getId(), participant));
   }
 
@@ -82,11 +82,6 @@ public class Event extends BaseAggregateWithUuid {
         .filter(participant -> participantId.equals(participant.getId()))
         .findFirst()
         .orElseThrow(UnknownParticipant::new);
-  }
-
-  public void addOperation(Operation operation) {
-    operations.add(operation);
-    publishInternalEvent(new OperationPerformedInternalEvent(getId(), operation.getId()));
   }
 
   private Expense find(UUID expenseId) {
