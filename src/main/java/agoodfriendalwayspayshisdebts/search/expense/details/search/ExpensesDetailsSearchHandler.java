@@ -1,6 +1,7 @@
 package agoodfriendalwayspayshisdebts.search.expense.details.search;
 
 import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpensesDetails;
+import com.vter.search.JongoQueryBuilder;
 import com.vter.search.JongoSearchHandler;
 import org.jongo.Jongo;
 
@@ -22,16 +23,18 @@ public class ExpensesDetailsSearchHandler extends JongoSearchHandler<ExpensesDet
     final int limit = (unskippedExpenseCount >= search.limit()) ? search.limit() : unskippedExpenseCount;
     final int reverseSkip = search.skip() + limit;
 
-    return jongo.getCollection("expensesdetails_view")
-        .findOne("{_id:#}", search.eventId)
+    return JongoQueryBuilder.create("expensesdetails_view")
+        .add("_id", "#", search.eventId)
+        .findOne(jongo)
         .projection("{expenseCount:1,expenses:{$slice:[#,#]}}", -reverseSkip, limit)
         .as(ExpensesDetails.class);
   }
 
   private static Optional<Integer> expenseCount(UUID eventId, Jongo jongo) {
     final Optional<ExpenseCountQuery> optionalQueryResult = Optional.ofNullable(
-        jongo.getCollection("expensesdetails_view")
-            .findOne("{_id:#}", eventId)
+        JongoQueryBuilder.create("expensesdetails_view")
+            .add("_id", "#", eventId)
+            .findOne(jongo)
             .projection("{_id:0,expenses:0}")
             .as(ExpenseCountQuery.class)
     );
