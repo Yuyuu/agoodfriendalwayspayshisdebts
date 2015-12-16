@@ -10,7 +10,7 @@ public class EventResultsSearchHandler extends JongoSearchHandler<EventResultsSe
 
   @Override
   protected Iterable<ParticipantResults> execute(EventResultsSearch search, Jongo jongo) {
-    final EventResults result =  JongoQueryBuilder.create("eventresults_view")
+    final EventResults result = JongoQueryBuilder.create("eventresults_view")
         .add("_id", "#", search.eventId)
         .findOne(jongo)
         .as(EventResults.class);
