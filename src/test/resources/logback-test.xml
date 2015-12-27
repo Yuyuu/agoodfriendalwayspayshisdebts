@@ -5,8 +5,9 @@
         </encoder>
     </appender>
 
-    <logger name="fr.vter" level="DEBUG"/>
-    <logger name="agoodfriendalwayspayshisdebts" level="DEBUG"/>
+    <logger name="com.vter" additivity="false" level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </logger>
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
