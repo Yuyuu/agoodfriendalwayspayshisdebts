@@ -1,8 +1,0 @@
-package agoodfriendalwayspayshisdebts.infrastructure.persistence.memory
-
-import agoodfriendalwayspayshisdebts.model.activity.Operation
-import agoodfriendalwayspayshisdebts.model.activity.OperationRepository
-import com.vter.infrastructure.persistence.memory.MemoryRepositoryWithUuid
-
-class MemoryOperationRepository extends MemoryRepositoryWithUuid<Operation> implements OperationRepository {
-}
