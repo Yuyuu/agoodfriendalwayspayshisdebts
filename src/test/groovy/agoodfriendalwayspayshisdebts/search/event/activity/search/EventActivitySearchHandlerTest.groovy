@@ -2,52 +2,47 @@ package agoodfriendalwayspayshisdebts.search.event.activity.search
 
 import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.search.event.activity.model.ActivityFilter
-import com.vter.infrastructure.persistence.mongo.MongoSessionProvider
-import com.vter.infrastructure.persistence.mongo.WithMongoLink
+import com.vter.search.WithJongo
 import org.joda.time.DateTime
 import org.junit.Rule
 import spock.lang.Specification
 
 class EventActivitySearchHandlerTest extends Specification {
   @Rule
-  WithMongoLink mongoLink = WithMongoLink.withPackage("agoodfriendalwayspayshisdebts.infrastructure.persistence.mongo.mapping")
+  WithJongo jongo = new WithJongo()
 
   UUID eventId = UUID.randomUUID()
 
-  MongoSessionProvider mongoSessionProvider = Mock(MongoSessionProvider)
   EventActivitySearchHandler handler = new EventActivitySearchHandler()
-
-  void setup() {
-    mongoSessionProvider.currentSession() >> mongoLink.currentSession()
-    handler.initialize(mongoSessionProvider)
-  }
 
   def "returns the activity of an event"() {
     given:
     def operationId = UUID.randomUUID()
-    mongoLink.collection("operation") << [
-        _id: operationId, type: "NEW_EXPENSE", creationDate: date("2010-06-30T04:00"), data: "hello", eventId: eventId
+    jongo.collection("operationdetails_view") << [
+        _id: operationId, operationType: "NEW_EXPENSE", creationDate: date("2010-06-30T04:00"), operationData: "hello", eventId: eventId
     ]
 
     when:
     def search = new EventActivitySearch(eventId, ActivityFilter.ALL, 1)
-    def operations = handler.execute(search)
+    def operations = handler.execute(search, jongo.jongo())
 
     then:
     operations.size() == 1
     operations[0].id == operationId
-    operations[0].type() == OperationType.NEW_EXPENSE
-    operations[0].creationDate().year == 2010
-    operations[0].data() == "hello"
-    operations[0].eventId() == eventId
+    operations[0].operationType == OperationType.NEW_EXPENSE
+    operations[0].creationDate.year == 2010
+    operations[0].operationData == "hello"
+    operations[0].eventId == eventId
   }
 
   def "can return the activity progressively"() {
     given:
-    mongoLink.collection("operation") << [
-        [data: "22"], [data: "21"], [data: "20"], [data: "19"], [data: "18"], [data: "17"], [data: "16"], [data: "15"],
-        [data: "14"], [data: "13"], [data: "12"], [data: "11"], [data: "10"], [data: "9"], [data: "8"],  [data: "7"],
-        [data: "6"], [data: "5"], [data: "4"], [data: "3"], [data: "2"], [data: "1"]
+    jongo.collection("operationdetails_view") << [
+        [operationData: "22"], [operationData: "21"], [operationData: "20"], [operationData: "19"], [operationData: "18"],
+        [operationData: "17"], [operationData: "16"], [operationData: "15"], [operationData: "14"], [operationData: "13"],
+        [operationData: "12"], [operationData: "11"], [operationData: "10"], [operationData: "9"], [operationData: "8"],
+        [operationData: "7"], [operationData: "6"], [operationData: "5"], [operationData: "4"], [operationData: "3"],
+        [operationData: "2"], [operationData: "1"]
     ].each {
       it["_id"] = UUID.randomUUID()
       it["eventId"] = eventId
@@ -55,10 +50,10 @@ class EventActivitySearchHandlerTest extends Specification {
 
     when:
     def search = new EventActivitySearch(eventId, ActivityFilter.ALL, page)
-    def operations = handler.execute(search)
+    def operations = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.data() == expected
+    operations*.operationData == expected
 
     where:
     page || expected
@@ -74,27 +69,27 @@ class EventActivitySearchHandlerTest extends Specification {
 
     when:
     def search = new EventActivitySearch(eventId, ActivityFilter.ALL, 1)
-    def operations = handler.execute(search)
+    def operations = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.data() == ["15", "14", "13", "12", "11", "10", "9", "8", "7", "6"]
+    operations*.operationData == ["15", "14", "13", "12", "11", "10", "9", "8", "7", "6"]
   }
 
   def "only retrieves activity of the given event"() {
     given:
-    mongoLink.collection("operation") << [
-        [data: "5", eventId: eventId], [data: "4", eventId: UUID.randomUUID()], [data: "3", eventId: eventId],
-        [data: "2", eventId: UUID.randomUUID()], [data: "1", eventId: eventId]
+    jongo.collection("operationdetails_view") << [
+        [operationData: "5", eventId: eventId], [operationData: "4", eventId: UUID.randomUUID()], [operationData: "3", eventId: eventId],
+        [operationData: "2", eventId: UUID.randomUUID()], [operationData: "1", eventId: eventId]
     ].each {
       it["_id"] = UUID.randomUUID()
     }
 
     when:
     def search = new EventActivitySearch(eventId, ActivityFilter.ALL, 1)
-    def operations = handler.execute(search)
+    def operations = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.data() == ["5", "3", "1"]
+    operations*.operationData == ["5", "3", "1"]
   }
 
   def "can return the activity that is only about expenses"() {
@@ -103,10 +98,10 @@ class EventActivitySearchHandlerTest extends Specification {
 
     when:
     def search = new EventActivitySearch(eventId, ActivityFilter.EXPENSES, page)
-    def operations = handler.execute(search)
+    def operations = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.data() == expected
+    operations*.operationData == expected
 
     where:
     page || expected
@@ -121,10 +116,10 @@ class EventActivitySearchHandlerTest extends Specification {
 
     when:
     def search = new EventActivitySearch(eventId, ActivityFilter.PARTICIPANTS, page)
-    def operations = handler.execute(search)
+    def operations = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.data() == expected
+    operations*.operationData == expected
 
     where:
     page || expected
@@ -139,10 +134,10 @@ class EventActivitySearchHandlerTest extends Specification {
 
     when:
     def search = new EventActivitySearch(eventId, ActivityFilter.REMINDERS, page)
-    def operations = handler.execute(search)
+    def operations = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.data() == expected
+    operations*.operationData == expected
 
     where:
     page || expected
@@ -152,22 +147,22 @@ class EventActivitySearchHandlerTest extends Specification {
   }
 
   private void populateView() {
-    mongoLink.collection("operation") << [
-        [data: "4", type: "NEW_EXPENSE", creationDate: date("2010-06-30T04:00")],
-        [data: "8", type: "NEW_PARTICIPANT", creationDate: date("2010-06-30T08:00")],
-        [data: "1", type: "EXPENSE_DELETED", creationDate: date("2010-06-30T01:00")],
-        [data: "11", type: "EXPENSE_DELETED", creationDate: date("2010-06-30T11:00")],
-        [data: "9", type: "REMINDER_DELIVERED", creationDate: date("2010-06-30T09:00")],
-        [data: "6", type: "REMINDER_DROPPED", creationDate: date("2010-06-30T06:00")],
-        [data: "3", type: "PARTICIPANT_EDITED", creationDate: date("2010-06-30T03:00")],
-        [data: "10", type: "NEW_EXPENSE", creationDate: date("2010-06-30T10:00")],
-        [data: "7", type: "EXPENSE_DELETED", creationDate: date("2010-06-30T07:00")],
-        [data: "2", type: "REMINDER_DROPPED", creationDate: date("2010-06-30T02:00")],
-        [data: "12", type: "NEW_EXPENSE", creationDate: date("2010-06-30T12:00")],
-        [data: "5", type: "EVENT_CREATION", creationDate: date("2010-06-30T05:00")],
-        [data: "14", type: "REMINDER_DELIVERED", creationDate: date("2010-06-30T14:00")],
-        [data: "15", type: "NEW_PARTICIPANT", creationDate: date("2010-06-30T15:00")],
-        [data: "13", type: "PARTICIPANT_EDITED", creationDate: date("2010-06-30T13:00")]
+    jongo.collection("operationdetails_view") << [
+        [operationData: "4", operationType: "NEW_EXPENSE", creationDate: date("2010-06-30T04:00")],
+        [operationData: "8", operationType: "NEW_PARTICIPANT", creationDate: date("2010-06-30T08:00")],
+        [operationData: "1", operationType: "EXPENSE_DELETED", creationDate: date("2010-06-30T01:00")],
+        [operationData: "11", operationType: "EXPENSE_DELETED", creationDate: date("2010-06-30T11:00")],
+        [operationData: "9", operationType: "REMINDER_DELIVERED", creationDate: date("2010-06-30T09:00")],
+        [operationData: "6", operationType: "REMINDER_DROPPED", creationDate: date("2010-06-30T06:00")],
+        [operationData: "3", operationType: "PARTICIPANT_EDITED", creationDate: date("2010-06-30T03:00")],
+        [operationData: "10", operationType: "NEW_EXPENSE", creationDate: date("2010-06-30T10:00")],
+        [operationData: "7", operationType: "EXPENSE_DELETED", creationDate: date("2010-06-30T07:00")],
+        [operationData: "2", operationType: "REMINDER_DROPPED", creationDate: date("2010-06-30T02:00")],
+        [operationData: "12", operationType: "NEW_EXPENSE", creationDate: date("2010-06-30T12:00")],
+        [operationData: "5", operationType: "EVENT_CREATION", creationDate: date("2010-06-30T05:00")],
+        [operationData: "14", operationType: "REMINDER_DELIVERED", creationDate: date("2010-06-30T14:00")],
+        [operationData: "15", operationType: "NEW_PARTICIPANT", creationDate: date("2010-06-30T15:00")],
+        [operationData: "13", operationType: "PARTICIPANT_EDITED", creationDate: date("2010-06-30T13:00")]
     ].each {
       it["_id"] = UUID.randomUUID()
       it["eventId"] = eventId
