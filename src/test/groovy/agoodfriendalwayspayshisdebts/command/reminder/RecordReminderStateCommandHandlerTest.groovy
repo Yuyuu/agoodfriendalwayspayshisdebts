@@ -1,8 +1,8 @@
 package agoodfriendalwayspayshisdebts.command.reminder
 
-import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.MemoryOperationRepository
 import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
 import agoodfriendalwayspayshisdebts.model.RepositoryLocator
+import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
 import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.participant.Participant
@@ -26,16 +26,17 @@ class RecordReminderStateCommandHandlerTest extends Specification {
     RepositoryLocator.events().add(event)
   }
 
-  def "records the state of the reminder as an operation"() {
+  def "an event is emitted when the state of a reminder changes"() {
     when:
     handler.execute(new RecordReminderStateCommand(event: state, eventId: event.id, participantId: bob.id))
 
     then:
-    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
-    operation.id != null
-    operation.type() == operationType
-    operation.data() == "bob"
-    operation.creationDate()!= null
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent != null
+    internalEvent.eventId == event.id
+    internalEvent.creationDate != null
+    internalEvent.operationType == operationType
+    internalEvent.operationData == "bob"
 
     where:
     state       || operationType
