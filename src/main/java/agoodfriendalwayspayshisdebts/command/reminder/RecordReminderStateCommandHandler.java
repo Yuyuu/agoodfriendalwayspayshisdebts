@@ -5,7 +5,6 @@ import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEv
 import agoodfriendalwayspayshisdebts.model.activity.OperationType;
 import agoodfriendalwayspayshisdebts.model.event.Event;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
-import agoodfriendalwayspayshisdebts.model.reminder.ReminderState;
 import com.vter.command.CommandHandler;
 import com.vter.model.internal_event.InternalEventBus;
 

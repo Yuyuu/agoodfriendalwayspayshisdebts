@@ -1,4 +1,4 @@
-package agoodfriendalwayspayshisdebts.model.reminder;
+package agoodfriendalwayspayshisdebts.command.reminder;
 
 import agoodfriendalwayspayshisdebts.model.activity.OperationType;
 
