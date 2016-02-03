@@ -1,43 +1,45 @@
 package agoodfriendalwayspayshisdebts.search.event.activity.search;
 
-import agoodfriendalwayspayshisdebts.model.activity.Operation;
 import agoodfriendalwayspayshisdebts.search.event.activity.model.ActivityFilter;
-import com.vter.search.MongoSearchHandler;
-import org.mongolink.domain.criteria.Criteria;
-import org.mongolink.domain.criteria.Order;
-import org.mongolink.domain.criteria.Restrictions;
+import agoodfriendalwayspayshisdebts.search.event.activity.model.OperationDetails;
+import com.google.common.collect.Lists;
+import com.vter.search.JongoQueryBuilder;
+import com.vter.search.JongoSearchHandler;
+import org.jongo.Find;
+import org.jongo.Jongo;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class EventActivitySearchHandler extends MongoSearchHandler<EventActivitySearch, Iterable<Operation>> {
+public class EventActivitySearchHandler extends JongoSearchHandler<EventActivitySearch, Iterable<OperationDetails>> {
 
   @Override
-  public Iterable<Operation> execute(EventActivitySearch search) {
+  protected Iterable<OperationDetails> execute(EventActivitySearch search, Jongo jongo) {
     final int pageSize = pageSize(search.filter);
     final int skip = (search.page - 1) * pageSize;
-    final Criteria<Operation> criteria = session().createCriteria(Operation.class);
-    criteria.add(Restrictions.equals("eventId", search.eventId));
-    applyTypeRestriction(criteria, search.filter);
-    criteria.sort("creationDate", Order.DESCENDING);
-    criteria.skip(skip);
-    criteria.limit(pageSize);
-    return criteria.list();
+    final JongoQueryBuilder queryBuilder = JongoQueryBuilder.create("operationdetails_view");
+    queryBuilder.add("eventId", "#", search.eventId);
+    applyTypeRestriction(queryBuilder, search.filter);
+    final Find findQuery = queryBuilder.find(jongo);
+    return Lists.newArrayList(
+        findQuery.sort("{creationDate:-1}").skip(skip).limit(pageSize).as(OperationDetails.class).iterator()
+    );
   }
 
-  private static void applyTypeRestriction(Criteria criteria, ActivityFilter filter) {
+  private static void applyTypeRestriction(JongoQueryBuilder queryBuilder, ActivityFilter filter) {
+    String query;
+    Object queryValues;
     assert filter.associatedOperationCount() >= 0;
     switch (filter.associatedOperationCount()) {
       case 0:
         return;
       case 1:
-        criteria.add(Restrictions.equals("type", filter.operationTypes().get(0).name()));
+        query = "#";
+        queryValues = filter.operationTypes().get(0);
         break;
       default:
-        final List<String> operationTypes = filter.operationTypes().stream().map(Enum::name).collect(Collectors.toList());
-        criteria.add(Restrictions.in("type", operationTypes));
+        query = "{$in:#}";
+        queryValues = filter.operationTypes();
         break;
     }
+    queryBuilder.add("operationType", query, queryValues);
   }
 
   private static int pageSize(ActivityFilter filter) {

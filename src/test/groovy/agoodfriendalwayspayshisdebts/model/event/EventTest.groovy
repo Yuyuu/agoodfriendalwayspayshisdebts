@@ -1,8 +1,7 @@
 package agoodfriendalwayspayshisdebts.model.event
 
-import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.MemoryOperationRepository
 import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
-import agoodfriendalwayspayshisdebts.model.RepositoryLocator
+import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
 import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
@@ -33,16 +32,16 @@ class EventTest extends Specification {
     event.participants().first().eventId() == event.id
   }
 
-  def "records the operation when an event is created"() {
+  def "emits an internal event to notify of the event creation operation"() {
     when:
-    Event.createAndPublishInternalEvent("cool event", [])
+    def event = Event.createAndPublishInternalEvent("cool event", [])
 
     then:
-    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
-    operation.id != null
-    operation.type() == OperationType.EVENT_CREATION
-    operation.data() == "cool event"
-    operation.creationDate()!= null
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent.eventId == event.id
+    internalEvent.creationDate != null
+    internalEvent.operationType == OperationType.EVENT_CREATION
+    internalEvent.operationData == "cool event"
   }
 
   def "emits an internal event when creating a new event"() {
@@ -69,7 +68,7 @@ class EventTest extends Specification {
     event.expenses()[0] == expense
   }
 
-  def "records the operation when an expense is added"() {
+  def "emits an internal event to notify of the expense added operation"() {
     given:
     def event = new Event("", [])
 
@@ -77,14 +76,14 @@ class EventTest extends Specification {
     event.addExpense(new Expense("label", null, 0L, [], event.id))
 
     then:
-    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
-    operation.id != null
-    operation.type() == OperationType.NEW_EXPENSE
-    operation.data() == "label"
-    operation.creationDate()!= null
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent.eventId == event.id
+    internalEvent.creationDate != null
+    internalEvent.operationType == OperationType.NEW_EXPENSE
+    internalEvent.operationData == "label"
   }
 
-  def "records the operation when an expense is deleted"() {
+  def "emits an internal event to notify of the expense deleted operation"() {
     given:
     def event = new Event("", [])
     def expense = new Expense("label", null, 0L, [], event.id)
@@ -94,11 +93,11 @@ class EventTest extends Specification {
     event.deleteExpense(expense.id)
 
     then:
-    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
-    operation.id != null
-    operation.type() == OperationType.EXPENSE_DELETED
-    operation.data() == "label"
-    operation.creationDate()!= null
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent.eventId == event.id
+    internalEvent.creationDate != null
+    internalEvent.operationType == OperationType.EXPENSE_DELETED
+    internalEvent.operationData == "label"
   }
 
   def "emits an event when an expense is added"() {
@@ -170,7 +169,7 @@ class EventTest extends Specification {
     event.participants().find { it.name() == "ben" } != null
   }
 
-  def "records the operation when a participant is added"() {
+  def "emits an event to notify of the participant added operation"() {
     given:
     def event = new Event("", [])
 
@@ -178,11 +177,11 @@ class EventTest extends Specification {
     event.addParticipant(new Participant("lea", 1, null))
 
     then:
-    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
-    operation.id != null
-    operation.type() == OperationType.NEW_PARTICIPANT
-    operation.data() == "lea"
-    operation.creationDate()!= null
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent.eventId == event.id
+    internalEvent.creationDate != null
+    internalEvent.operationType == OperationType.NEW_PARTICIPANT
+    internalEvent.operationData == "lea"
   }
 
   def "emits an event when a participant is added"() {

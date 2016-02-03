@@ -1,7 +1,6 @@
 package agoodfriendalwayspayshisdebts.model.event;
 
-import agoodfriendalwayspayshisdebts.model.RepositoryLocator;
-import agoodfriendalwayspayshisdebts.model.activity.Operation;
+import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.activity.OperationType;
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
@@ -39,8 +38,10 @@ public class Event extends BaseAggregateWithUuid {
 
   public static Event createAndPublishInternalEvent(String name, Collection<Participant> participants) {
     final Event event = new Event(name, participants);
-    RepositoryLocator.operations().add(new Operation(OperationType.EVENT_CREATION, event.name(), event.getId()));
-    publishInternalEvent(new EventCreatedInternalEvent(event.getId()));
+    publishInternalEvents(
+        new EventCreatedInternalEvent(event.getId()),
+        new OperationPerformedInternalEvent(event.getId(), OperationType.EVENT_CREATION, event.name())
+    );
     return event;
   }
 
@@ -58,23 +59,29 @@ public class Event extends BaseAggregateWithUuid {
 
   public void addExpense(Expense expense) {
     expenses.add(expense);
-    RepositoryLocator.operations().add(new Operation(OperationType.NEW_EXPENSE, expense.label(), getId()));
-    publishInternalEvent(new ExpenseAddedInternalEvent(expense));
+    publishInternalEvents(
+        new ExpenseAddedInternalEvent(expense),
+        new OperationPerformedInternalEvent(getId(), OperationType.NEW_EXPENSE, expense.label())
+    );
   }
 
   public Expense deleteExpense(UUID expenseId) {
     final Expense expense = find(expenseId);
     expenses.remove(expense);
-    RepositoryLocator.operations().add(new Operation(OperationType.EXPENSE_DELETED, expense.label(), getId()));
-    publishInternalEvent(new ExpenseDeletedInternalEvent(expense));
+    publishInternalEvents(
+        new ExpenseDeletedInternalEvent(expense),
+        new OperationPerformedInternalEvent(getId(), OperationType.EXPENSE_DELETED, expense.label())
+    );
     return expense;
   }
 
   public void addParticipant(Participant participant) {
     participant.eventId(getId());
     participants.add(participant);
-    RepositoryLocator.operations().add(new Operation(OperationType.NEW_PARTICIPANT, participant.name(), getId()));
-    publishInternalEvent(new ParticipantAddedInternalEvent(getId(), participant));
+    publishInternalEvents(
+        new ParticipantAddedInternalEvent(getId(), participant),
+        new OperationPerformedInternalEvent(getId(), OperationType.NEW_PARTICIPANT, participant.name())
+    );
   }
 
   public Participant findParticipant(UUID participantId) {
@@ -91,7 +98,7 @@ public class Event extends BaseAggregateWithUuid {
         .orElseThrow(UnknownExpense::new);
   }
 
-  private static <TInternalEvent extends InternalEvent> void publishInternalEvent(TInternalEvent internalEvent) {
-    InternalEventBus.INSTANCE().publish(internalEvent);
+  private static <TInternalEvent extends InternalEvent> void publishInternalEvents(TInternalEvent ...internalEvents) {
+    InternalEventBus.INSTANCE().publish(internalEvents);
   }
 }

@@ -1,8 +1,7 @@
 package agoodfriendalwayspayshisdebts.model.participant
 
-import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.MemoryOperationRepository
 import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
-import agoodfriendalwayspayshisdebts.model.RepositoryLocator
+import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent
 import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import com.vter.model.internal_event.WithEventBus
 import org.junit.Rule
@@ -58,19 +57,21 @@ class ParticipantTest extends Specification {
     participant.email() == "a@email.com"
   }
 
-  def "records the operation when a participant is edited"() {
+  def "emits an event to notify of the participant edited operation"() {
     given:
+    def eventId = UUID.randomUUID()
     def participant = new Participant("lea", 1, null)
+    participant.eventId(eventId)
 
     when:
     participant.update("email")
 
     then:
-    def operation = ((MemoryOperationRepository) RepositoryLocator.operations()).all[0]
-    operation.id != null
-    operation.type() == OperationType.PARTICIPANT_EDITED
-    operation.data() == "lea"
-    operation.creationDate()!= null
+    def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
+    internalEvent.eventId == eventId
+    internalEvent.creationDate != null
+    internalEvent.operationType == OperationType.PARTICIPANT_EDITED
+    internalEvent.operationData == "lea"
   }
 
   def "emits an event when a participant is updated"() {
