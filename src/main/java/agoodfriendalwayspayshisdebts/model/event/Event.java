@@ -23,6 +23,7 @@ import java.util.UUID;
 public class Event extends BaseAggregateWithUuid {
 
   private String name;
+  private String currency;
   private Set<Participant> participants = Sets.newHashSet();
   private List<Expense> expenses = Lists.newArrayList();
 
@@ -30,14 +31,15 @@ public class Event extends BaseAggregateWithUuid {
   @SuppressWarnings("unused")
   protected Event() {}
 
-  public Event(String name, Collection<Participant> participants) {
+  public Event(String name, String currency, Collection<Participant> participants) {
     this.name = name;
+    this.currency = currency;
     participants.forEach(participant -> participant.eventId(this.getId()));
     this.participants.addAll(participants);
   }
 
-  public static Event createAndPublishInternalEvent(String name, Collection<Participant> participants) {
-    final Event event = new Event(name, participants);
+  public static Event createAndPublishInternalEvent(String name, String currency, Collection<Participant> participants) {
+    final Event event = new Event(name, currency, participants);
     publishInternalEvents(
         new EventCreatedInternalEvent(event.getId()),
         new OperationPerformedInternalEvent(event.getId(), OperationType.EVENT_CREATION, event.name())
@@ -55,6 +57,10 @@ public class Event extends BaseAggregateWithUuid {
 
   public String name() {
     return name;
+  }
+
+  public String currency() {
+    return currency;
   }
 
   public void addExpense(Expense expense) {

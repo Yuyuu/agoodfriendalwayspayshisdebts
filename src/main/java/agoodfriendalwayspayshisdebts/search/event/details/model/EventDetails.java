@@ -12,6 +12,7 @@ public class EventDetails {
   @MongoId
   public UUID id;
   public String name;
+  public String currency;
   public Set<ParticipantDetails> participants = Sets.newHashSet();
 
   private EventDetails() {}
@@ -20,6 +21,7 @@ public class EventDetails {
     final EventDetails eventDetails = new EventDetails();
     eventDetails.id = event.getId();
     eventDetails.name = event.name();
+    eventDetails.currency = event.currency();
     eventDetails.participants.addAll(
         event.participants().stream().map(ParticipantDetails::forParticipant).collect(Collectors.toList())
     );

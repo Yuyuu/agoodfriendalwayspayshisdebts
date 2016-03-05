@@ -18,7 +18,7 @@ class OnEventCreatedTest extends Specification {
 
   Participant kim = new Participant("kim", 1, null)
   String strKimId = kim.id.toString()
-  Event event = new Event("", [kim])
+  Event event = new Event("", "€", [kim])
 
   OnEventCreated handler
 

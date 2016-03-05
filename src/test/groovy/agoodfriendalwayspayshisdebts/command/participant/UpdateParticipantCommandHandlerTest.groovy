@@ -16,7 +16,7 @@ class UpdateParticipantCommandHandlerTest extends Specification {
   WithEventBus eventBus = new WithEventBus()
 
   Participant lea = new Participant("lea", 1, "")
-  Event event = new Event("", [lea])
+  Event event = new Event("", "€", [lea])
 
   def setup() {
     RepositoryLocator.events().add(event)

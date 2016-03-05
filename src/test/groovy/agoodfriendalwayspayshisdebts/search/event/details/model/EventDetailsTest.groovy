@@ -8,7 +8,7 @@ class EventDetailsTest extends Specification {
 
   def "can create for an event"() {
     given:
-    def event = new Event("event", [new Participant("lea", 1, null)])
+    def event = new Event("event", "€", [new Participant("lea", 1, null)])
 
     when:
     def eventDetails = EventDetails.forEvent(event)
@@ -16,6 +16,7 @@ class EventDetailsTest extends Specification {
     then:
     eventDetails.id == event.id
     eventDetails.name == "event"
+    eventDetails.currency == "€"
     eventDetails.participants[0].name == "lea"
   }
 }

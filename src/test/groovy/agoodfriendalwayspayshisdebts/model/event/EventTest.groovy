@@ -21,20 +21,21 @@ class EventTest extends Specification {
   @Rule
   WithMemoryRepository memoryRepository = new WithMemoryRepository()
 
-  def "can create an event with a name and a list of participants"() {
+  def "can create an event with a name, a currency symbol and a list of participants"() {
     given:
-    def event = new Event("cool event", [new Participant("kim", 1, null)])
+    def event = new Event("cool event", "€", [new Participant("kim", 1, null)])
 
     expect:
     event.id != null
     event.name() == "cool event"
+    event.currency() == "€"
     event.participants().first().name() == "kim"
     event.participants().first().eventId() == event.id
   }
 
   def "emits an internal event to notify of the event creation operation"() {
     when:
-    def event = Event.createAndPublishInternalEvent("cool event", [])
+    def event = Event.createAndPublishInternalEvent("cool event", "€", [])
 
     then:
     def internalEvent = eventBus.bus.lastEvent(OperationPerformedInternalEvent)
@@ -46,7 +47,7 @@ class EventTest extends Specification {
 
   def "emits an internal event when creating a new event"() {
     when:
-    def event = Event.createAndPublishInternalEvent("cool event", [new Participant("kim", 1, null)])
+    def event = Event.createAndPublishInternalEvent("cool event", "€", [new Participant("kim", 1, null)])
 
     then:
     def internalEvent = eventBus.bus.lastEvent(EventCreatedInternalEvent)
@@ -57,7 +58,7 @@ class EventTest extends Specification {
   def "contains expenses"() {
     given:
     def kim = new Participant("kim", 1, null)
-    def event = new Event("cool event", [kim])
+    def event = new Event("cool event", "€", [kim])
 
     when:
     def expense = new Expense("label", kim.id, 5, [kim.id], event.id)
@@ -70,7 +71,7 @@ class EventTest extends Specification {
 
   def "emits an internal event to notify of the expense added operation"() {
     given:
-    def event = new Event("", [])
+    def event = new Event("", "€", [])
 
     when:
     event.addExpense(new Expense("label", null, 0L, [], event.id))
@@ -85,7 +86,7 @@ class EventTest extends Specification {
 
   def "emits an internal event to notify of the expense deleted operation"() {
     given:
-    def event = new Event("", [])
+    def event = new Event("", "€", [])
     def expense = new Expense("label", null, 0L, [], event.id)
     event.expenses().add(expense)
 
@@ -102,7 +103,7 @@ class EventTest extends Specification {
 
   def "emits an event when an expense is added"() {
     given:
-    def event = new Event("event", [new Participant("kim", 1, null)])
+    def event = new Event("event", "€", [new Participant("kim", 1, null)])
 
     when:
     def expense = new Expense("label", null, 2, [], event.id)
@@ -116,7 +117,7 @@ class EventTest extends Specification {
 
   def "throws an error when attempting to delete an expense that does not exist"() {
     given:
-    def event = new Event("", [])
+    def event = new Event("", "€", [])
 
     when:
     event.deleteExpense(UUID.randomUUID())
@@ -127,7 +128,7 @@ class EventTest extends Specification {
 
   def "can delete an expense"() {
     given:
-    def event = new Event("", [])
+    def event = new Event("", "€", [])
     def expense = new Expense("", null, 1, [], event.id)
     event.expenses().add(expense)
 
@@ -141,7 +142,7 @@ class EventTest extends Specification {
 
   def "emits an event when an expense is deleted"() {
     given:
-    def event = new Event("", [])
+    def event = new Event("", "€", [])
     def expense = new Expense("label", null, 2, [], event.id)
     event.expenses().add(expense)
 
@@ -157,7 +158,7 @@ class EventTest extends Specification {
   def "contains participants"() {
     given:
     def kim = new Participant("kim", 1, null)
-    def event = new Event("", [kim])
+    def event = new Event("", "€", [kim])
 
     when:
     def ben = new Participant("ben", 1, null)
@@ -171,7 +172,7 @@ class EventTest extends Specification {
 
   def "emits an event to notify of the participant added operation"() {
     given:
-    def event = new Event("", [])
+    def event = new Event("", "€", [])
 
     when:
     event.addParticipant(new Participant("lea", 1, null))
@@ -186,7 +187,7 @@ class EventTest extends Specification {
 
   def "emits an event when a participant is added"() {
     given:
-    def event = new Event("", [new Participant("kim", 1, null)])
+    def event = new Event("", "€", [new Participant("kim", 1, null)])
 
     when:
     def ben = new Participant("ben", 1, null)
@@ -202,7 +203,7 @@ class EventTest extends Specification {
   def "can find a participant"() {
     given:
     def kim = new Participant("kim", 1, null)
-    def event = new Event("", [kim])
+    def event = new Event("", "€", [kim])
 
     expect:
     event.findParticipant(kim.id) == kim
@@ -210,7 +211,7 @@ class EventTest extends Specification {
 
   def "throws an error if the searched participant does not exist"() {
     given:
-    def event = new Event("", [])
+    def event = new Event("", "€", [])
 
     when:
     event.findParticipant(UUID.randomUUID())

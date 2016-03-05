@@ -4,7 +4,7 @@ class AppTest extends AbstractIntegrationSpecification {
 
   def "the synchronous application flow should roll"() {
     given:
-    def requestBody = """{"name": "cool event", "participants": [{"name": "kim", "share": 1, "email": ""}]}"""
+    def requestBody = """{"name": "cool event", "currency": "€", "participants": [{"name": "kim", "share": 1, "email": ""}]}"""
 
     when:
     def response = post("/events", requestBody).response().content()
@@ -14,6 +14,7 @@ class AppTest extends AbstractIntegrationSpecification {
     then:
     eventDetails["id"] == eventId
     eventDetails["name"] == "cool event"
+    eventDetails["currency"] == "€"
     eventDetails["participants"][0]["name"] == "kim"
   }
 }

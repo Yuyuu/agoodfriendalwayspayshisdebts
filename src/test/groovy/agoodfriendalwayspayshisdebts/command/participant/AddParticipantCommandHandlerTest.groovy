@@ -16,7 +16,7 @@ class AddParticipantCommandHandlerTest extends Specification {
   @Rule
   WithEventBus eventBus = new WithEventBus()
 
-  Event event = new Event("", [])
+  Event event = new Event("", "€", [])
 
   def setup() {
     RepositoryLocator.events().add(event)

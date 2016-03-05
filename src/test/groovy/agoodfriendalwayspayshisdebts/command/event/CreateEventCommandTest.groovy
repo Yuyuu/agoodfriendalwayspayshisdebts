@@ -17,7 +17,7 @@ class CreateEventCommandTest extends Specification {
   @Unroll
   def "name with value {#name} is a violation"() {
     given:
-    def command = new CreateEventCommand(name: name, participants: [[name: "kim", share: 1]])
+    def command = new CreateEventCommand(name: name, currency: "€", participants: [[name: "kim", share: 1]])
 
     when:
     def violations = validator.validate(command)
@@ -29,9 +29,20 @@ class CreateEventCommandTest extends Specification {
     name << [null, "  "]
   }
 
+  def "requires a currency"() {
+    given:
+    def command = new CreateEventCommand(name: "event", participants: [[name: "kim", share: 1]])
+
+    when:
+    def violations = validator.validate(command)
+
+    then:
+    violations.first().message == "EVENT_CURRENCY_REQUIRED"
+  }
+
   def "requires at least one participant"() {
     given:
-    def command = new CreateEventCommand(name: "event", participants: participants)
+    def command = new CreateEventCommand(name: "event", currency: "€", participants: participants)
 
     when:
     def violations = validator.validate(command)

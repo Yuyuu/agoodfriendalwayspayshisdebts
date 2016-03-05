@@ -15,7 +15,7 @@ class DeleteExpenseCommandHandlerTest extends Specification {
   @Rule
   WithEventBus eventBus = new WithEventBus()
 
-  Event event = new Event("", [])
+  Event event = new Event("", "€", [])
   Expense expense = new Expense("label", null, 1, [], event.id)
 
   def setup() {

@@ -20,7 +20,7 @@ class OnParticipantAddedTest extends Specification {
   String strKimId = kim.id.toString()
   Participant lea = new Participant("lea", 2, null)
   String strLeaId = lea.id.toString()
-  Event event = new Event("", [kim])
+  Event event = new Event("", "€", [kim])
 
   OnParticipantAdded handler
 

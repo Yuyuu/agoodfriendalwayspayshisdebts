@@ -18,7 +18,7 @@ class RecordReminderStateCommandHandlerTest extends Specification {
   WithEventBus eventBus = new WithEventBus()
 
   Participant bob = new Participant("bob", 1, null)
-  Event event = new Event("", [bob])
+  Event event = new Event("", "€", [bob])
 
   RecordReminderStateCommandHandler handler = new RecordReminderStateCommandHandler()
 

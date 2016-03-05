@@ -16,7 +16,7 @@ class AddExpenseCommandHandlerTest extends Specification {
   WithEventBus eventBus = new WithEventBus()
 
   Participant kim = new Participant("kim", 1, null)
-  Event event = new Event("event", [kim])
+  Event event = new Event("event", "€", [kim])
 
   def setup() {
     RepositoryLocator.events().add(event)

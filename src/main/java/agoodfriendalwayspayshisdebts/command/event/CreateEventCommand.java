@@ -14,6 +14,9 @@ public class CreateEventCommand implements Command<UUID> {
   @NotBlank(message = "EVENT_NAME_REQUIRED")
   public String name;
 
+  @NotEmpty(message = "EVENT_CURRENCY_REQUIRED")
+  public String currency;
+
   @NotEmpty(message = "PARTICIPANTS_REQUIRED")
   @ValidParticipants
   public List<Map<String, Object>> participants;

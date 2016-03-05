@@ -51,7 +51,7 @@ class MongoEventRepositoryTest extends Specification {
 
   def "can add an event"() {
     when:
-    def event = new Event("event", [new Participant("kim", 1, null)])
+    def event = new Event("event", "€", [new Participant("kim", 1, null)])
     repository.add(event)
     mongoLink.cleanSession()
 
@@ -67,7 +67,7 @@ class MongoEventRepositoryTest extends Specification {
 
   def "can delete an event"() {
     given:
-    def event = new Event("event", [new Participant("kim", 1, null)])
+    def event = new Event("event","€", [new Participant("kim", 1, null)])
     repository.add(event)
 
     when:

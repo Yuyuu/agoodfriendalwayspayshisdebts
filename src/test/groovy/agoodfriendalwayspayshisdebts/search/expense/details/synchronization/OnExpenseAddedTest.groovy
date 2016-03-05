@@ -19,7 +19,7 @@ class OnExpenseAddedTest extends Specification {
   WithMemoryRepository repository = new WithMemoryRepository()
 
   Participant kim = new Participant("kim", 1, null)
-  Event event = new Event("event", [kim])
+  Event event = new Event("event", "€", [kim])
 
   OnExpenseAdded handler
 

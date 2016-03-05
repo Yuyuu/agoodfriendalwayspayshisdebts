@@ -17,7 +17,7 @@ class OnParticipantUpdatedTest extends Specification {
   WithJongo jongo = new WithJongo()
 
   Participant participant = new Participant("", 1, "participant@email.com")
-  Event event = new Event("", [participant])
+  Event event = new Event("", "€", [participant])
 
   OnParticipantUpdated handler
 

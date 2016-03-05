@@ -13,7 +13,7 @@ class OnParticipantIncludedTest extends Specification {
   WithJongo jongo = new WithJongo()
 
   Participant kim = new Participant("kim", 1, null)
-  Event event = new Event("event", [kim])
+  Event event = new Event("event", "€", [kim])
 
   OnParticipantIncluded handler
 

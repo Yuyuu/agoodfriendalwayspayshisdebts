@@ -25,7 +25,7 @@ class OnEventCreatedTest extends Specification {
 
   def "can create the details of the event"() {
     given:
-    def event = new Event("cool event", [new Participant("kim", 1, null)])
+    def event = new Event("cool event", "€", [new Participant("kim", 1, null)])
     RepositoryLocator.events().add(event)
     def internalEvent = new EventCreatedInternalEvent(event.id)
 
