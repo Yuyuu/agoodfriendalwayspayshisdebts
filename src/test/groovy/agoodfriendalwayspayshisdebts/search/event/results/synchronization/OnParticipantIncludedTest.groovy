@@ -1,5 +1,8 @@
 package agoodfriendalwayspayshisdebts.search.event.results.synchronization
 
+import agoodfriendalwayspayshisdebts.infrastructure.persistence.memory.WithMemoryRepository
+import agoodfriendalwayspayshisdebts.model.RepositoryLocator
+import agoodfriendalwayspayshisdebts.model.event.Event
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import agoodfriendalwayspayshisdebts.model.participant.ParticipantIncludedInternalEvent
@@ -11,27 +14,57 @@ class OnParticipantIncludedTest extends Specification {
   @Rule
   WithJongo jongo = new WithJongo()
 
+  @Rule
+  WithMemoryRepository repository = new WithMemoryRepository()
+
   Participant kim = new Participant("kim", 1, null)
   String strKimId = kim.id.toString()
   Participant lea = new Participant("lea", 1, null)
   String strLeaId = lea.id.toString()
   Participant ben = new Participant("ben", 2, null)
   String strBenId = ben.id.toString()
-  UUID eventId = UUID.randomUUID()
+  Event event = new Event("", "", [kim, lea, ben])
 
   OnParticipantIncluded handler
 
   def setup() {
     handler = new OnParticipantIncluded(jongo.jongo())
+    RepositoryLocator.events().add(event)
+  }
+
+  def "initializes the results of the participant if it does not exist"() {
+    given:
+    def expense = new Expense("label", kim.id, 9D, [kim.id], event.id)
+
+    and:
+    jongo.collection("eventresults_view") << [
+        _id: event.id, participantsResults: [
+        (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 9D, totalDebt: 2D, totalAdvance: 4.5D, details: [:]]
+    ]
+    ]
+
+    when:
+    expense.participantsIds() << ben.id
+    handler.executeInternalEvent(new ParticipantIncludedInternalEvent(expense, ben))
+
+    then:
+    def participantsResultsDocument = jongo.collection("eventresults_view").findOne()["participantsResults"]
+    def benResultDocument = participantsResultsDocument[strBenId]
+    benResultDocument["totalSpent"] != null
+    benResultDocument["totalDebt"] != null
+    benResultDocument["totalAdvance"] != null
+    benResultDocument["details"][strKimId]["rawDebt"] != null
+    benResultDocument["details"][strKimId]["mitigatedDebt"] != null
+    benResultDocument["details"][strKimId]["advance"] != null
   }
 
   def "can update the result of the event"() {
     given:
-    def expense = new Expense("label", kim.id, 9D, [kim.id, lea.id], eventId)
+    def expense = new Expense("label", kim.id, 9D, [kim.id, lea.id], event.id)
 
     and:
     jongo.collection("eventresults_view") << [
-        _id: eventId, participantsResults: [
+        _id: event.id, participantsResults: [
             (strKimId): [participantName: "kim", participantShare: 1, totalSpent: 9D, totalDebt: 2D, totalAdvance: 4.5D, details: [(strBenId): [participantName: "ben", rawDebt: 2D, mitigatedDebt: 2D, advance: 0D], (strLeaId): [advance: 4.5D]]],
             (strLeaId): [participantName: "lea", participantShare: 1, totalSpent: 0D, totalDebt: 4.5D, totalAdvance: 0D, details: [(strKimId): [participantName: "kim", rawDebt: 4.5D, mitigatedDebt: 4.5D, advance: 0D], (strBenId): [:]]],
             (strBenId): [participantName: "ben", participantShare: 2, totalSpent: 0D, totalDebt: 0D, totalAdvance: 2D, details: [(strKimId): [participantName: "kim", rawDebt: 0D, mitigatedDebt: 0D, advance: 2D], (strLeaId): [:]]]
