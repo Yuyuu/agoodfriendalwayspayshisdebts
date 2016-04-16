@@ -20,7 +20,7 @@ public class GetEventDetails extends BaseAction {
     this.searchBus = searchBus;
   }
 
-  @Get("/events/:stringifiedUuid/meta")
+  @Get("/events/:stringifiedUuid")
   public Optional<EventDetails> retrieve(String stringifiedUuid) {
     final UUID eventId = UUID.fromString(stringifiedUuid);
     final ExecutionResult<EventDetails> result = searchBus.sendAndWaitResponse(new EventDetailsSearch(eventId));

@@ -1,8 +1,9 @@
 package agoodfriendalwayspayshisdebts.web.actions.expense;
 
-import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpensesDetails;
 import agoodfriendalwayspayshisdebts.search.expense.details.search.ExpensesDetailsSearch;
+import agoodfriendalwayspayshisdebts.search.expense.metadata.search.ExpensesMetadataSearch;
 import com.vter.infrastructure.bus.ExecutionResult;
+import com.vter.search.Search;
 import com.vter.search.SearchBus;
 import com.vter.web.actions.BaseAction;
 import net.codestory.http.annotations.Get;
@@ -20,13 +21,21 @@ public class GetExpensesDetails extends BaseAction {
     this.searchBus = searchBus;
   }
 
-  @Get("/events/:stringifiedUuid/expenses?skip=:skip&limit=:limit")
-  public Optional<ExpensesDetails> getExpenses(String stringifiedUuid, int skip, int limit) {
+  @Get("/events/:stringifiedUuid/expenses?format=:format&skip=:skip&limit=:limit")
+  public Optional<?> getExpenses(String stringifiedUuid, String format, int skip, int limit) {
     final UUID eventId = UUID.fromString(stringifiedUuid);
-    final ExecutionResult<ExpensesDetails> result = searchBus.sendAndWaitResponse(
-        new ExpensesDetailsSearch(eventId).skip(skip).limit(limit)
+    final Optional<String> optionalFormat = Optional.ofNullable(format);
+    final ExecutionResult<?> result = searchBus.sendAndWaitResponse(
+        search(optionalFormat, eventId).skip(skip).limit(limit)
     );
     return getOptionalDataOrFail(result);
+  }
+
+  private static Search<?> search(Optional<String> format, UUID eventId) {
+    if (format.isPresent()) {
+      return format.get().equals("meta") ? new ExpensesMetadataSearch(eventId) : new ExpensesDetailsSearch(eventId);
+    }
+    return new ExpensesDetailsSearch(eventId);
   }
 
   private final SearchBus searchBus;

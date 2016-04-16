@@ -9,7 +9,7 @@ class AppTest extends AbstractIntegrationSpecification {
     when:
     def response = post("/events", requestBody).response().content()
     def eventId = slurper.parseText(response)["id"]
-    def eventDetails = slurper.parseText(get("/events/$eventId/meta").response().content())
+    def eventDetails = slurper.parseText(get("/events/$eventId").response().content())
 
     then:
     eventDetails["id"] == eventId
