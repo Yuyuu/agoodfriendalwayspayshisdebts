@@ -1,7 +1,7 @@
 package agoodfriendalwayspayshisdebts.command.expense;
 
 import agoodfriendalwayspayshisdebts.command.expense.validation.PositiveNonzeroAmount;
-import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpenseDetails;
+import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseDetails;
 import com.vter.command.Command;
 import org.hibernate.validator.constraints.NotBlank;
 

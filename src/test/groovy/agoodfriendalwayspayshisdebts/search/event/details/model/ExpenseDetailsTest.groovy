@@ -1,7 +1,7 @@
 package agoodfriendalwayspayshisdebts.search.event.details.model
 
 import agoodfriendalwayspayshisdebts.model.expense.Expense
-import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpenseDetails
+import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseDetails
 import spock.lang.Specification
 
 class ExpenseDetailsTest extends Specification {

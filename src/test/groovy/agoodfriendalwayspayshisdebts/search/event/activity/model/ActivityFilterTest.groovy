@@ -16,6 +16,8 @@ class ActivityFilterTest extends Specification {
     "reminders"    || ActivityFilter.REMINDERS
     "all"          || ActivityFilter.ALL
     ""             || ActivityFilter.ALL
+    null           || ActivityFilter.ALL
+    "EXPENSES"     || ActivityFilter.EXPENSES
   }
 
   def "associates an activity filter to a list of operation types"(
@@ -30,5 +32,10 @@ class ActivityFilterTest extends Specification {
     ActivityFilter.EXPENSES     | 2             | [OperationType.NEW_EXPENSE, OperationType.EXPENSE_DELETED]
     ActivityFilter.PARTICIPANTS | 2             | [OperationType.NEW_PARTICIPANT, OperationType.PARTICIPANT_EDITED]
     ActivityFilter.REMINDERS    | 2             | [OperationType.REMINDER_DELIVERED, OperationType.REMINDER_DROPPED]
+  }
+
+  def "the string of an enum value is returned lowercased"() {
+    expect:
+    ActivityFilter.EXPENSES.toString() == "expenses"
   }
 }

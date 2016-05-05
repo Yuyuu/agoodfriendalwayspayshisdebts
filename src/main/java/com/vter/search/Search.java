@@ -4,24 +4,28 @@ import com.vter.infrastructure.bus.Message;
 
 public abstract class Search<TResponse> implements Message<TResponse> {
 
-  public Search<TResponse> limit(int limit) {
-    this.limit = limit;
+  public Search<TResponse> perPage(int perPage) {
+    this.perPage = perPage;
     return this;
   }
 
-  public Search<TResponse> skip(int skip) {
-    this.skip = skip;
+  public Search<TResponse> page(int page) {
+    this.page = page;
     return this;
-  }
-
-  public int limit() {
-    return limit;
   }
 
   public int skip() {
-    return skip;
+    return (page - 1) * perPage;
   }
 
-  private int limit;
-  private int skip;
+  public int page() {
+    return page;
+  }
+
+  public int perPage() {
+    return perPage;
+  }
+
+  private int perPage;
+  private int page;
 }

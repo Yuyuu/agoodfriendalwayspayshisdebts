@@ -2,25 +2,31 @@ package agoodfriendalwayspayshisdebts.search.event.activity.search;
 
 import agoodfriendalwayspayshisdebts.search.event.activity.model.ActivityFilter;
 import agoodfriendalwayspayshisdebts.search.event.activity.model.OperationDetails;
-import com.google.common.collect.Lists;
+import agoodfriendalwayspayshisdebts.search.event.activity.model.OperationsSearchResult;
 import com.vter.search.JongoQueryBuilder;
 import com.vter.search.JongoSearchHandler;
-import org.jongo.Find;
+import com.vter.search.PaginationError;
 import org.jongo.Jongo;
+import org.jongo.MongoCursor;
 
-public class EventActivitySearchHandler extends JongoSearchHandler<EventActivitySearch, Iterable<OperationDetails>> {
+public class EventActivitySearchHandler extends JongoSearchHandler<EventActivitySearch, OperationsSearchResult> {
 
   @Override
-  protected Iterable<OperationDetails> execute(EventActivitySearch search, Jongo jongo) {
-    final int pageSize = pageSize(search.filter);
-    final int skip = (search.page - 1) * pageSize;
+  protected OperationsSearchResult execute(EventActivitySearch search, Jongo jongo) {
+    assert search.perPage() > 0 && search.page() > 0;
     final JongoQueryBuilder queryBuilder = JongoQueryBuilder.create("operationdetails_view");
     queryBuilder.add("eventId", "#", search.eventId);
     applyTypeRestriction(queryBuilder, search.filter);
-    final Find findQuery = queryBuilder.find(jongo);
-    return Lists.newArrayList(
-        findQuery.sort("{creationDate:-1}").skip(skip).limit(pageSize).as(OperationDetails.class).iterator()
-    );
+    final MongoCursor<OperationDetails> cursor = queryBuilder
+        .find(jongo)
+        .sort("{creationDate:-1}")
+        .skip(search.skip())
+        .limit(search.perPage())
+        .as(OperationDetails.class);
+    if (isBadPagination(search, cursor.count())) {
+      throw new PaginationError();
+    }
+    return new OperationsSearchResult(cursor);
   }
 
   private static void applyTypeRestriction(JongoQueryBuilder queryBuilder, ActivityFilter filter) {
@@ -42,14 +48,8 @@ public class EventActivitySearchHandler extends JongoSearchHandler<EventActivity
     queryBuilder.add("operationType", query, queryValues);
   }
 
-  private static int pageSize(ActivityFilter filter) {
-    switch (filter) {
-      case EXPENSES:
-      case PARTICIPANTS:
-      case REMINDERS:
-        return 3;
-      default:
-        return 10;
-    }
+  private static boolean isBadPagination(EventActivitySearch search, int totalCount) {
+    final int totalPageCount = (totalCount + search.perPage() - 1) / search.perPage();
+    return search.page() > totalPageCount;
   }
 }

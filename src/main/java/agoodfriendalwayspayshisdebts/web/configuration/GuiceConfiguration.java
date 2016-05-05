@@ -27,6 +27,7 @@ import com.vter.search.SearchHandler;
 import com.vter.search.SearchSynchronization;
 import com.vter.web.fluent.status.resolver.BusinessErrorResolver;
 import com.vter.web.fluent.status.resolver.ExceptionResolver;
+import com.vter.web.fluent.status.resolver.PaginationErrorResolver;
 import com.vter.web.fluent.status.resolver.ValidationExceptionResolver;
 import org.jongo.Jongo;
 import org.jongo.marshall.jackson.JacksonMapper;
@@ -87,6 +88,7 @@ public class GuiceConfiguration extends AbstractModule {
     final Multibinder<ExceptionResolver> multibinder = Multibinder.newSetBinder(binder(), ExceptionResolver.class);
     multibinder.addBinding().to(ValidationExceptionResolver.class);
     multibinder.addBinding().to(BusinessErrorResolver.class);
+    multibinder.addBinding().to(PaginationErrorResolver.class);
   }
 
   @Provides

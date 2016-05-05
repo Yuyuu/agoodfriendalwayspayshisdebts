@@ -2,6 +2,7 @@ package agoodfriendalwayspayshisdebts.search.event.activity.search
 
 import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.search.event.activity.model.ActivityFilter
+import com.vter.search.PaginationError
 import com.vter.search.WithJongo
 import org.joda.time.DateTime
 import org.junit.Rule
@@ -23,16 +24,17 @@ class EventActivitySearchHandlerTest extends Specification {
     ]
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.ALL, 1)
-    def operations = handler.execute(search, jongo.jongo())
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL).perPage(3).page(1)
+    def result = handler.execute(search, jongo.jongo())
 
     then:
-    operations.size() == 1
-    operations[0].id == operationId
-    operations[0].operationType == OperationType.NEW_EXPENSE
-    operations[0].creationDate.year == 2010
-    operations[0].operationData == "hello"
-    operations[0].eventId == eventId
+    result.totalCount ==1
+    result.items.size() == 1
+    result.items[0].id == operationId
+    result.items[0].operationType == OperationType.NEW_EXPENSE
+    result.items[0].creationDate.year == 2010
+    result.items[0].operationData == "hello"
+    result.items[0].eventId == eventId
   }
 
   def "can return the activity progressively"() {
@@ -49,18 +51,18 @@ class EventActivitySearchHandlerTest extends Specification {
     }
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.ALL, page)
-    def operations = handler.execute(search, jongo.jongo())
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL).perPage(10).page(page)
+    def result = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.operationData == expected
+    result.totalCount == 22
+    result.items*.operationData == expected
 
     where:
     page || expected
     1    || ["22", "21", "20", "19", "18", "17", "16", "15", "14", "13"]
     2    || ["12", "11", "10", "9", "8", "7", "6", "5", "4", "3"]
     3    || ["2", "1"]
-    4    || []
   }
 
   def "sorts the activity in descending order of creation date"() {
@@ -68,11 +70,11 @@ class EventActivitySearchHandlerTest extends Specification {
     populateView()
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.ALL, 1)
-    def operations = handler.execute(search, jongo.jongo())
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL).perPage(10).page(1)
+    def result = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.operationData == ["15", "14", "13", "12", "11", "10", "9", "8", "7", "6"]
+    result.items*.operationData == ["15", "14", "13", "12", "11", "10", "9", "8", "7", "6"]
   }
 
   def "only retrieves activity of the given event"() {
@@ -85,11 +87,11 @@ class EventActivitySearchHandlerTest extends Specification {
     }
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.ALL, 1)
-    def operations = handler.execute(search, jongo.jongo())
+    def search = new EventActivitySearch(eventId, ActivityFilter.ALL).perPage(10).page(1)
+    def result = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.operationData == ["5", "3", "1"]
+    result.items*.operationData == ["5", "3", "1"]
   }
 
   def "can return the activity that is only about expenses"() {
@@ -97,17 +99,16 @@ class EventActivitySearchHandlerTest extends Specification {
     populateView()
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.EXPENSES, page)
-    def operations = handler.execute(search, jongo.jongo())
+    def search = new EventActivitySearch(eventId, ActivityFilter.EXPENSES).perPage(3).page(page)
+    def result = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.operationData == expected
+    result.items*.operationData == expected
 
     where:
     page || expected
     1    || ["12", "11", "10"]
     2    || ["7", "4", "1"]
-    3    || []
   }
 
   def "can return the activity that is only about participants"() {
@@ -115,17 +116,16 @@ class EventActivitySearchHandlerTest extends Specification {
     populateView()
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.PARTICIPANTS, page)
-    def operations = handler.execute(search, jongo.jongo())
+    def search = new EventActivitySearch(eventId, ActivityFilter.PARTICIPANTS).perPage(3).page(page)
+    def result = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.operationData == expected
+    result.items*.operationData == expected
 
     where:
     page || expected
     1    || ["15", "13", "8"]
     2    || ["3"]
-    3    || []
   }
 
   def "can return the activity that is only about reminders"() {
@@ -133,17 +133,28 @@ class EventActivitySearchHandlerTest extends Specification {
     populateView()
 
     when:
-    def search = new EventActivitySearch(eventId, ActivityFilter.REMINDERS, page)
-    def operations = handler.execute(search, jongo.jongo())
+    def search = new EventActivitySearch(eventId, ActivityFilter.REMINDERS).perPage(3).page(page)
+    def result = handler.execute(search, jongo.jongo())
 
     then:
-    operations*.operationData == expected
+    result.items*.operationData == expected
 
     where:
     page || expected
     1    || ["14", "9", "6"]
     2    || ["2"]
-    3    || []
+  }
+
+  def "throws an exception on bad pagination"() {
+    given:
+    populateView()
+
+    when:
+    def search = new EventActivitySearch(eventId, ActivityFilter.REMINDERS).perPage(3).page(6)
+    handler.execute(search, jongo.jongo())
+
+    then:
+    thrown(PaginationError)
   }
 
   private void populateView() {

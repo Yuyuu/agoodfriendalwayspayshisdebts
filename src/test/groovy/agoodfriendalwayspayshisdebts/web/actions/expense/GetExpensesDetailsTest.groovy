@@ -1,9 +1,7 @@
 package agoodfriendalwayspayshisdebts.web.actions.expense
 
-import agoodfriendalwayspayshisdebts.search.expense.details.model.ExpensesDetails
-import agoodfriendalwayspayshisdebts.search.expense.details.search.ExpensesDetailsSearch
-import agoodfriendalwayspayshisdebts.search.expense.metadata.model.ExpensesMetadata
-import agoodfriendalwayspayshisdebts.search.expense.metadata.search.ExpensesMetadataSearch
+import agoodfriendalwayspayshisdebts.search.expense.model.ExpensesSearchResult
+import agoodfriendalwayspayshisdebts.search.expense.search.ExpensesDetailsSearch
 import com.vter.infrastructure.bus.ExecutionResult
 import com.vter.search.SearchBus
 import spock.lang.Specification
@@ -15,28 +13,52 @@ class GetExpensesDetailsTest extends Specification {
 
   def "can return the expenses details of an event"() {
     given:
-    def expensesDetails = Mock(ExpensesDetails)
-    searchBus.sendAndWaitResponse(_ as ExpensesDetailsSearch) >> ExecutionResult.success(expensesDetails)
+    def result = Mock(ExpensesSearchResult)
+    result.totalCount = 3
+    result.items = []
+    searchBus.sendAndWaitResponse(_ as ExpensesDetailsSearch) >> ExecutionResult.success(result)
 
     when:
-    def result = action.getExpenses(UUID.randomUUID().toString(), format, 3, 2)
+    def id = UUID.randomUUID().toString()
+    def payload = action.getExpenses(id, null, 1, 1)
 
     then:
-    result.get() == expensesDetails
-
-    where:
-    format << [null, "full"]
+    payload.rawContent().totalCount == 3
+    payload.rawContent().items == []
+    payload.headers().get("Link") == "</events/$id/expenses?per_page=1&page=2>; rel=\"next\", </events/$id/expenses?per_page=1&page=3>; rel=\"last\"" as String
   }
 
   def "can return the expenses metadata of an event"() {
     given:
-    def expensesMetadata = Mock(ExpensesMetadata)
-    searchBus.sendAndWaitResponse(_ as ExpensesMetadataSearch) >> ExecutionResult.success(expensesMetadata)
+    def result = Mock(ExpensesSearchResult)
+    result.totalCount = 3
+    result.items = []
+    searchBus.sendAndWaitResponse(_ as ExpensesDetailsSearch) >> ExecutionResult.success(result)
 
     when:
-    def result = action.getExpenses(UUID.randomUUID().toString(), "meta", 3, 2)
+    def id = UUID.randomUUID().toString()
+    def payload = action.getExpenses(id, "meta", 1, 1)
 
     then:
-    result.get() == expensesMetadata
+    payload.rawContent().totalCount == 3
+    payload.rawContent().items == []
+    payload.headers().get("Link") == "</events/$id/expenses?per_page=1&format=meta&page=2>; rel=\"next\", </events/$id/expenses?per_page=1&format=meta&page=3>; rel=\"last\"" as String
+  }
+
+  def "has default per page and page values"() {
+    when:
+    action.getExpenses(UUID.randomUUID().toString(), format, perPage, page)
+
+    then:
+    1 * searchBus.sendAndWaitResponse({it.perPage() == finalPerPage && it.page() == finalPage})
+
+    where:
+    format | perPage | page | finalPerPage | finalPage
+    null   | 0       | 0    | 4            | 1
+    "meta" | -1      | 1    | 10           | 1
+    null   | 3       | 2    | 3            | 2
+    "meta" | 3       | 2    | 3            | 2
+    "meta" | 3       | 0    | 3            | 1
+    null   | 3       | -2   | 3            | 1
   }
 }

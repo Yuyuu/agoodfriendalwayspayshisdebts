@@ -20,7 +20,10 @@ public enum ActivityFilter {
   }
 
   public static ActivityFilter parseFromString(String filter) {
-    switch (filter) {
+    if (filter == null) {
+      return ActivityFilter.ALL;
+    }
+    switch (filter.toLowerCase()) {
       case "expenses":
         return ActivityFilter.EXPENSES;
       case "participants":
@@ -38,5 +41,10 @@ public enum ActivityFilter {
 
   public List<OperationType> operationTypes() {
     return operationTypes;
+  }
+
+  @Override
+  public String toString() {
+    return this.name().toLowerCase();
   }
 }
