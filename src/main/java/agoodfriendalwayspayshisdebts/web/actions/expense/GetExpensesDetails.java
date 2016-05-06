@@ -40,6 +40,6 @@ public class GetExpensesDetails extends BasePaginationAction {
   }
 
   private static int perPage(String format) {
-    return format.equals("meta") ? 10 : 4;
+    return format.equals("meta") ? 20 : 10;
   }
 }

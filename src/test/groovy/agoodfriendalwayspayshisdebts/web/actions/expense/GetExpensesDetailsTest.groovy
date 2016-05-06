@@ -54,8 +54,8 @@ class GetExpensesDetailsTest extends Specification {
 
     where:
     format | perPage | page | finalPerPage | finalPage
-    null   | 0       | 0    | 4            | 1
-    "meta" | -1      | 1    | 10           | 1
+    null   | 0       | 0    | 10           | 1
+    "meta" | -1      | 1    | 20           | 1
     null   | 3       | 2    | 3            | 2
     "meta" | 3       | 2    | 3            | 2
     "meta" | 3       | 0    | 3            | 1
