@@ -5,7 +5,6 @@ import agoodfriendalwayspayshisdebts.search.expense.model.ExpensesMetadata;
 import agoodfriendalwayspayshisdebts.search.expense.model.ExpensesSearchResult;
 import com.vter.search.JongoQueryBuilder;
 import com.vter.search.JongoSearchHandler;
-import com.vter.search.PaginationError;
 import org.jongo.Jongo;
 
 import java.util.Optional;
@@ -15,6 +14,7 @@ public class ExpensesDetailsSearchHandler extends JongoSearchHandler<ExpensesDet
 
   @Override
   protected ExpensesSearchResult execute(ExpensesDetailsSearch search, Jongo jongo) {
+    assert search.perPage() > 0 && search.page() > 0;
     final Optional<Integer> optionalExpenseCount = expenseCount(search.eventId, jongo);
     if (!optionalExpenseCount.isPresent()) {
       return null;
@@ -26,10 +26,6 @@ public class ExpensesDetailsSearchHandler extends JongoSearchHandler<ExpensesDet
 
     final int limit = (unskippedExpenseCount >= search.perPage()) ? search.perPage() : unskippedExpenseCount;
     final int reverseSkip = skip + limit;
-
-    if (limit <= 0 || reverseSkip < 0) {
-      throw new PaginationError();
-    }
 
     return JongoQueryBuilder.create("expensesdetails_view")
         .add("_id", "#", search.eventId)

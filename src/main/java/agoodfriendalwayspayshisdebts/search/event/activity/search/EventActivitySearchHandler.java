@@ -5,7 +5,6 @@ import agoodfriendalwayspayshisdebts.search.event.activity.model.OperationDetail
 import agoodfriendalwayspayshisdebts.search.event.activity.model.OperationsSearchResult;
 import com.vter.search.JongoQueryBuilder;
 import com.vter.search.JongoSearchHandler;
-import com.vter.search.PaginationError;
 import org.jongo.Jongo;
 import org.jongo.MongoCursor;
 
@@ -23,9 +22,6 @@ public class EventActivitySearchHandler extends JongoSearchHandler<EventActivity
         .skip(search.skip())
         .limit(search.perPage())
         .as(OperationDetails.class);
-    if (isBadPagination(search, cursor.count())) {
-      throw new PaginationError();
-    }
     return new OperationsSearchResult(cursor);
   }
 
@@ -46,10 +42,5 @@ public class EventActivitySearchHandler extends JongoSearchHandler<EventActivity
         break;
     }
     queryBuilder.add("operationType", query, queryValues);
-  }
-
-  private static boolean isBadPagination(EventActivitySearch search, int totalCount) {
-    final int totalPageCount = (totalCount + search.perPage() - 1) / search.perPage();
-    return search.page() > totalPageCount;
   }
 }
