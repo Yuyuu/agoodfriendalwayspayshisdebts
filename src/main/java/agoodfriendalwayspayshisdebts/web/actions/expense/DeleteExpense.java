@@ -4,7 +4,7 @@ import agoodfriendalwayspayshisdebts.command.expense.DeleteExpenseCommand;
 import com.vter.command.CommandBus;
 import com.vter.infrastructure.bus.ExecutionResult;
 import com.vter.web.actions.BaseAction;
-import net.codestory.http.annotations.Delete;
+import net.codestory.http.annotations.Put;
 import net.codestory.http.annotations.Resource;
 import net.codestory.http.constants.HttpStatus;
 import net.codestory.http.payload.Payload;
@@ -20,7 +20,7 @@ public class DeleteExpense extends BaseAction {
     this.commandBus = commandBus;
   }
 
-  @Delete("/events/:stringifiedEventUuid/expenses/:stringifiedExpenseUuid")
+  @Put("/events/:stringifiedEventUuid/expenses/:stringifiedExpenseUuid")
   public Payload delete(String stringifiedEventId, String stringifiedExpenseUuid) {
     final DeleteExpenseCommand command = new DeleteExpenseCommand();
     command.eventId = UUID.fromString(stringifiedEventId);
