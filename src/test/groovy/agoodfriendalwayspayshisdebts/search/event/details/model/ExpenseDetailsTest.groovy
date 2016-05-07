@@ -20,6 +20,7 @@ class ExpenseDetailsTest extends Specification {
     then:
     expenseDetails.id == expense.id
     expenseDetails.label == "label"
+    expenseDetails.state == "PENDING"
     expenseDetails.purchaserName == "ben"
     expenseDetails.amount == 10
     expenseDetails.participantsNames == ["ben"]

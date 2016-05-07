@@ -19,6 +19,7 @@ class ExpenseTest extends Specification {
     expect:
     expense.id != null
     expense.label() == "food"
+    expense.state() == State.PENDING
     expense.purchaserId() == purchaserId
     expense.amount() == 10
     expense.participantsIds().first() == purchaserId

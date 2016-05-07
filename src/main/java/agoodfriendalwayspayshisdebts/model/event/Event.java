@@ -2,10 +2,7 @@ package agoodfriendalwayspayshisdebts.model.event;
 
 import agoodfriendalwayspayshisdebts.model.activity.OperationPerformedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.activity.OperationType;
-import agoodfriendalwayspayshisdebts.model.expense.Expense;
-import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent;
-import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent;
-import agoodfriendalwayspayshisdebts.model.expense.UnknownExpense;
+import agoodfriendalwayspayshisdebts.model.expense.*;
 import agoodfriendalwayspayshisdebts.model.participant.Participant;
 import agoodfriendalwayspayshisdebts.model.participant.ParticipantAddedInternalEvent;
 import agoodfriendalwayspayshisdebts.model.participant.UnknownParticipant;
@@ -65,6 +62,7 @@ public class Event extends BaseAggregateWithUuid {
 
   public void addExpense(Expense expense) {
     expenses.add(expense);
+    expense.state(State.ADDED);
     publishInternalEvents(
         new ExpenseAddedInternalEvent(expense),
         new OperationPerformedInternalEvent(getId(), OperationType.NEW_EXPENSE, expense.label())
@@ -73,7 +71,7 @@ public class Event extends BaseAggregateWithUuid {
 
   public Expense deleteExpense(UUID expenseId) {
     final Expense expense = find(expenseId);
-    expenses.remove(expense);
+    expense.state(State.DELETED);
     publishInternalEvents(
         new ExpenseDeletedInternalEvent(expense),
         new OperationPerformedInternalEvent(getId(), OperationType.EXPENSE_DELETED, expense.label())
@@ -104,7 +102,7 @@ public class Event extends BaseAggregateWithUuid {
         .orElseThrow(UnknownExpense::new);
   }
 
-  private static <TInternalEvent extends InternalEvent> void publishInternalEvents(TInternalEvent ...internalEvents) {
+  private static void publishInternalEvents(InternalEvent ...internalEvents) {
     InternalEventBus.INSTANCE().publish(internalEvents);
   }
 }

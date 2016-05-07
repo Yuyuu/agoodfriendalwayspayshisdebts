@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class ExpenseDetails {
   public UUID id;
   public String label;
+  public String state;
   public String purchaserName;
   public double amount;
   public List<String> participantsNames = Lists.newArrayList();
@@ -23,6 +24,7 @@ public class ExpenseDetails {
     final ExpenseDetails expenseDetails = new ExpenseDetails();
     expenseDetails.id = expense.getId();
     expenseDetails.label = expense.label();
+    expenseDetails.state = expense.state().toString();
     expenseDetails.purchaserName = eventParticipantsNames.get(expense.purchaserId());
     expenseDetails.amount = expense.amount();
     expenseDetails.participantsNames.addAll(

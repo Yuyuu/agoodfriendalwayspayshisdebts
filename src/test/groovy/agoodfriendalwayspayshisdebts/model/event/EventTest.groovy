@@ -6,6 +6,7 @@ import agoodfriendalwayspayshisdebts.model.activity.OperationType
 import agoodfriendalwayspayshisdebts.model.expense.Expense
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseAddedInternalEvent
 import agoodfriendalwayspayshisdebts.model.expense.ExpenseDeletedInternalEvent
+import agoodfriendalwayspayshisdebts.model.expense.State
 import agoodfriendalwayspayshisdebts.model.expense.UnknownExpense
 import agoodfriendalwayspayshisdebts.model.participant.Participant
 import agoodfriendalwayspayshisdebts.model.participant.ParticipantAddedInternalEvent
@@ -67,6 +68,7 @@ class EventTest extends Specification {
     then:
     event.expenses().size() == 1
     event.expenses()[0] == expense
+    expense.state() == State.ADDED
   }
 
   def "emits an internal event to notify of the expense added operation"() {
@@ -126,7 +128,7 @@ class EventTest extends Specification {
     thrown(UnknownExpense)
   }
 
-  def "can delete an expense"() {
+  def "can pass an expense to the deleted state"() {
     given:
     def event = new Event("", "€", [])
     def expense = new Expense("", null, 1, [], event.id)
@@ -137,7 +139,8 @@ class EventTest extends Specification {
 
     then:
     deletedExpense == expense
-    event.expenses().empty
+    event.expenses().first() == expense
+    deletedExpense.state() == State.DELETED
   }
 
   def "emits an event when an expense is deleted"() {

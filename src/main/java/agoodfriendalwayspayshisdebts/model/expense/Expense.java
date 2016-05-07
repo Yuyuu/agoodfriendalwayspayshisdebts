@@ -13,6 +13,7 @@ import java.util.UUID;
 public class Expense extends BaseEntityWithUuid {
 
   private String label;
+  private State state;
   private UUID purchaserId;
   private double amount;
   private Set<UUID> participantsIds = Sets.newHashSet();
@@ -25,6 +26,7 @@ public class Expense extends BaseEntityWithUuid {
 
   public Expense(String label, UUID purchaserId, double amount, List<UUID> participantsIds, UUID eventId) {
     this.label = label;
+    this.state = State.PENDING;
     this.purchaserId = purchaserId;
     this.amount = amount;
     this.participantsIds.addAll(participantsIds);
@@ -55,8 +57,16 @@ public class Expense extends BaseEntityWithUuid {
     return purchaserId;
   }
 
+  public State state() {
+    return state;
+  }
+
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public void state(State state) {
+    this.state = state;
   }
 
   public void includeParticipant(Participant participant) {
