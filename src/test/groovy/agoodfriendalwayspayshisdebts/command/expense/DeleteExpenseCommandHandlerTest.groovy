@@ -26,9 +26,12 @@ class DeleteExpenseCommandHandlerTest extends Specification {
 
   def "passes the expense is state deleted"() {
     when:
-    new DeleteExpenseCommandHandler().execute(new DeleteExpenseCommand(eventId: event.id, expenseId: expense.id))
+    def deletedExpense = new DeleteExpenseCommandHandler().execute(
+        new DeleteExpenseCommand(eventId: event.id, expenseId: expense.id)
+    )
 
     then:
+    deletedExpense == expense
     def updatedEvent = RepositoryLocator.events().get(event.id)
     updatedEvent.expenses().find { it.id == expense.id }.state() == State.DELETED
   }

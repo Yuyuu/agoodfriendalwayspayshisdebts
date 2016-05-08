@@ -1,6 +1,7 @@
 package agoodfriendalwayspayshisdebts.web.actions.expense
 
 import agoodfriendalwayspayshisdebts.command.expense.DeleteExpenseCommand
+import agoodfriendalwayspayshisdebts.model.expense.Expense
 import com.vter.command.CommandBus
 import com.vter.infrastructure.bus.ExecutionResult
 import spock.lang.Specification
@@ -11,16 +12,16 @@ class DeleteExpenseTest extends Specification {
   def "can ask to delete an expense from an event"() {
     given:
     def action = new DeleteExpense(commandBus)
-    commandBus.sendAndWaitResponse(_ as DeleteExpenseCommand) >> ExecutionResult.success(null)
+    def result = Mock(Expense)
+    commandBus.sendAndWaitResponse(_ as DeleteExpenseCommand) >> ExecutionResult.success(result)
 
     when:
     def dummyUuid = UUID.randomUUID().toString()
-    def payload = action.delete(dummyUuid, dummyUuid)
+    def expense = action.delete(dummyUuid, dummyUuid)
 
     then:
     noExceptionThrown()
-    payload.code() == 204
-    payload.rawContent() == null
+    expense == result
   }
 
   def "propagates the error if any occurred"() {

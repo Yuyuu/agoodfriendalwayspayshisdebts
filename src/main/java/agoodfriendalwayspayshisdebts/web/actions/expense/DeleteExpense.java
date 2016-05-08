@@ -1,13 +1,12 @@
 package agoodfriendalwayspayshisdebts.web.actions.expense;
 
 import agoodfriendalwayspayshisdebts.command.expense.DeleteExpenseCommand;
+import agoodfriendalwayspayshisdebts.model.expense.Expense;
 import com.vter.command.CommandBus;
 import com.vter.infrastructure.bus.ExecutionResult;
 import com.vter.web.actions.BaseAction;
 import net.codestory.http.annotations.Put;
 import net.codestory.http.annotations.Resource;
-import net.codestory.http.constants.HttpStatus;
-import net.codestory.http.payload.Payload;
 
 import javax.inject.Inject;
 import java.util.UUID;
@@ -21,12 +20,12 @@ public class DeleteExpense extends BaseAction {
   }
 
   @Put("/events/:stringifiedEventUuid/expenses/:stringifiedExpenseUuid")
-  public Payload delete(String stringifiedEventId, String stringifiedExpenseUuid) {
+  public Expense delete(String stringifiedEventId, String stringifiedExpenseUuid) {
     final DeleteExpenseCommand command = new DeleteExpenseCommand();
     command.eventId = UUID.fromString(stringifiedEventId);
     command.expenseId = UUID.fromString(stringifiedExpenseUuid);
-    final ExecutionResult<Void> result = commandBus.sendAndWaitResponse(command);
-    return getDataAsPayloadOrFail(result, HttpStatus.NO_CONTENT);
+    final ExecutionResult<Expense> result = commandBus.sendAndWaitResponse(command);
+    return getDataOrFail(result);
   }
 
   private final CommandBus commandBus;
