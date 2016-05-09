@@ -1,7 +1,10 @@
 package agoodfriendalwayspayshisdebts.search.expense.search
 
-import agoodfriendalwayspayshisdebts.search.expense.model.ExpensesMetadata
+import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseDetails
+import agoodfriendalwayspayshisdebts.search.expense.model.ExpenseMetadata
+import agoodfriendalwayspayshisdebts.search.expense.model.ExpensesSearchResult
 import com.vter.search.WithJongo
+import org.joda.time.DateTime
 import org.junit.Rule
 import spock.lang.Specification
 
@@ -9,16 +12,15 @@ class ExpensesDetailsSearchHandlerTest extends Specification {
   @Rule
   WithJongo jongo = new WithJongo()
 
-  UUID eventId = UUID.randomUUID()
+  UUID eventId = uuid()
 
   ExpensesDetailsSearchHandler handler = new ExpensesDetailsSearchHandler()
 
   def "can return the expenses details of an event"() {
     given:
     jongo.collection("expensesdetails_view") << [
-        _id: eventId,
-        totalCount: 1,
-        items: [[label: "label", purchaserName: "kim", amount: 2, participantsNames: ["kim"], description: "hello"]]
+        [_id: uuid(), eventId: eventId, label: "label", purchaserName: "kim", amount: 2, participantsNames: ["kim"],
+         description: "hello"]
     ]
 
     when:
@@ -26,7 +28,7 @@ class ExpensesDetailsSearchHandlerTest extends Specification {
     def result = handler.execute(search, jongo.jongo())
 
     then:
-    result.eventId == eventId
+    result instanceof ExpensesSearchResult<ExpenseDetails>
     result.totalCount == 1
     result.items.size() == 1
     result.items[0].label == "label"
@@ -39,10 +41,13 @@ class ExpensesDetailsSearchHandlerTest extends Specification {
   def "can return the expenses progressively"() {
     given:
     jongo.collection("expensesdetails_view") << [
-        _id: eventId,
-        totalCount: 6,
-        items: [[label: "e1"], [label: "e2"], [label: "e3"], [label: "e4"], [label: "e5"], [label: "e6"]]
-    ]
+        [label: "e1", creationDate: date("2010-06-30T01:00")], [label: "e2", creationDate: date("2010-06-30T02:00")],
+        [label: "e3", creationDate: date("2010-06-30T03:00")], [label: "e4", creationDate: date("2010-06-30T04:00")],
+        [label: "e5", creationDate: date("2010-06-30T05:00")], [label: "e6", creationDate: date("2010-06-30T06:00")]
+    ].each {
+      it["_id"] = uuid()
+      it["eventId"] = eventId
+    }
 
     when:
     def search = new ExpensesDetailsSearch(eventId, "").perPage(perPage).page(page)
@@ -54,45 +59,57 @@ class ExpensesDetailsSearchHandlerTest extends Specification {
 
     where:
     page | perPage || expenses
-    1    | 2       || ["e5", "e6"]
-    2    | 2       || ["e3", "e4"]
-    3    | 2       || ["e1", "e2"]
+    1    | 2       || ["e6", "e5"]
+    2    | 2       || ["e4", "e3"]
+    3    | 2       || ["e2", "e1"]
     4    | 2       || []
     2    | 5       || ["e1"]
-    1    | 11      || ["e1", "e2", "e3", "e4", "e5", "e6"]
+    1    | 11      || ["e6", "e5", "e4", "e3", "e2", "e1"]
     3    | 11      || []
   }
 
   def "can return the metadata format of expenses"() {
     given:
     jongo.collection("expensesdetails_view") << [
-        _id: eventId,
-        totalCount: 6,
-        items: [[label: "e1"], [label: "e2"], [label: "e3"], [label: "e4"], [label: "e5"], [label: "e6"]]
-    ]
+        [label: "e1", creationDate: date("2010-06-30T01:00")], [label: "e2", creationDate: date("2010-06-30T02:00")],
+        [label: "e3", creationDate: date("2010-06-30T03:00")], [label: "e4", creationDate: date("2010-06-30T04:00")],
+        [label: "e5", creationDate: date("2010-06-30T05:00")], [label: "e6", creationDate: date("2010-06-30T06:00")]
+    ].each {
+      it["_id"] = uuid()
+      it["eventId"] = eventId
+    }
 
     when:
     def search = new ExpensesDetailsSearch(eventId, "meta").perPage(perPage).page(page)
     def result = handler.execute(search, jongo.jongo())
 
     then:
-    result instanceof ExpensesMetadata
+    result instanceof ExpensesSearchResult<ExpenseMetadata>
     result.totalCount == 6
     result.items*.label == expenses
 
     where:
     page | perPage || expenses
-    1    | 2       || ["e5", "e6"]
-    2    | 2       || ["e3", "e4"]
-    3    | 2       || ["e1", "e2"]
+    1    | 2       || ["e6", "e5"]
+    2    | 2       || ["e4", "e3"]
+    3    | 2       || ["e2", "e1"]
   }
 
-  def "returns null if no document is found for the event"() {
+  def "returns a result if no document is found for the event"() {
     when:
     def search = new ExpensesDetailsSearch(eventId, "").perPage(1).page(1)
     def details = handler.execute(search, jongo.jongo())
 
     then:
-    details == null
+    details.totalCount == 0
+    details.items.empty
+  }
+
+  private static UUID uuid() {
+    UUID.randomUUID()
+  }
+
+  private static long date(String dateAsString) {
+    DateTime.parse(dateAsString).millis
   }
 }

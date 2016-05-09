@@ -102,7 +102,7 @@ public class Event extends BaseAggregateWithUuid {
         .orElseThrow(UnknownExpense::new);
   }
 
-  private static void publishInternalEvents(InternalEvent ...internalEvents) {
+  private static void publishInternalEvents(InternalEvent... internalEvents) {
     InternalEventBus.INSTANCE().publish(internalEvents);
   }
 }

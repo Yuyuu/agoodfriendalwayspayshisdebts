@@ -23,6 +23,7 @@ class ExpenseTest extends Specification {
     expense.purchaserId() == purchaserId
     expense.amount() == 10
     expense.participantsIds().first() == purchaserId
+    expense.creationDate() != null
     expense.eventId() == eventId
   }
 

@@ -19,10 +19,10 @@ class OnExpenseDeletedTest extends Specification {
     handler = new OnExpenseDeleted(jongo.jongo())
   }
 
-  def "updates the state of the expense to deleted"() {
+  def "updates the state of the expense to delete"() {
     given:
     def expense = new Expense("", null, 1, [], eventId)
-    jongo.collection("expensesdetails_view") << [_id: eventId, totalCount: 1, items: [[id:expense.id, state:"ADDED"]]]
+    jongo.collection("expensesdetails_view") << [[_id: expense.id, state: "ADDED"]]
 
     when:
     expense.state(State.DELETED)
@@ -30,7 +30,6 @@ class OnExpenseDeletedTest extends Specification {
 
     then:
     def document = jongo.collection("expensesdetails_view").findOne()
-    document["totalCount"] == 1
-    document["items"][0]["state"] == "DELETED"
+    document["state"] == "DELETED"
   }
 }

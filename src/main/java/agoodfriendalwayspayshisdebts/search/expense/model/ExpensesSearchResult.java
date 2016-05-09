@@ -1,18 +1,11 @@
 package agoodfriendalwayspayshisdebts.search.expense.model;
 
+import com.google.common.collect.Lists;
 import com.vter.search.PaginatedSearchResult;
-import org.jongo.marshall.jackson.oid.MongoId;
+import org.jongo.MongoCursor;
 
-import java.util.List;
-import java.util.UUID;
-
-public abstract class ExpensesSearchResult<TItem> extends PaginatedSearchResult<TItem> {
-  @MongoId
-  public UUID eventId;
-
-  protected ExpensesSearchResult() {}
-
-  public ExpensesSearchResult(int totalCount, List<TItem> items) {
-    super(totalCount, items);
+public class ExpensesSearchResult<TItem> extends PaginatedSearchResult<TItem> {
+  public ExpensesSearchResult(MongoCursor<TItem> cursor) {
+    super(cursor.count(), Lists.newArrayList(cursor.iterator()));
   }
 }

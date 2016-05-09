@@ -24,6 +24,7 @@ class ExpenseDetailsTest extends Specification {
     expenseDetails.purchaserName == "ben"
     expenseDetails.amount == 10
     expenseDetails.participantsNames == ["ben"]
+    expenseDetails.creationDate == expense.creationDate()
     expenseDetails.description == "description"
     expenseDetails.eventId == eventId
   }

@@ -1,10 +1,12 @@
 package agoodfriendalwayspayshisdebts.search.expense.model;
 
 import agoodfriendalwayspayshisdebts.model.expense.Expense;
+import org.jongo.marshall.jackson.oid.MongoId;
 
 import java.util.UUID;
 
 public class ExpenseMetadata {
+  @MongoId
   public UUID id;
   public String label;
 

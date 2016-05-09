@@ -5,6 +5,7 @@ import agoodfriendalwayspayshisdebts.model.participant.ParticipantIncludedIntern
 import com.google.common.collect.Sets;
 import com.vter.model.BaseEntityWithUuid;
 import com.vter.model.internal_event.InternalEventBus;
+import org.joda.time.DateTime;
 
 import java.util.List;
 import java.util.Set;
@@ -13,11 +14,12 @@ import java.util.UUID;
 public class Expense extends BaseEntityWithUuid {
 
   private String label;
-  private State state;
+  private State state = State.PENDING;
   private UUID purchaserId;
   private double amount;
   private Set<UUID> participantsIds = Sets.newHashSet();
   private String description;
+  private DateTime creationDate = DateTime.now();
   private UUID eventId;
 
   /* Used by mongolink */
@@ -26,7 +28,6 @@ public class Expense extends BaseEntityWithUuid {
 
   public Expense(String label, UUID purchaserId, double amount, List<UUID> participantsIds, UUID eventId) {
     this.label = label;
-    this.state = State.PENDING;
     this.purchaserId = purchaserId;
     this.amount = amount;
     this.participantsIds.addAll(participantsIds);
@@ -59,6 +60,10 @@ public class Expense extends BaseEntityWithUuid {
 
   public State state() {
     return state;
+  }
+
+  public DateTime creationDate() {
+    return creationDate;
   }
 
   public void setDescription(String description) {
