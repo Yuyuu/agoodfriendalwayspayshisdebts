@@ -44,9 +44,10 @@ class ExpensesDetailsSearchHandlerTest extends Specification {
         [label: "e1", creationDate: date("2010-06-30T01:00")], [label: "e2", creationDate: date("2010-06-30T02:00")],
         [label: "e3", creationDate: date("2010-06-30T03:00")], [label: "e4", creationDate: date("2010-06-30T04:00")],
         [label: "e5", creationDate: date("2010-06-30T05:00")], [label: "e6", creationDate: date("2010-06-30T06:00")]
-    ].each {
+    ].eachWithIndex { it, index ->
       it["_id"] = uuid()
       it["eventId"] = eventId
+      it["state"] = index % 2 == 0 ? "DELETED" : "ADDED"
     }
 
     when:
@@ -74,9 +75,10 @@ class ExpensesDetailsSearchHandlerTest extends Specification {
         [label: "e1", creationDate: date("2010-06-30T01:00")], [label: "e2", creationDate: date("2010-06-30T02:00")],
         [label: "e3", creationDate: date("2010-06-30T03:00")], [label: "e4", creationDate: date("2010-06-30T04:00")],
         [label: "e5", creationDate: date("2010-06-30T05:00")], [label: "e6", creationDate: date("2010-06-30T06:00")]
-    ].each {
+    ].eachWithIndex { it, index ->
       it["_id"] = uuid()
       it["eventId"] = eventId
+      it["state"] = index % 2 == 0 ? "DELETED" : "ADDED"
     }
 
     when:
@@ -85,14 +87,14 @@ class ExpensesDetailsSearchHandlerTest extends Specification {
 
     then:
     result instanceof ExpensesSearchResult<ExpenseMetadata>
-    result.totalCount == 6
+    result.totalCount == 3
     result.items*.label == expenses
 
     where:
     page | perPage || expenses
-    1    | 2       || ["e6", "e5"]
-    2    | 2       || ["e4", "e3"]
-    3    | 2       || ["e2", "e1"]
+    1    | 2       || ["e6", "e4"]
+    2    | 2       || ["e2"]
+    3    | 2       || []
   }
 
   def "returns a result if no document is found for the event"() {
