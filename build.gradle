@@ -1,7 +1,7 @@
 apply plugin: "java"
 apply plugin: "groovy"
 
-version = "1.01"
+version = "1.02-SNAPSHOT"
 
 repositories {
   mavenCentral()

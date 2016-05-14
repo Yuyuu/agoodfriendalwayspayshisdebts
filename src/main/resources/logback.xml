@@ -5,7 +5,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.vter" additivity="false" level="INFO">
+    <logger name="com.vter" additivity="false" level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </logger>
 
